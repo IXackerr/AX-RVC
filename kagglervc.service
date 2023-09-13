@@ -1,0 +1,11 @@
+[Unit]
+Description=Kaggle Service
+After=network.target
+
+[Service]
+User=root
+ExecStart=/kaggle/working/AX-RVC/kaggle.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
