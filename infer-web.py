@@ -1657,7 +1657,7 @@ def cli_train(com):
     bool_flags = [bool(int(i)) for i in com[2:11]]
     version = com[11]
 
-    pretrained_base = "pretrained/" if version == "v1" else "pretrained_v2/"
+    pretrained_base = "/kaggle/input/ax-rvc/pretrained/" if version == "v1" else "/kaggle/input/ax-rvc/pretrained_v2/"
 
     g_pretrained_path = f"{pretrained_base}f0G{sample_rate}.pth"
     d_pretrained_path = f"{pretrained_base}f0D{sample_rate}.pth"
@@ -2301,8 +2301,8 @@ def make_test(
 def GradioSetup(UTheme=gr.themes.Soft()):
     default_weight = names[0] if names else ""
 
-    with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="Applio") as app:
-        gr.HTML("<h1> 🍏 Applio (Mangio-RVC-Fork) </h1>")
+    with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX-RVC") as app:
+        gr.HTML("<h1> 🍏 AX-RVC (Mangio-RVC-Fork) </h1>")
         with gr.Tabs():
             with gr.TabItem(i18n("Model Inference")):
                 with gr.Row():
@@ -3103,13 +3103,13 @@ def GradioSetup(UTheme=gr.themes.Soft()):
                                 pretrained_G14 = gr.Textbox(
                                     lines=4,
                                     label=i18n("Load pre-trained base model G path:"),
-                                    value="pretrained_v2/f0G40k.pth",
+                                    value="/kaggle/input/ax-rvc/pretrained_v2/f0G40k.pth",
                                     interactive=True,
                                 )
                                 pretrained_D15 = gr.Textbox(
                                     lines=4,
                                     label=i18n("Load pre-trained base model D path:"),
-                                    value="pretrained_v2/f0D40k.pth",
+                                    value="/kaggle/input/ax-rvc/pretrained_v2/f0D40k.pth",
                                     interactive=True,
                                 )
                                 gpus16 = gr.Textbox(
