@@ -1,5 +1,5 @@
-# 🍏 Applio-RVC-Fork
-Applio is a user-friendly fork of Mangio-RVC-Fork/RVC, designed to provide an intuitive interface, especially for newcomers.
+# 🍏 Applio x Xackerr-RVC-Fork
+AX-RVC is a user-friendly fork of Mangio-RVC-Fork/RVC, designed to provide an intuitive interface, especially for newcomers, and work on kaggle
 
 ## 📎 Links
 [![Discord](https://img.shields.io/badge/SUPPORT_DISCORD-37a779?style=for-the-badge)](https://discord.gg/IAHispano)
