@@ -163,7 +163,7 @@ hubert_model = None
 def load_hubert():
     global hubert_model
     models, _, _ = fairseq.checkpoint_utils.load_model_ensemble_and_task(
-        ["hubert_base.pt"], suffix=""
+        ["/kaggle/input/ax-rvc/hubert_base.pt"], suffix=""
     )
     hubert_model = models[0].to(config.device)
 
@@ -1204,7 +1204,7 @@ def change_sr2(sr2, if_f0_3, version19):
     model_paths = {"G": "", "D": ""}
 
     for model_type in model_paths:
-        file_path = f"pretrained{path_str}/{f0_str}{model_type}{sr2}.pth"
+        file_path = f"/kaggle/input/ax-rvc/pretrained{path_str}/{f0_str}{model_type}{sr2}.pth"
         if os.access(file_path, os.F_OK):
             model_paths[model_type] = file_path
         else:
@@ -1226,7 +1226,7 @@ def change_version19(sr2, if_f0_3, version19):
     model_paths = {"G": "", "D": ""}
 
     for model_type in model_paths:
-        file_path = f"pretrained{path_str}/{f0_str}{model_type}{sr2}.pth"
+        file_path = f"/kaggle/input/ax-rvc/pretrained{path_str}/{f0_str}{model_type}{sr2}.pth"
         if os.access(file_path, os.F_OK):
             model_paths[model_type] = file_path
         else:
@@ -1238,7 +1238,7 @@ def change_version19(sr2, if_f0_3, version19):
 def change_f0(if_f0_3, sr2, version19):  # f0method8,pretrained_G14,pretrained_D15
     path_str = "" if version19 == "v1" else "_v2"
 
-    pth_format = "pretrained%s/f0%s%s.pth"
+    pth_format = "/kaggle/input/ax-rvc/pretrained%s/f0%s%s.pth"
     model_desc = {"G": "", "D": ""}
 
     for model_type in model_desc:
