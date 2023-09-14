@@ -1,9 +1,6 @@
 # 🍏 Applio x Xackerr-RVC-Fork
-AX-RVC is a user-friendly fork of Mangio-RVC-Fork/RVC, designed to provide an intuitive interface, especially for newcomers, and work on kaggle
-
-## 📎 Links
-[![Discord](https://img.shields.io/badge/SUPPORT_DISCORD-37a779?style=for-the-badge)](https://discord.gg/IAHispano)
-[![Google Colab](https://img.shields.io/badge/GOOGLE_COLAB-37a779?style=for-the-badge)](https://colab.research.google.com/drive/157pUQep6txJOYModYFqvz_5OJajeh7Ii)
+AX-RVC is a user-friendly fork of Mangio-RVC-Fork/RVC, designed to provide an intuitive interface, especially for newcomers, and work on kaggle.
+You need AX RVC Shell for run this script on kaggle
 
 ## 📚 Table of Contents
   1. [Improvements of Applio Over RVC](#-improvements-of-applio-over-rvc)
