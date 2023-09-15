@@ -61,7 +61,7 @@ class _audio_pre_:
                 (
                     X_wave[d],
                     _,
-                ) = librosa.core.load(  
+                ) = librosa.core.load(  # 理论上librosa读取可能对某些音频有bug，应该上ffmpeg读取，但是太麻烦了弃坑
                     music_file,
                     bp["sr"],
                     False,
@@ -228,7 +228,7 @@ class _audio_pre_new:
                 (
                     X_wave[d],
                     _,
-                ) = librosa.core.load( 
+                ) = librosa.core.load(  # 理论上librosa读取可能对某些音频有bug，应该上ffmpeg读取，但是太麻烦了弃坑
                     music_file,
                     bp["sr"],
                     False,

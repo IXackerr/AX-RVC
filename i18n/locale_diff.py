@@ -3,7 +3,7 @@ import os
 from collections import OrderedDict
 
 # Define the standard file name
-standard_file = "en_US.json"
+standard_file = "zh_CN.json"
 
 # Find all JSON files in the directory
 dir_path = "./"

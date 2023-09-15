@@ -100,7 +100,7 @@ class RVC:
         ) + 1
         f0_mel[f0_mel <= 1] = 1
         f0_mel[f0_mel > 255] = 255
-        f0_coarse = np.rint(f0_mel).astype(np.int_)
+        f0_coarse = np.rint(f0_mel).astype(np.int)
         return f0_coarse, f0bak
 
     def get_f0(self, x, f0_up_key, n_cpu, method="harvest"):
@@ -200,7 +200,7 @@ class RVC:
 
             print("loading rmvpe model")
             self.model_rmvpe = RMVPE(
-                "/kaggle/input/ax-rmf/rmvpe.pt", is_half=self.is_half, device=self.device,onnx=False
+                "/kaggle/input/ax-rmf/rmvpe.pt", is_half=self.is_half, device=self.device
             )
             # self.model_rmvpe = RMVPE("aug2_58000_half.pt", is_half=self.is_half, device=self.device)
         f0 = self.model_rmvpe.infer_from_audio(x, thred=0.03)

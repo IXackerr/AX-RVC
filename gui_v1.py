@@ -118,7 +118,7 @@ if __name__ == "__main__":
             layout = [
                 [
                     sg.Frame(
-                        title=i18n("Load model"),
+                        title=i18n("加载模型"),
                         layout=[
                             [
                                 sg.Input(
@@ -126,7 +126,7 @@ if __name__ == "__main__":
                                     key="pth_path",
                                 ),
                                 sg.FileBrowse(
-                                    i18n("Select the .pth file"),
+                                    i18n("选择.pth文件"),
                                     initial_folder=os.path.join(os.getcwd(), "weights"),
                                     file_types=((". pth"),),
                                 ),
@@ -137,7 +137,7 @@ if __name__ == "__main__":
                                     key="index_path",
                                 ),
                                 sg.FileBrowse(
-                                    i18n("Select the .index file"),
+                                    i18n("选择.index文件"),
                                     initial_folder=os.path.join(os.getcwd(), "logs"),
                                     file_types=((". index"),),
                                 ),
@@ -149,7 +149,7 @@ if __name__ == "__main__":
                     sg.Frame(
                         layout=[
                             [
-                                sg.Text(i18n("Input device")),
+                                sg.Text(i18n("输入设备")),
                                 sg.Combo(
                                     input_devices,
                                     key="sg_input_device",
@@ -157,7 +157,7 @@ if __name__ == "__main__":
                                 ),
                             ],
                             [
-                                sg.Text(i18n("Output device")),
+                                sg.Text(i18n("输出设备")),
                                 sg.Combo(
                                     output_devices,
                                     key="sg_output_device",
@@ -165,14 +165,14 @@ if __name__ == "__main__":
                                 ),
                             ],
                         ],
-                        title=i18n("Audio device (please use the same type of driver)"),
+                        title=i18n("音频设备(请使用同种类驱动)"),
                     )
                 ],
                 [
                     sg.Frame(
                         layout=[
                             [
-                                sg.Text(i18n("Response threshold")),
+                                sg.Text(i18n("响应阈值")),
                                 sg.Slider(
                                     range=(-60, 0),
                                     key="threhold",
@@ -182,7 +182,7 @@ if __name__ == "__main__":
                                 ),
                             ],
                             [
-                                sg.Text(i18n("Pitch settings")),
+                                sg.Text(i18n("音调设置")),
                                 sg.Slider(
                                     range=(-24, 24),
                                     key="pitch",
@@ -202,7 +202,7 @@ if __name__ == "__main__":
                                 ),
                             ],
                             [
-                                sg.Text(i18n("Step algorithm")),
+                                sg.Text(i18n("音高算法")),
                                 sg.Radio(
                                     "pm",
                                     "f0method",
@@ -229,12 +229,12 @@ if __name__ == "__main__":
                                 ),
                             ],
                         ],
-                        title=i18n("General settings"),
+                        title=i18n("常规设置"),
                     ),
                     sg.Frame(
                         layout=[
                             [
-                                sg.Text(i18n("Sample length")),
+                                sg.Text(i18n("采样长度")),
                                 sg.Slider(
                                     range=(0.12, 2.4),
                                     key="block_time",
@@ -244,7 +244,7 @@ if __name__ == "__main__":
                                 ),
                             ],
                             [
-                                sg.Text(i18n("Number of epoch processes")),
+                                sg.Text(i18n("harvest进程数")),
                                 sg.Slider(
                                     range=(1, n_cpu),
                                     key="n_cpu",
@@ -256,7 +256,7 @@ if __name__ == "__main__":
                                 ),
                             ],
                             [
-                                sg.Text(i18n("Fade length")),
+                                sg.Text(i18n("淡入淡出长度")),
                                 sg.Slider(
                                     range=(0.01, 0.15),
                                     key="crossfade_length",
@@ -266,7 +266,7 @@ if __name__ == "__main__":
                                 ),
                             ],
                             [
-                                sg.Text(i18n("Extra推理时长")),
+                                sg.Text(i18n("额外推理时长")),
                                 sg.Slider(
                                     range=(0.05, 3.00),
                                     key="extra_time",
@@ -276,17 +276,17 @@ if __name__ == "__main__":
                                 ),
                             ],
                             [
-                                sg.Checkbox(i18n("Input noise reduction"), key="I_noise_reduce"),
-                                sg.Checkbox(i18n("Output noise reduction"), key="O_noise_reduce"),
+                                sg.Checkbox(i18n("输入降噪"), key="I_noise_reduce"),
+                                sg.Checkbox(i18n("输出降噪"), key="O_noise_reduce"),
                             ],
                         ],
-                        title=i18n("Performance settings"),
+                        title=i18n("性能设置"),
                     ),
                 ],
                 [
-                    sg.Button(i18n("开始音频Convert"), key="start_vc"),
-                    sg.Button(i18n("停止音频Convert"), key="stop_vc"),
-                    sg.Text(i18n("Inference time (ms):")),
+                    sg.Button(i18n("开始音频转换"), key="start_vc"),
+                    sg.Button(i18n("停止音频转换"), key="stop_vc"),
+                    sg.Text(i18n("推理时间(ms):")),
                     sg.Text("0", key="infer_time"),
                 ],
             ]
@@ -331,17 +331,17 @@ if __name__ == "__main__":
 
         def set_values(self, values):
             if len(values["pth_path"].strip()) == 0:
-                sg.popup(i18n("Select the pth file"))
+                sg.popup(i18n("请选择pth文件"))
                 return False
             if len(values["index_path"].strip()) == 0:
-                sg.popup(i18n("Select the index file"))
+                sg.popup(i18n("请选择index文件"))
                 return False
             pattern = re.compile("[^\x00-\x7F]+")
             if pattern.findall(values["pth_path"]):
-                sg.popup(i18n("The pth file path must not contain Chinese characters."))
+                sg.popup(i18n("pth文件路径不可包含中文"))
                 return False
             if pattern.findall(values["index_path"]):
-                sg.popup(i18n("The index file path must not contain Chinese characters."))
+                sg.popup(i18n("index文件路径不可包含中文"))
                 return False
             self.set_devices(values["sg_input_device"], values["sg_output_device"])
             self.config.pth_path = values["pth_path"]

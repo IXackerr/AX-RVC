@@ -1,134 +1,239 @@
-# 🍏 Applio x Xackerr-RVC-Fork
-AX-RVC is a user-friendly fork of Mangio-RVC-Fork/RVC, designed to provide an intuitive interface, especially for newcomers, and work on kaggle.
-You need AX RVC Shell for run this script on kaggle
+# 7/28 Changelog:
+- Undo SQL change for the sake of stability, uses csv now
+- Merging checkpoints bug has been resolved
 
-## 📚 Table of Contents
-  1. [Improvements of Applio Over RVC](#-improvements-of-applio-over-rvc)
-  2. [Additional Features of This Repository](#️-additional-features-of-this-repository)
-  3. [Planned Features for Future Development](#️-planned-features-for-future-development)
-  4. [Installation](#-installation)
-  5. [Running the Web GUI (Inference & Train)](#-running-the-web-gui-inference--train)
-  6. [Running the CLI (Inference & Train)](#-running-the-cli-inference--train)
-  7. [Credits](#credits)
-  8. [Thanks to all RVC and Mangio contributors](#thanks-to-all-rvc-and-mangio-contributors)
+# 7/26 Changelog:
+- Fixed the cli inferencing traceback.
+- SQL Databases implemented for formanting training stop.
+- Gradio browser tab renamed to `Mangio-RVC-Web 💻`.
+- Rudimentary functions from `infer-web.py` removed.
+- Formanting now accepts any audio format, as long as it is supported by FFmpeg.
 
-# use dataset for kaggle
-https://kaggle.com/datasets/aaa74fd62e95ad662b09255b9ef1b716829e139836caeab1db2bf6d3da534162
-## 🎯 Improvements of Applio Over RVC
-### f0 Inference Algorithm Overhaul
-- Applio features a comprehensive overhaul of the f0 inference algorithm, including:
-  - Addition of the pyworld dio f0 method.
-  - Alternative method for calculating crepe f0.
-  - Introduction of the torchcrepe crepe-tiny model.
-  - Customizable crepe_hop_length for the crepe algorithm via both the web GUI and CLI.
+# 7/25 Changelog:
+- Better MacOS installation script. For inference, all that needs to be done is running the `run.sh` from the extracted zip folder, where it will install Python 3.8, Homebrew, and other dependencies for you automatically. M1 Macs are natively supported for GPU acceleration, and training should work if you choose to download the pretrained models.
 
-### f0 Crepe Pitch Extraction for Training
-- Works on paperspace machines but not local MacOS/Windows machines (Potential memory leak).
+# 7/23 Changelog:
+- Fp16 detection now works how it did before the last RVC beta; no more training slowdowns compared to how it was before then
+- Logging on TensorBoard is now done per epoch. It logs every X steps in an epoch; therefore each point on the graph is now represented per-epoch.
+- Updated UI to include placeholders.
+- Certain sliders now appear only when needed.
+- Step 2b (feature extract) is hidden if pitch guidance is disabled.
+- Unnecessary radios have been replaced with checkboxes.
 
-### Paperspace Integration
-- Applio seamlessly integrates with Paperspace, providing the following features:
-  - Paperspace argument on infer-web.py (--paperspace) for sharing a Gradio link.
-  - A dedicated make file tailored for Paperspace users.
+# 7/22 Changelog:
+- Experimental Formant Shift using StftPitchShift(tried using praat with praatio but to no avail)
+- Added `Stop Training` button when training, no need to restart RVC every time you want to stop the training of a model!
+- Auto-detect Index path for models selected + Auto-detect paths, no more default values like this: `E:\codes\py39\vits_vc_gpu_train\logs\mi-test-1key\total_fea.npy`, We're getting Root Dir and subfolders using 
+```python 
+os.path.abspath(os.getcwd())
+``` 
+- Audio files dropdown by autodetecting files in `/audios/` folder 
+- More stable version of Gradio(3.34.0) with support of Themes
+- Removed `One Click Training` button in `Training` Tab, since it was glitchy and has confused a lot of users. 
+- Changed default training settings to be more optimal for newer users. 
+- Auto-open TensorBoard localhost URL when `tensor-launch.py` is executed 
+- RMVPE implemented in both inferencing and training
 
-### Access to Tensorboard
-- Applio grants easy access to Tensorboard via a Makefile and a Python script.
 
-### CLI Functionality
-- Applio introduces command-line interface (CLI) functionality, with the addition of the --is_cli flag in infer-web.py for CLI system usage.
+<div align="center">
+<h1>Mangio-RVC-Fork with v2 Support! 💻 </h1>
+A fork of an easy-to-use SVC framework based on VITS with top1 retrieval 💯. In general, this fork provides a CLI interface in addition. And also gives you more f0 methods to use, as well as a personlized 'hybrid' f0 estimation method using nanmedian. <br><br>
+<b> 
 
-### f0 Hybrid Estimation Method
-- Applio offers a novel f0 hybrid estimation method by calculating nanmedian for a specified array of f0 methods, ensuring the best results from multiple methods (CLI exclusive).
-- This hybrid estimation method is also available for f0 feature extraction during training.
+<h1> !! Feature implementations have been post-poned -- working on other related improvements !! </h1>
 
-### UI Changes
-#### Inference:
-- A complete interface redesign enhances user experience, with notable features such as:
-  - Audio recording directly from the interface.
-  - Convenient drop-down menus for audio and .index file selection.
-  - An advanced settings section with new features like autotune and formant shifting.
+<b>Im developing alone. Help support me in the rapid development of open-source A.I Deep NN audio tools and frameworks. By donating, you making a commitment to the improvement of audio A.I as a whole. You should donate if you merely want to "support" me, not because you are then expecting a finished product. There are no guarantees. Thank you</b>
+<br>
+<a href="https://www.paypal.com/donate/?business=HEW6P8R79NFFN&no_recurring=0&item_name=I+have+an+altruistic+drive+to+develop+open-source+A.I+frameworks+and+tools.+Support+me+in+improving+A.I+audio+entirely.&currency_code=AUD"><img src="./mangio_utils/donate.png" height="42"></a>
 
-#### Training:
-- Improved training features include:
-  - A total epoch slider now limited to 10,000.
-  - Increased save frequency limit to 100.
-  - Default recommended options for smoother setup.
-  - Better adaptation to high-resolution screens.
-  - A drop-down menu for dataset selection.
-  - Enhanced saving system options, including Save all files, Save G and D files, and Save model for inference.
+> 💓 Please support the original [RVC repository](https://www.bilibili.com/video/BV1pm4y1z7Gm/). Without it, obviously this fork wouldn't have been possible. The Mangio-RVC-Fork aims to essentially enhance the features that the original RVC repo has in my own way. Please note that this fork is NOT STABLE and was forked with the intention of experimentation. Do not use this Fork thinking it is a "better" version of the original repo. Think of it more like another "version" of the original repo. Please note that this doesn't have a google colab. If you want to use google colab, go to the original repository. This fork is intended to be used with paperspace and local machines for now.
+</b>
 
-#### UVR:
-- Applio ensures compatibility with all VR/MDX models for an extended range of possibilities.
+<b> Now supports version 2 pre-trained models! </b>
 
-#### TTS (Text-to-Speech, New):
-- Introducing a new Text-to-Speech (TTS) feature using RVC models.
-- Support for multiple languages and Edge-tts/Bark-tts.
+## Add me on discord: Funky Town#2048
+I am able to communicate with you here and there.
 
-#### Resources (New):
-- Users can now upload models, backups, datasets, and audios from various storage services like Drive, Huggingface, Discord, and more.
-- Download audios from YouTube with the ability to automatically separate instrumental and vocals, offering advanced options and UVR support.
+[![madewithlove](https://forthebadge.com/images/badges/built-with-love.svg)](https://github.com/liujing04/Retrieval-based-Voice-Conversion-WebUI)
+  
+[![Licence](https://img.shields.io/github/license/liujing04/Retrieval-based-Voice-Conversion-WebUI?style=for-the-badge)](https://github.com/liujing04/Retrieval-based-Voice-Conversion-WebUI/blob/main/%E4%BD%BF%E7%94%A8%E9%9C%80%E9%81%B5%E5%AE%88%E7%9A%84%E5%8D%8F%E8%AE%AE-LICENSE.txt)
 
-#### Extra (New):
-- Combine instrumental and vocals with ease, including independent volume control for each track and the option to add effects like reverb, compressor, and noise gate.
-- Significant improvements in the processing interface, allowing tasks such as merging models, modifying information, obtaining information, or extracting models effortlessly.
+[![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/)
 
-## ⚙️ Additional Features of This Repository
+[![Discord](https://img.shields.io/badge/RVC%20Developers-Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/HcsmBBGyVk)
 
-In addition to the aforementioned improvements, this repository offers the following features:
+Special thanks to discord user @kalomaze#2983 for creating a temporary colab notebook for this fork for the time being. Eventually, an official, more stable notebook will be included with this fork. Please use paperspace instead if you can as it is much more stable.
+<br>
 
-### Enhanced Tone Leakage Reduction
-- Implements tone leakage reduction by replacing source features with training-set features using top1 retrieval. This helps in achieving cleaner audio results.
+[![Open In Colab](https://img.shields.io/badge/Colab-F9AB00?style=for-the-badge&logo=googlecolab&color=525252)](https://colab.research.google.com/drive/1iWOLYE9znqT6XE5Rw2iETE19ZlqpziLx?usp=sharing)
 
-### Efficient Training
-- Provides a seamless and speedy training experience, even on relatively modest graphics cards. The system is optimized for efficient resource utilization.
+<img src="https://33.media.tumblr.com/2344c05b16d25e60771d315604f90258/tumblr_nmy9cc0Zm71syljkjo1_1280.gif" /><br>
+  
+</div>
 
-### Data Efficiency
-- Supports training with a small dataset, yielding commendable results, especially with audio clips of at least 10 minutes of low-noise speech.
+------
 
-## 🛠️ Planned Features for Future Development
-As part of the ongoing development of this fork, the following features are planned to be added:
+> The original RVC [Demo Video](https://www.bilibili.com/video/BV1pm4y1z7Gm/) here!
 
-- Incorporating an inference batcher script based on user feedback. This enhancement will allow for processing 30-second audio samples at a time, improving output quality and preventing memory errors during inference.
-- Implementing an automatic removal mechanism for old generations to optimize storage space usage. This feature ensures that the repository remains efficient and organized over time.
-- Streamlining the training process for Paperspace machines to further improve efficiency and resource utilization during training tasks.
+> Realtime Voice Conversion Software using RVC : [w-okada/voice-changer](https://github.com/w-okada/voice-changer)
 
-## ✨ Installation
+> The dataset for the pre-training model uses nearly 50 hours of high quality VCTK open source dataset.
 
-### Automatic installation (Windows):
-To quickly and effortlessly install Applio along with all the necessary models and configurations on Windows, you can use the [install_Applio.bat](https://github.com/IAHispano/Applio-RVC-Fork/releases) script available in the releases section.
+> High quality licensed song datasets will be added to training-set one after another for your use, without worrying about copyright infringement.
+# Summary 📘
+## Features that this fork (Mangio-RVC-Fork) has that the original repo doesn't ☑️
++ f0 Inference algorithm overhaul: 🌟
+  + Added pyworld dio f0 method.
+  + Added another way of calculating crepe f0 method. (mangio-crepe)
+  + Added torchcrepe crepe-tiny model. (Faster on inference, but probably worse quality than normal full crepe)
+  + Modifiable crepe_hop_length for the crepe algorithm via the web_gui and CLI. 
++ f0 Crepe Pitch Extraction for training. 🌟 (EXPERIMENTAL) Works on paperspace machines but not local mac/windows machines. Potential memory leak. Watch out.
++ Paperspace integration 🌟
+  + Paperspace argument on infer-web.py (--paperspace) that shares a gradio link
+  + Make file for paperspace users
++ Tensorboard access via Makefile (make tensorboard)
++ Total epoch slider for the training now limited to 10,000 not just 1000.
++ Added CLI functionality
+  + added --is_cli flag on infer-web.py to use the CLI system.
++ f0 hybrid (median) estimation method by calculating nanmedian for a specified array of f0 methods to get the best of all worlds for all specified f0 methods. Only for CLI right now. Soon to be implemented into GUI 🌟
++ f0 hybrid (median) estimation method on f0 feature extraction (training). (VERY EXPERIMENTAL PROBABLY EXTREMELY BUGGY). Feature extraction with the hybrid method will take MUCH longer.
 
-### Manual installation (Windows/MacOS):
-**Note for MacOS Users**: When using `faiss 1.7.2` under MacOS, you may encounter a Segmentation Fault: 11 error. To resolve this issue, install `faiss-cpu 1.7.0` using the following command if you're installing it manually with pip: 
- ```bash
-pip install faiss-cpu==1.7.0
-```
-Additionally, you can install Swig on MacOS using brew:
+## This repository has the following features too:
++ Reduce tone leakage by replacing source feature to training-set feature using top1 retrieval;
++ Easy and fast training, even on relatively poor graphics cards;
++ Training with a small amount of data also obtains relatively good results (>=10min low noise speech recommended);
++ Supporting model fusion to change timbres (using ckpt processing tab->ckpt merge);
++ Easy-to-use Webui interface;
++ Use the UVR5 model to quickly separate vocals and instruments.
+
+## Features planned to be added during the fork's development ▶️
++ An inference batcher script. Improvement Proposal:
+  + According to various github users, apparently inferencing 30 second samples at a time both increases quality and prevents harvest memory errors.
++ Improved GUI (More convenience).
++ Automatic removal of old generations to save space.
++ More Optimized training on paperspace machines 
+
+# About this fork's f0 Hybrid feature on inference
+Right now, the hybrid f0 method is only available on CLI, not GUI yet. But basically during inference, we can specify an array of f0 methods, E.G ["pm", "harvest", "crepe"], get f0 calculations of all of them and 'combine' them with nanmedian to get a hybrid f0 signal to get the 'best of all worlds' of the f0 methods provided.
+
+Here's how we would infer with the hybrid f0 method in cli:
 ```bash
-brew install swig
+MyModel.pth saudio/Source.wav Output.wav logs/mi-test/added.index 0 -2 hybrid[pm+crepe] 128 3 0 1 0.95 0.33
 ```
+Notice that the method is "hybrid[pm+crepe]" instead of a singular method like "harvest".
+
+
+```bash
+hybrid[pm+harvest+crepe]
+# the crepe calculation will be at the 'end' of the computational stack.
+# the parselmouth calculation will be at the 'start' of the computational stack.
+# the 'hybrid' method will calculate the nanmedian of both pm, harvest and crepe
+```
+
+Many f0 methods may be used. But are to be split with a delimiter of the '+' character. Keep in mind that inference will take much longer as we are calculating f0 X more times.
+
+# About the original repo's crepe method, compared to this forks crepe method (mangio-crepe)
+The original repos crepe f0 computation method is slightly different to mine. Its arguable that in some areas, my crepe implementation sounds more stable in some parts. However, the orginal repo's crepe implementation gets rid of noise and artifacts much better. In this fork, my own crepe implementation (mangio-crepe) uses a customizable crepe_hop_length feature on both the GUI and the CLI which the original crepe doesnt have. Please let it be known, that each implementation sounds slightly different, and there isn't a clear "better" or "worse". It all depends on the context!
+
+If one must be chosen, I highly recommend using the original crepe implementation (not this fork's) as the developers of RVC have more control on fixing issues than I have.
+
+# About this fork's f0 training additional features.
+## Crepe f0 feature extraction
+Crepe training is still incredibly instable and there's been report of a memory leak. This will be fixed in the future, however it works quite well on paperspace machines. Please note that crepe training adds a little bit of difference against a harvest trained model. Crepe sounds clearer on some parts, but sounds more robotic on some parts too. Both I would say are equally good to train with, but I still think crepe on INFERENCE is not only quicker, but more pitch stable (especially with vocal layers). Right now, its quite stable to train with a harvest model and infer it with crepe. If you are training with crepe however (f0 feature extraction), please make sure your datasets are as dry as possible to reduce artifacts and unwanted harmonics as I assume the crepe pitch estimation latches on to reverb more.
+
+## Hybrid f0 feature extraction
+Only for CLI (not implemented in GUI yet). Basically the same as usage described in this readme's f0 hybrid on inference section. Instead of stating "harvest" into your arguments in the f0 feature extraction page, you would use "hybrid[harvest+dio+pm+crepe]" for example. This f0 nanmedian hybrid method will take very long during feature extraction. Please, if you're willing to use hybrid f0, be patient.
+
+## If you get CUDA issues with crepe training, or pm and harvest etc.
+This is due to the number of processes (n_p) being too high. Make sure to cut the number of threads down. Please lower the value of the "Number of CPU Threads to use" slider on the feature extraction GUI.  
+
+# Version Notes
+Welcome to RVC version 2!
+
+Please note that version 2 pre-trained models only support 40k model sample rates. If you want to use 32k or 48k however, please use version 1 pre-trained models.
+
+# Installing the Dependencies 🖥️
+Using pip (python3.9.8 is stable with this fork)
+
+## Paperspace Users:
+```bash
+cd Mangio-RVC-Fork
+make install # Do this everytime you start your paperspace machine
+```
+
+## Windows/MacOS
+**Notice**: `faiss 1.7.2` will raise Segmentation Fault: 11 under `MacOS`, please use `pip install faiss-cpu==1.7.0` if you use pip to install it manually.  `Swig` can be installed via `brew` under `MacOS`
+ 
+ ```bash
+ brew install swig
+ ```
 
 Install requirements:
-*Using pip (Python 3.9.8 is stable with this fork)*
 ```bash
 pip install -r requirements.txt
 ```
 
-### Manual installation (Paperspace):
+If you're experiencing httpx invalid port errors please insteall httpx==0.23.0
+
+# Preparation of other Pre-models ⬇️
+## Paperspace Users:
 ```bash
-cd Applio-RVC-Fork
-make install # Do this everytime you start your paperspace machine
+cd Mangio-RVC-Fork
+# Do only once after cloning this fork (No need to do it again unless pre-models change on hugging face)
+make basev1 
+# or if using version 2 pre-trained models.
+make basev2
 ```
 
-## 🪄 Running the Web GUI (Inference & Train) 
-*Use --paperspace or --colab if on cloud system.*
+## Local Users
+RVC requires other pre-models to infer and train.
+You need to download them from our [Huggingface space](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/).
+
+Here's a list of Pre-models and other files that RVC needs:
 ```bash
+hubert_base.pt
+
+./pretrained 
+
+./uvr5_weights
+
+
+If you want to test the v2 version model (the v2 version model changes the feature from the 256-dimensional input of 9-layer hubert+final_proj to the 768-dimensional input of 12-layer hubert, and adds 3 cycle discriminators), an additional download is required
+
+./pretrained_v2 
+
+#If you are using Windows, you may need this file, skip if ffmpeg and ffprobe are installed; ubuntu/debian users can install these two libraries through apt install ffmpeg
+./ffmpeg
+
+./ffprobe
+```
+# Running the Web GUI to Infer & Train 💪
+
+## For paperspace users:
+```bash
+cd Mangio-RVC-Fork
+make run-ui
+```
+Then click the gradio link it provides.
+
+## Or manually
+
+```bash
+# use --paperspace or --colab if on cloud system
 python infer-web.py --pycmd python --port 3000
 ```
 
-## 💻 Running the CLI (Inference & Train) 
+# Inference & Training with CLI 💪 🔠
+## Paperspace users
+```bash
+cd Mangio-RVC-Fork
+make run-cli
+```
+## Or Manually
 ```bash
 python infer-web.py --pycmd python --is_cli
 ```
-
+## Usage
 ```bash
 Mangio-RVC-Fork v2 CLI App!
 
@@ -171,15 +276,56 @@ Example: mi-test.pth saudio/Sidney.wav myTest.wav logs/mi-test/added_index.index
 
 INFER: <INSERT ARGUMENTS HERE OR COPY AND PASTE THE EXAMPLE>
 ```
-## 🏆 Credits
-Applio owes its existence to the collaborative efforts of various repositories, including Mangio-RVC-Fork, and all the other credited contributors. Without their contributions, Applio would not have been possible. Therefore, we kindly request that if you appreciate the work we've accomplished, you consider exploring the projects mentioned in our credits.
 
-Our goal is not to supplant RVC or Mangio; rather, we aim to provide a contemporary and up-to-date alternative for the entire community.
+# Running the Tensorboard 📉
+```bash
+cd Mangio-RVC-Fork
+make tensorboard
+```
+Then click the tensorboard link it provides and refresh the data.
 
-### Repositories
-+ [Retrieval-based-Voice-Conversion-WebUI](Retrieval-based-Voice-Conversion-WebUI)
-+ [Mangio-RVC-Fork](https://github.com/Mangio621/Mangio-RVC-Fork)
-+ [RVG_tts](https://github.com/Foxify52/RVG_tts)
+## Change Gradio Theme:
+
+- [OPTIONAL] Change Gradio's theme:
+    1. Open `infer-web.py` in any code/text editing software (e.g. `notepad++`, `notepad`, `vscode`, etc)
+  
+    2a. Press Ctrl+F and search for `with gr.Blocks(`, select the one that's not fully commented
+  
+    2b. Go to line `1842`, you'll see the `with gr.Blocks(theme='HaleyCH/HaleyCH_Theme') as app:`
+  
+    3. Go to [Gradio Theme Gallery](https://huggingface.co/spaces/gradio/theme-gallery):
+       
+    3.1 Select any theme you like (e.g. [this one](https://huggingface.co/spaces/freddyaboulton/dracula_revamped))
+  
+    3.2 Look at the top of the page
+  
+    ![image](https://github.com/alexlnkp/Mangio-RVC-Tweaks/assets/79400603/59e3e6a9-bdda-4ede-8161-00ee957c1715)
+
+    3.3 Copy theme variable(in this case, it's `theme='freddyaboulton/dracula_revamped'`)
+  
+    4. Replace `theme='HaleyCH/HaleyCH_Theme'` in `infer-web.py` with any value of a theme from [Gradio Theme Gallery](https://huggingface.co/spaces/gradio/theme-gallery)
+
+
+# Formant Shift Explanation
+
+![image](https://github.com/Mangio621/Mangio-RVC-Fork/assets/79400603/300ebce2-36c7-4761-b1dd-b31403ad2cd1)
+
+- ### Click `Apply` button every time you change the values for inferencing.
+
+- ### As the name implies, you can only use `wav` files so far, also it is very slow, so be patient.
+
+- ### If you added a new `preset.txt` in the `\formantshiftcfg\` folder, click button with refresh emoji
+
+- ### If the preset you selected somehow got edited, by pressing refresh emoji button you'll update values, by grabbing them from the file
+
+
+# Other 
+
+If you are using Windows, you can download and extract `RVC-beta.7z` to use RVC directly and use `go-web.bat` to start Webui.
+
+There's also a tutorial on RVC in Chinese and you can check it out if needed.
+
+## Credits
 + [ContentVec](https://github.com/auspicious3000/contentvec/)
 + [VITS](https://github.com/jaywalnut310/vits)
 + [HIFIGAN](https://github.com/jik876/hifi-gan)
@@ -187,22 +333,9 @@ Our goal is not to supplant RVC or Mangio; rather, we aim to provide a contempor
 + [FFmpeg](https://github.com/FFmpeg/FFmpeg)
 + [Ultimate Vocal Remover](https://github.com/Anjok07/ultimatevocalremovergui)
 + [audio-slicer](https://github.com/openvpi/audio-slicer)
+## Thanks to all contributors for their efforts
 
-### Main developers
-+ [Vidal](https://github.com/TheUserNil)
-+ [Aitron](https://github.com/aitronssesin)
-+ [Blaise](https://github.com/blaise-tk)
-
-
-## 🙏 Thanks to all RVC, Mangio and Applio contributors
 <a href="https://github.com/liujing04/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors" target="_blank">
   <img src="https://contrib.rocks/image?repo=liujing04/Retrieval-based-Voice-Conversion-WebUI" />
 </a>
 
-<a href="https://github.com/Mangio621/Mangio-RVC-Fork/graphs/contributors" target="_blank">
-  <img src="https://contrib.rocks/image?repo=Mangio621/Mangio-RVC-Fork" />
-</a>
-
-<a href="https://github.com/IAHispano/Applio-RVC-Fork/graphs/contributors" target="_blank">
-  <img src="https://contrib.rocks/image?repo=IAHispano/Applio-RVC-Fork" />
-</a>

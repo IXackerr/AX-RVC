@@ -1,6 +1,7 @@
 import os
 import torch
 
+# os.system("wget -P cvec/ https://huggingface.co/lj1995/VoiceConversionWebUI/resolve/main/hubert_base.pt")
 import gradio as gr
 import librosa
 import numpy as np
@@ -46,11 +47,13 @@ def get_vc(sid):
     global n_spk, tgt_sr, net_g, vc, cpt, version
     if sid == "" or sid == []:
         global hubert_model
-        if hubert_model != None: 
-            del net_g, n_spk, vc, hubert_model, tgt_sr  
+        if hubert_model != None:  # 考虑到轮询, 需要加个判断看是否 sid 是由有模型切换到无模型的
+            print("clean_empty_cache")
+            del net_g, n_spk, vc, hubert_model, tgt_sr  # ,cpt
             hubert_model = net_g = n_spk = vc = hubert_model = tgt_sr = None
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
+            ###楼下不这么折腾清理不干净
             if_f0 = cpt.get("f0", 1)
             version = cpt.get("version", "v1")
             if version == "v1":
@@ -76,7 +79,7 @@ def get_vc(sid):
     print("loading %s" % person)
     cpt = torch.load(person, map_location="cpu")
     tgt_sr = cpt["config"][-1]
-    cpt["config"][-3] = cpt["weight"]["emb_g.weight"].shape[0]  
+    cpt["config"][-3] = cpt["weight"]["emb_g.weight"].shape[0]  # n_spk
     if_f0 = cpt.get("f0", 1)
     version = cpt.get("version", "v1")
     if version == "v1":
@@ -124,12 +127,13 @@ def vc_single(
     f0_method,
     file_index,
     file_index2,
+    # file_big_npy,
     index_rate,
     filter_radius,
     resample_sr,
     rms_mix_rate,
     protect,
-):  
+):  # spk_item, input_audio0, vc_transform0,f0_file,f0method0
     global tgt_sr, net_g, vc, hubert_model, version
     if input_audio_path is None:
         return "You need to upload an audio", None
@@ -157,7 +161,10 @@ def vc_single(
             )
             if file_index != ""
             else file_index2
-        )  
+        )  # 防止小白写错，自动帮他替换掉
+        # file_big_npy = (
+        #     file_big_npy.strip(" ").strip('"').strip("\n").strip('"').strip(" ")
+        # )
         audio_opt = vc.pipeline(
             hubert_model,
             net_g,
@@ -168,6 +175,7 @@ def vc_single(
             f0_up_key,
             f0_method,
             file_index,
+            # file_big_npy,
             index_rate,
             if_f0,
             filter_radius,
@@ -206,13 +214,13 @@ with app:
                 RVC 在线demo
                 """
             )
-            sid = gr.Dropdown(label=i18n("Inferencing voice:"), choices=sorted(names))
+            sid = gr.Dropdown(label=i18n("推理音色"), choices=sorted(names))
             with gr.Column():
                 spk_item = gr.Slider(
                     minimum=0,
                     maximum=2333,
                     step=1,
-                    label=i18n("Select Speaker/Singer ID:"),
+                    label=i18n("请选择说话人id"),
                     value=0,
                     visible=False,
                     interactive=True,
@@ -223,12 +231,12 @@ with app:
                 outputs=[spk_item],
             )
             gr.Markdown(
-                value=i18n("Recommended +12 key for male to female conversion, and -12 key for female to male conversion. If the sound range goes too far and the voice is distorted, you can also adjust it to the appropriate range by yourself.")
+                value=i18n("男转女推荐+12key, 女转男推荐-12key, 如果音域爆炸导致音色失真也可以自己调整到合适音域. ")
             )
             vc_input3 = gr.Audio(label="上传音频（长度小于90秒）")
-            vc_transform0 = gr.Number(label=i18n("Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12):"), value=0)
+            vc_transform0 = gr.Number(label=i18n("变调(整数, 半音数量, 升八度12降八度-12)"), value=0)
             f0method0 = gr.Radio(
-                label=i18n("Select the pitch extraction algorithm:"),
+                label=i18n("选择音高提取算法,输入歌声可用pm提速,harvest低音好但巨慢无比,crepe效果好但吃GPU"),
                 choices=["pm", "harvest", "crepe"],
                 value="pm",
                 interactive=True,
@@ -236,34 +244,34 @@ with app:
             filter_radius0 = gr.Slider(
                 minimum=0,
                 maximum=7,
-                label=i18n("If >=3: apply median filtering to the harvested pitch results. The value represents the filter radius and can reduce breathiness."),
+                label=i18n(">=3则使用对harvest音高识别的结果使用中值滤波，数值为滤波半径，使用可以削弱哑音"),
                 value=3,
                 step=1,
                 interactive=True,
             )
             with gr.Column():
                 file_index1 = gr.Textbox(
-                    label=i18n("Feature search dataset file path"),
+                    label=i18n("特征检索库文件路径,为空则使用下拉的选择结果"),
                     value="",
                     interactive=False,
                     visible=False,
                 )
             file_index2 = gr.Dropdown(
-                label=i18n("Auto-detect index path and select from the dropdown:"),
+                label=i18n("自动检测index路径,下拉式选择(dropdown)"),
                 choices=sorted(index_paths),
                 interactive=True,
             )
             index_rate1 = gr.Slider(
                 minimum=0,
                 maximum=1,
-                label=i18n("Search feature ratio:"),
+                label=i18n("检索特征占比"),
                 value=0.88,
                 interactive=True,
             )
             resample_sr0 = gr.Slider(
                 minimum=0,
                 maximum=48000,
-                label=i18n("Resample the output audio in post-processing to the final sample rate. Set to 0 for no resampling:"),
+                label=i18n("后处理重采样至最终采样率，0为不进行重采样"),
                 value=0,
                 step=1,
                 interactive=True,
@@ -271,22 +279,22 @@ with app:
             rms_mix_rate0 = gr.Slider(
                 minimum=0,
                 maximum=1,
-                label=i18n("Use the volume envelope of the input to replace or mix with the volume envelope of the output. The closer the ratio is to 1, the more the output envelope is used:"),
+                label=i18n("输入源音量包络替换输出音量包络融合比例，越靠近1越使用输出包络"),
                 value=1,
                 interactive=True,
             )
             protect0 = gr.Slider(
                 minimum=0,
                 maximum=0.5,
-                label=i18n("Protect voiceless consonants and breath sounds to prevent artifacts such as tearing in electronic music. Set to 0.5 to disable. Decrease the value to increase protection, but it may reduce indexing accuracy:"),
+                label=i18n("保护清辅音和呼吸声，防止电音撕裂等artifact，拉满0.5不开启，调低加大保护力度但可能降低索引效果"),
                 value=0.33,
                 step=0.01,
                 interactive=True,
             )
-            f0_file = gr.File(label=i18n("F0 curve file (optional). One pitch per line. Replaces the default F0 and pitch modulation:"))
-            but0 = gr.Button(i18n("Convert"), variant="primary")
-            vc_output1 = gr.Textbox(label=i18n("Output information:"))
-            vc_output2 = gr.Audio(label=i18n("Export audio (click on the three dots in the lower right corner to download)"))
+            f0_file = gr.File(label=i18n("F0曲线文件, 可选, 一行一个音高, 代替默认F0及升降调"))
+            but0 = gr.Button(i18n("转换"), variant="primary")
+            vc_output1 = gr.Textbox(label=i18n("输出信息"))
+            vc_output2 = gr.Audio(label=i18n("输出音频(右下角三个点,点了可以下载)"))
             but0.click(
                 vc_single,
                 [
@@ -297,6 +305,7 @@ with app:
                     f0method0,
                     file_index1,
                     file_index2,
+                    # file_big_npy1,
                     index_rate1,
                     filter_radius0,
                     resample_sr0,
