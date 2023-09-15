@@ -163,7 +163,7 @@ hubert_model = None
 def load_hubert():
     global hubert_model
     models, _, _ = fairseq.checkpoint_utils.load_model_ensemble_and_task(
-        ["/kaggle/input/ax-rvc/hubert_base.pt"], suffix=""
+        ["/kaggle/input/ax-rmf/hubert_base.pt"], suffix=""
     )
     hubert_model = models[0].to(config.device)
 
@@ -1204,7 +1204,7 @@ def change_sr2(sr2, if_f0_3, version19):
     model_paths = {"G": "", "D": ""}
 
     for model_type in model_paths:
-        file_path = f"/kaggle/input/ax-rvc/pretrained{path_str}/{f0_str}{model_type}{sr2}.pth"
+        file_path = f"/kaggle/input/ax-rmf/pretrained{path_str}/{f0_str}{model_type}{sr2}.pth"
         if os.access(file_path, os.F_OK):
             model_paths[model_type] = file_path
         else:
@@ -1226,7 +1226,7 @@ def change_version19(sr2, if_f0_3, version19):
     model_paths = {"G": "", "D": ""}
 
     for model_type in model_paths:
-        file_path = f"/kaggle/input/ax-rvc/pretrained{path_str}/{f0_str}{model_type}{sr2}.pth"
+        file_path = f"/kaggle/input/ax-rmf/pretrained{path_str}/{f0_str}{model_type}{sr2}.pth"
         if os.access(file_path, os.F_OK):
             model_paths[model_type] = file_path
         else:
@@ -1238,7 +1238,7 @@ def change_version19(sr2, if_f0_3, version19):
 def change_f0(if_f0_3, sr2, version19):  # f0method8,pretrained_G14,pretrained_D15
     path_str = "" if version19 == "v1" else "_v2"
 
-    pth_format = "/kaggle/input/ax-rvc/pretrained%s/f0%s%s.pth"
+    pth_format = "/kaggle/input/ax-rmf/pretrained%s/f0%s%s.pth"
     model_desc = {"G": "", "D": ""}
 
     for model_type in model_desc:
@@ -1657,7 +1657,7 @@ def cli_train(com):
     bool_flags = [bool(int(i)) for i in com[2:11]]
     version = com[11]
 
-    pretrained_base = "/kaggle/input/ax-rvc/pretrained/" if version == "v1" else "/kaggle/input/ax-rvc/pretrained_v2/"
+    pretrained_base = "/kaggle/input/ax-rmf/pretrained/" if version == "v1" else "/kaggle/input/ax-rmf/pretrained_v2/"
 
     g_pretrained_path = f"{pretrained_base}f0G{sample_rate}.pth"
     d_pretrained_path = f"{pretrained_base}f0D{sample_rate}.pth"
@@ -3103,13 +3103,13 @@ def GradioSetup(UTheme=gr.themes.Soft()):
                                 pretrained_G14 = gr.Textbox(
                                     lines=4,
                                     label=i18n("Load pre-trained base model G path:"),
-                                    value="/kaggle/input/ax-rvc/pretrained_v2/f0G40k.pth",
+                                    value="/kaggle/input/ax-rmf/pretrained_v2/f0G40k.pth",
                                     interactive=True,
                                 )
                                 pretrained_D15 = gr.Textbox(
                                     lines=4,
                                     label=i18n("Load pre-trained base model D path:"),
-                                    value="/kaggle/input/ax-rvc/pretrained_v2/f0D40k.pth",
+                                    value="/kaggle/input/ax-rmf/pretrained_v2/f0D40k.pth",
                                     interactive=True,
                                 )
                                 gpus16 = gr.Textbox(
