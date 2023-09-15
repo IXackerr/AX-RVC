@@ -12,7 +12,8 @@ You need AX RVC Shell for run this script on kaggle
   7. [Credits](#credits)
   8. [Thanks to all RVC and Mangio contributors](#thanks-to-all-rvc-and-mangio-contributors)
 
-
+# use dataset for kaggle
+https://kaggle.com/datasets/aaa74fd62e95ad662b09255b9ef1b716829e139836caeab1db2bf6d3da534162
 ## 🎯 Improvements of Applio Over RVC
 ### f0 Inference Algorithm Overhaul
 - Applio features a comprehensive overhaul of the f0 inference algorithm, including:
