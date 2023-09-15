@@ -67,7 +67,7 @@ jsonschema==4.17.3
 kiwisolver==1.4.4
 librosa==0.9.1
 linkify-it-py==1.0.3
-llvmlite==0.40.1
+llvmlite==0.39.1
 lxml==4.9.2
 Markdown==3.4.3
 markdown-it-py==2.2.0
@@ -81,13 +81,13 @@ mpmath==1.2.1
 multidict==6.0.3
 networkx==2.8.8
 noisereduce==2.0.1
-numba==0.57.1
+numba==0.56.4
 numpy==1.23.5
 oauthlib==3.2.2
 omegaconf==2.0.6
 onnx==1.14.0
 onnxconverter-common==1.13.0
-onnxruntime-gpu==1.15.1
+onnxruntime-gpu==1.14.1
 orjson==3.8.3
 packaging==22.0
 pandas==1.5.2
