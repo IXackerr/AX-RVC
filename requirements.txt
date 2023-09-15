@@ -87,7 +87,7 @@ oauthlib==3.2.2
 omegaconf==2.0.6
 onnx==1.14.0
 onnxconverter-common==1.13.0
-onnxruntime-gpu==1.14.1
+onnxruntime-gpu==1.15.1
 orjson==3.8.3
 packaging==22.0
 pandas==1.5.2
