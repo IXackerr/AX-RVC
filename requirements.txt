@@ -81,7 +81,7 @@ mpmath==1.2.1
 multidict==6.0.3
 networkx==2.8.8
 noisereduce==2.0.1
-numba==0.56.4
+numba==0.57.1
 numpy==1.23.5
 oauthlib==3.2.2
 omegaconf==2.0.6
