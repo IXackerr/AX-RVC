@@ -2461,7 +2461,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
                 exp_dir1 = gr.Textbox(label=i18n("输入实验名"), value="mi-test")
                 sr2 = gr.Radio(
                     label=i18n("目标采样率"),
-                    choices=["40k", "48k"],
+                    choices=["40k"],
                     value="40k",
                     interactive=True,
                 )
@@ -2472,8 +2472,8 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
                 )
                 version19 = gr.Radio(
                     label=i18n("版本"),
-                    choices=["v1", "v2"],
-                    value="v1",
+                    choices=["v2"],
+                    value="v2",
                     interactive=True,
                     visible=True,
                 )
@@ -2617,13 +2617,13 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
                     pretrained_G14 = gr.Textbox(
                         lines=2,
                         label=i18n("加载预训练底模G路径"),
-                        value="/kaggle/input/ax-rmf/pretrained/f0G40k.pth",
+                        value="/kaggle/input/ax-rmf/pretrained_2/f0G40k.pth",
                         interactive=True,
                     )
                     pretrained_D15 = gr.Textbox(
                         lines=2,
                         label=i18n("加载预训练底模D路径"),
-                        value="/kaggle/input/ax-rmf/pretrained/f0D40k.pth",
+                        value="/kaggle/input/ax-rmf/pretrained_2/f0D40k.pth",
                         interactive=True,
                     )
                     sr2.change(
