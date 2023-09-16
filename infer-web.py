@@ -2617,13 +2617,13 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
                     pretrained_G14 = gr.Textbox(
                         lines=2,
                         label=i18n("加载预训练底模G路径"),
-                        value="/kaggle/input/ax-rmf/pretrained_2/f0G40k.pth",
+                        value="/kaggle/input/ax-rmf/pretrained_v2/f0G40k.pth",
                         interactive=True,
                     )
                     pretrained_D15 = gr.Textbox(
                         lines=2,
                         label=i18n("加载预训练底模D路径"),
-                        value="/kaggle/input/ax-rmf/pretrained_2/f0D40k.pth",
+                        value="/kaggle/input/ax-rmf/pretrained_v2/f0D40k.pth",
                         interactive=True,
                     )
                     sr2.change(
