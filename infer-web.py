@@ -817,19 +817,19 @@ def change_sr2(sr2, if_f0_3, version19):
     path_str = "" if version19 == "v1" else "_v2"
     f0_str = "f0" if if_f0_3 else ""
     if_pretrained_generator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/%sG4%sk.pth" % (path_str, f0_str, sr2), os.F_OK
+        "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if_pretrained_discriminator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/%sD4%sk.pth" % (path_str, f0_str, sr2), os.F_OK
+        "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if not if_pretrained_generator_exist:
         print(
-            "/kaggle/input/ax-rmf/pretrained%s/%sG4%sk.pth" % (path_str, f0_str, sr2),
+            "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2),
             "doesn't exist, will not use pretrained model",
         )
     if not if_pretrained_discriminator_exist:
         print(
-            "/kaggle/input/ax-rmf/pretrained%s/%sD4%sk.pth" % (path_str, f0_str, sr2),
+            "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2),
             "doesn't exist, will not use pretrained model",
         )
     return (
@@ -853,26 +853,26 @@ def change_version19(sr2, if_f0_3, version19):
     )
     f0_str = "f0" if if_f0_3 else ""
     if_pretrained_generator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/%sG4%sk.pth" % (path_str, f0_str, sr2), os.F_OK
+        "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if_pretrained_discriminator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/%sD4%sk.pth" % (path_str, f0_str, sr2), os.F_OK
+        "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if not if_pretrained_generator_exist:
         print(
-            "/kaggle/input/ax-rmf/pretrained%s/%sG4%sk.pth" % (path_str, f0_str, sr2),
+            "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2),
             "doesn't exist, will not use pretrained model",
         )
     if not if_pretrained_discriminator_exist:
         print(
-            "/kaggle/input/ax-rmf/pretrained%s/%sD4%sk.pth" % (path_str, f0_str, sr2),
+            "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2),
             "doesn't exist, will not use pretrained model",
         )
     return (
-        "/kaggle/input/ax-rmf/pretrained%s/%sG4%sk.pth" % (path_str, f0_str, sr2)
+        "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2)
         if if_pretrained_generator_exist
         else "",
-        "/kaggle/input/ax-rmf/pretrained%s/%sD4%sk.pth" % (path_str, f0_str, sr2)
+        "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2)
         if if_pretrained_discriminator_exist
         else "",
         to_return_sr2,
@@ -1678,8 +1678,8 @@ def cli_train(com):
 
     pretrained_base = "/kaggle/input/ax-rmf/pretrained/" if version == "v1" else "/kaggle/input/ax-rmf/pretrained_v2/"
 
-    g_pretrained_path = "%sf0G4%sk.pth" % (pretrained_base, sample_rate)
-    d_pretrained_path = "%sf0D4%sk.pth" % (pretrained_base, sample_rate)
+    g_pretrained_path = "%sf0G%s.pth" % (pretrained_base, sample_rate)
+    d_pretrained_path = "%sf0D%s.pth" % (pretrained_base, sample_rate)
 
     print("Mangio-RVC-Fork Train-CLI: Training...")
     click_train(
