@@ -1436,7 +1436,7 @@ with gr.Blocks(title="RVC WebUI") as app:
                     )
                     sr__ = gr.Radio(
                         label=i18n("目标采样率"),
-                        choices=["32k", "40k", "48k"],
+                        choices=["40k", "48k"],
                         value="40k",
                         interactive=True,
                     )
@@ -1448,7 +1448,7 @@ with gr.Blocks(title="RVC WebUI") as app:
                     )
                     version_1 = gr.Radio(
                         label=i18n("模型版本型号"),
-                        choices=["v1", "v2"],
+                        choices=["v2"],
                         value="v2",
                         interactive=True,
                     )
