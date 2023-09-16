@@ -817,10 +817,10 @@ def change_sr2(sr2, if_f0_3, version19):
     path_str = "" if version19 == "v1" else "_v2"
     f0_str = "f0" if if_f0_3 else ""
     if_pretrained_generator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2), os.F_OK
+        "/kaggle/input/ax-rmf/pretrained%s/%sG4%sk.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if_pretrained_discriminator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2), os.F_OK
+        "/kaggle/input/ax-rmf/pretrained%s/%sD4%sk.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if not if_pretrained_generator_exist:
         print(
@@ -853,10 +853,10 @@ def change_version19(sr2, if_f0_3, version19):
     )
     f0_str = "f0" if if_f0_3 else ""
     if_pretrained_generator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2), os.F_OK
+        "/kaggle/input/ax-rmf/pretrained%s/%sG4%sk.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if_pretrained_discriminator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2), os.F_OK
+        "/kaggle/input/ax-rmf/pretrained%s/%sD4%sk.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if not if_pretrained_generator_exist:
         print(
@@ -869,10 +869,10 @@ def change_version19(sr2, if_f0_3, version19):
             "doesn't exist, will not use pretrained model",
         )
     return (
-        "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2)
+        "/kaggle/input/ax-rmf/pretrained%s/%sG4%sk.pth" % (path_str, f0_str, sr2)
         if if_pretrained_generator_exist
         else "",
-        "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2)
+        "/kaggle/input/ax-rmf/pretrained%s/%sD4%sk.pth" % (path_str, f0_str, sr2)
         if if_pretrained_discriminator_exist
         else "",
         to_return_sr2,
