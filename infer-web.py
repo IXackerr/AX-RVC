@@ -1966,4 +1966,5 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC WebUI") as 
             inbrowser=not config.noautoopen,
             server_port=config.listen_port,
             quiet=False,
+            share=False,
         )
