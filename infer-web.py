@@ -383,30 +383,30 @@ def extract_f0_feature(gpus, n_p, f0method, if_f0, exp_dir, version19, gpus_rmvp
 
 def get_pretrained_models(path_str, f0_str, sr2):
     if_pretrained_generator_exist = os.access(
-        "assets/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2), os.F_OK
+        "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if_pretrained_discriminator_exist = os.access(
-        "assets/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2), os.F_OK
+        "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if not if_pretrained_generator_exist:
         logger.warn(
-            "assets/pretrained%s/%sG%s.pth not exist, will not use pretrained model",
+            "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth not exist, will not use pretrained model",
             path_str,
             f0_str,
             sr2,
         )
     if not if_pretrained_discriminator_exist:
         logger.warn(
-            "assets/pretrained%s/%sD%s.pth not exist, will not use pretrained model",
+            "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth not exist, will not use pretrained model",
             path_str,
             f0_str,
             sr2,
         )
     return (
-        "assets/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2)
+        "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2)
         if if_pretrained_generator_exist
         else "",
-        "assets/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2)
+        "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2)
         if if_pretrained_discriminator_exist
         else "",
     )
@@ -1247,12 +1247,12 @@ with gr.Blocks(title="RVC WebUI") as app:
                 with gr.Row():
                     pretrained_G14 = gr.Textbox(
                         label=i18n("加载预训练底模G路径"),
-                        value="assets/pretrained_v2/f0G40k.pth",
+                        value="/kaggle/input/ax-rmf/pretrained_v2/f0G40k.pth",
                         interactive=True,
                     )
                     pretrained_D15 = gr.Textbox(
                         label=i18n("加载预训练底模D路径"),
-                        value="assets/pretrained_v2/f0D40k.pth",
+                        value="/kaggle/input/ax-rmf/pretrained_v2/f0D40k.pth",
                         interactive=True,
                     )
                     sr2.change(
