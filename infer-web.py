@@ -3,7 +3,7 @@ import shutil
 import sys
 import json  # Mangio fork using json for preset saving
 import math
-
+import resource
 import signal
 
 now_dir = os.getcwd()
@@ -138,7 +138,7 @@ else:
 gpus = "-".join([i[0] for i in gpu_infos])
 
 hubert_model = None
-
+resource.setrlimit(resource.RLIMIT_AS, (6 * 1024 * 1024 * 1024, 6 * 1024 * 1024 * 1024))
 
 def load_hubert():
     global hubert_model
