@@ -824,12 +824,12 @@ def change_sr2(sr2, if_f0_3, version19):
     )
     if not if_pretrained_generator_exist:
         print(
-            "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2),
+            "/kaggle/input/ax-rmf/pretrained%s/%sG4%sk.pth" % (path_str, f0_str, sr2),
             "doesn't exist, will not use pretrained model",
         )
     if not if_pretrained_discriminator_exist:
         print(
-            "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2),
+            "/kaggle/input/ax-rmf/pretrained%s/%sD4%sk.pth" % (path_str, f0_str, sr2),
             "doesn't exist, will not use pretrained model",
         )
     return (
@@ -860,12 +860,12 @@ def change_version19(sr2, if_f0_3, version19):
     )
     if not if_pretrained_generator_exist:
         print(
-            "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2),
+            "/kaggle/input/ax-rmf/pretrained%s/%sG4%sk.pth" % (path_str, f0_str, sr2),
             "doesn't exist, will not use pretrained model",
         )
     if not if_pretrained_discriminator_exist:
         print(
-            "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2),
+            "/kaggle/input/ax-rmf/pretrained%s/%sD4%sk.pth" % (path_str, f0_str, sr2),
             "doesn't exist, will not use pretrained model",
         )
     return (
