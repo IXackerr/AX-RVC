@@ -2022,7 +2022,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
 
             with gr.Group():
                 gr.Markdown(
-                    value=i18n("男转女推荐+12key, 女转男推荐-12key, 如果音域爆炸导致音色失真也可以自己调整到合适音域. ")
+                    i18n("男转女推荐+12key, 女转男推荐-12key, 如果音域爆炸导致音色失真也可以自己调整到合适音域. ")
                 )
                 with gr.Row():
                     with gr.Column():
@@ -2256,7 +2256,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
                     )
             with gr.Group():
                 gr.Markdown(
-                    value=i18n("批量转换, 输入待转换音频文件夹, 或上传多个音频文件, 在指定文件夹(默认opt)下输出转换的音频. ")
+                    i18n("批量转换, 输入待转换音频文件夹, 或上传多个音频文件, 在指定文件夹(默认opt)下输出转换的音频. ")
                 )
                 with gr.Row():
                     with gr.Column():
@@ -2389,7 +2389,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
         with gr.TabItem(i18n("伴奏人声分离&去混响&去回声")):
             with gr.Group():
                 gr.Markdown(
-                    value=i18n(
+                    i18n(
                         "人声伴奏分离批量处理， 使用UVR5模型。 <br>"
                         "合格的文件夹路径格式举例： E:\\codes\\py39\\vits_vc_gpu\\白鹭霜华测试样例(去文件管理器地址栏拷就行了)。 <br>"
                         "模型分为三类： <br>"
@@ -2453,7 +2453,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
                     )
         with gr.TabItem(i18n("训练")):
             gr.Markdown(
-                value=i18n(
+                i18n(
                     "step1: 填写实验配置. 实验数据放在logs下, 每个实验一个文件夹, 需手工输入实验名路径, 内含实验配置, 日志, 训练得到的模型文件. "
                 )
             )
@@ -2487,7 +2487,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
                 )
             with gr.Group():  # 暂时单人的, 后面支持最多4人的#数据处理
                 gr.Markdown(
-                    value=i18n(
+                    i18n(
                         "step2a: 自动遍历训练文件夹下所有可解码成音频的文件并进行切片归一化, 在实验目录下生成2个wav文件夹; 暂时只支持单人训练. "
                     )
                 )
@@ -2510,7 +2510,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
                         preprocess_dataset, [trainset_dir4, exp_dir1, sr2, np7], [info1]
                     )
             with gr.Group():
-                step2b = value=i18n(
+                step2b = i18n(
                    label=i18n("step2b: 使用CPU提取音高(如果模型带音高), 使用GPU提取特征(选择卡号)")
                 )
                 with gr.Row():
@@ -2571,7 +2571,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
                         [info2],
                     )
             with gr.Group():
-                gr.Markdown(value=i18n("step3: 填写训练设置, 开始训练模型和索引"))
+                gr.Markdown(i18n("step3: 填写训练设置, 开始训练模型和索引"))
                 with gr.Row():
                     save_epoch10 = gr.Slider(
                         minimum=1,
@@ -2749,7 +2749,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
 
         with gr.TabItem(i18n("ckpt处理")):
             with gr.Group():
-                gr.Markdown(value=i18n("模型融合, 可用于测试音色融合"))
+                gr.Markdown(i18n("模型融合, 可用于测试音色融合"))
                 with gr.Row():
                     ckpt_a = gr.Textbox(
                         label=i18n("A模型路径"),
@@ -2820,7 +2820,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
                     info4,
                 )  # def merge(path1,path2,alpha1,sr,f0,info):
             with gr.Group():
-                gr.Markdown(value=i18n("修改模型信息(仅支持weights文件夹下提取的小模型文件)"))
+                gr.Markdown(i18n("修改模型信息(仅支持weights文件夹下提取的小模型文件)"))
                 with gr.Row():  ######
                     ckpt_path0 = gr.Textbox(
                         label=i18n("模型路径"),
@@ -2847,7 +2847,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
                     info5 = gr.Textbox(label=i18n("输出信息"), value="", max_lines=8)
                 but7.click(change_info, [ckpt_path0, info_, name_to_save1], info5)
             with gr.Group():
-                gr.Markdown(value=i18n("查看模型信息(仅支持weights文件夹下提取的小模型文件)"))
+                gr.Markdown(i18n("查看模型信息(仅支持weights文件夹下提取的小模型文件)"))
                 with gr.Row():
                     ckpt_path1 = gr.Textbox(
                         label=i18n("模型路径"),
@@ -2860,7 +2860,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
                 but8.click(show_info, [ckpt_path1], info6)
             with gr.Group():
                 gr.Markdown(
-                    value=i18n(
+                    i18n(
                         "模型提取(输入logs文件夹下大文件模型路径),适用于训一半不想训了模型没有自动提取保存小文件模型,或者想测试中间模型的情况"
                     )
                 )
@@ -2943,7 +2943,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
                 else:
                     with open("docs/faq_en.md", "r", encoding="utf8") as f:
                         info = f.read()
-                gr.Markdown(value=info)
+                gr.Markdown(info)
             except:
                 gr.Markdown(traceback.format_exc())
 
