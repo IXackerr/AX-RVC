@@ -23,9 +23,6 @@ from random import shuffle
 from subprocess import Popen
 from time import sleep
 
-import resource
-resource.setrlimit(resource.RLIMIT_AS, (6 * 1024 * 1024 * 1024,))
-
 import faiss
 import ffmpeg
 import gradio as gr
