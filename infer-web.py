@@ -1678,8 +1678,8 @@ def cli_train(com):
 
     pretrained_base = "/kaggle/input/ax-rmf/pretrained/" if version == "v1" else "/kaggle/input/ax-rmf/pretrained_v2/"
 
-    g_pretrained_path = "%sf0G%s.pth" % (pretrained_base, sample_rate)
-    d_pretrained_path = "%sf0D%s.pth" % (pretrained_base, sample_rate)
+    g_pretrained_path = "%sf0G4%sk.pth" % (pretrained_base, sample_rate)
+    d_pretrained_path = "%sf0D4%sk.pth" % (pretrained_base, sample_rate)
 
     print("Mangio-RVC-Fork Train-CLI: Training...")
     click_train(
