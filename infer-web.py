@@ -2510,8 +2510,8 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
                         preprocess_dataset, [trainset_dir4, exp_dir1, sr2, np7], [info1]
                     )
             with gr.Group():
-                step2b = i18n(
-                   label=i18n("step2b: 使用CPU提取音高(如果模型带音高), 使用GPU提取特征(选择卡号)")
+                step2b = gr.Markdown(
+                   i18n("step2b: 使用CPU提取音高(如果模型带音高), 使用GPU提取特征(选择卡号)")
                 )
                 with gr.Row():
                     with gr.Column():
