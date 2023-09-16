@@ -1965,5 +1965,5 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC WebUI") as 
             server_name="0.0.0.0",
             inbrowser=not config.noautoopen,
             server_port=config.listen_port,
-            quiet=True,
+            quiet=False,
         )
