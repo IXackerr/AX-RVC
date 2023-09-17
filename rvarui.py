@@ -1,476 +1,693 @@
-_IlIIIllIIlIIIIllI ='以-分隔输入使用的卡号, 例如   0-1-2   使用卡l和卡1和卡2'
-_IllIIIlllIlllllll ='也可批量输入音频文件, 二选一, 优先读文件夹'
-_IIllIllllllIllllI ='保护清辅音和呼吸声，防止电音撕裂等artifact，拉满0.5不开启，调低加大保护力度但可能降低索引效果'
-_IllIlIlIIllIIlIII ='输入源音量包络替换输出音量包络融合比例，越靠近1越使用输出包络'
-_IIlllllllllllIlII ='后处理重采样至最终采样率，0为不进行重采样'
-_IlllllIllIllIllIl ='自动检测index路径,下拉式选择(dropdown)'
-_IlIIlIIIIlIlllIII ='特征检索库文件路径,为空则使用下拉的选择结果'
-_IIllIIIlIIlIllIII ='>=3则使用对harvest音高识别的结果使用中值滤波，数值为滤波半径，使用可以削弱哑音'
-_IIlIllIIlIIllllll ='选择音高提取算法,输入歌声可用pm提速,harvest低音好但巨慢无比,crepe效果好但吃GPU,rmvpe效果最好且微吃GPU'
-_IIlIIlllIllIlIIlI ='变调(整数, 半音数量, 升八度12降八度-12)'
-_IIlIIlllllIlIlIII ='%s/added_IVF%s_Flat_nprobe_%s_%s_%s.index'
-_IllllIIIIlIlIlllI ='%s/trained_IVF%s_Flat_nprobe_%s_%s_%s.index'
-_IlIIIIllllIIIlIIl ='IVF%s,Flat'
-_IlIIlIIlIlIIlIlIl ='%s/total_fea.npy'
-_IIIIlIIlIIlllIlII ='Trying doing kmeans %s shape to 10k centers.'
-_IlllIIlIlIIlIlIll ='训练结束, 您可查看控制台训练日志或实验文件夹下的train.log'
-_IlIlIllIIIllIllll =' train_nsf_sim_cache_sid_load_pretrain.py -e "%s" -sr %s -f0 %s -bs %s -te %s -se %s %s %s -l %s -c %s -sw %s -v %s'
-_IIIllllIlIllIIlll =' train_nsf_sim_cache_sid_load_pretrain.py -e "%s" -sr %s -f0 %s -bs %s -g %s -te %s -se %s %s %s -l %s -c %s -sw %s -v %s'
-_IlIIIIlIIlIIllIIl ='write filelist done'
-_IllllIllIIlIlIIlI ='%s/filelist.txt'
-_IIlllIlIlIlllIllI ='%s/logs/mute/0_gt_wavs/mute%s.wav|%s/logs/mute/3_feature%s/mute.npy|%s'
-_IllllIlIIlIIlIIll ='%s/logs/mute/0_gt_wavs/mute%s.wav|%s/logs/mute/3_feature%s/mute.npy|%s/logs/mute/2a_f0/mute.wav.npy|%s/logs/mute/2b-f0nsf/mute.wav.npy|%s'
-_IIIlIIIllIlllIIIl ='%s/%s.wav|%s/%s.npy|%s'
-_IIlllIlllIlllIIIl ='%s/%s.wav|%s/%s.npy|%s/%s.wav.npy|%s/%s.wav.npy|%s'
-_IllllIIllllIIllIl ='%s/2b-f0nsf'
-_IIlIllIIIIllIlIII ='%s/0_gt_wavs'
-_IlllllIIIIIIIIlIl ='emb_g.weight'
-_IlIllIIlllIlllIIl ='clean_empty_cache'
-_IlIIllIIlIIlIllII ='sample_rate'
-_IIllIllIIIlIllIIl ='%s->%s'
-_IIIlIIIlIlllIIIIl ='.index'
-_IllIlIllIlIIIIIll ='weights'
-_IlIIIIlllIIIllIII ='opt'
-_IIIIlIlllIllIIIIl ='rmvpe'
-_IIllIlIlIIIIIllIl ='harvest'
-_IIllIlllIIlIIIIIl ='%s/3_feature768'
-_IIllIlIlIIlllIlII ='%s/3_feature256'
-_IIllIIllIIIIlIlII ='_v2'
-_IlIIlllIlIlIIlIll ='48k'
-_IllIlIIllIIIlIlIl ='32k'
-_IlIlIIlIllIllIIll ='cpu'
-_IIIIIIIlIIIlllIIl ='wav'
-_IllllIlIIIIIIIlII ='trained'
-_IlllIIIIIlIllIIll ='logs'
-_IIIlIIIllIIIlIllI ='-pd %s'
-_IlIlllIIIllIllIll ='-pg %s'
-_IIIlIlIlIIllIllIl ='choices'
-_IIIIIllIIIIIIIlll ='weight'
-_IlIIlIllIllIlIllI ='pm'
-_IIlIllllIlIlIlIll ='rmvpe_gpu'
-_IIllIIlllllIIIllI ='%s/logs/%s'
-_IlllIlllIIIIllIlI ='flac'
-_IIllIllIlllIIllIl ='f0'
-_IIlllIIlIIlIIllll ='%s/%s'
-_IlIIIIllllIIIIlII ='.pth'
-_IIIIllllllIlllIlI ='输出信息'
-_IlIlllIllIIlIIlII ='not exist, will not use pretrained model'
-_IllIIIIllllIlllll ='/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth'
-_IllllIlIIlIIIIIlI ='/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth'
-_IIIllIIlIlIllIIll ='40k'
-_IIllIlIlIIIlIlIII ='value'
-_IIIlllllllIllIIll ='v2'
-_IIIIlIIIlIlllIlll ='version'
-_IIIIlIlIlllllIlII ='visible'
-_IIIllIlIIIlllllll ='primary'
-_IllIIIIIllIIIIIlI =None 
-_IllIIIlIlllllIlll ='\\\\'
-_IIlIllllIIllllIll ='\\'
-_IIlIllllIlllIIIIl ='"'
-_IIIlIllIIIIlIllll =' '
-_IlllllllIlllllllI ='config'
-_IlIIIIllIIIlIllll ='.'
-_IllIIIIlllllIllIl ='r'
-_IlllIlllIlllIllIl ='是'
-_IIlIlIIIIllIIIIll ='update'
-_IlIIIllIlIlIIlllI ='__type__'
-_IlllllIlIllIIllII ='v1'
-_IIlIlIIIlIIlIIIll ='\n'
-_IIIIlIllllIIIlllI =False 
-_IlIlIIllIlIIIllIl =True 
-import os ,shutil ,sys 
-IIIIlIlIIIlIllIlI =os .getcwd ()
-sys .path .append (IIIIlIlIIIlIllIlI )
-import traceback ,pdb ,warnings ,numpy as np ,torch 
+_IlIIIllIlIIlIIIlI ='converted_tts'
+_IIlIIlllIllIIIIlI ='Replacing old dropdown file...'
+_IllIIIIlIIllIIlIl ='emb_g.weight'
+_IIIIIlIlIlIIIlIll ='sample_rate'
+_IlIIlIIllllIIIlIl ='Index not used.'
+_IIIlIllIIIlllIllI ='Using index:%s.'
+_IIIIllIIllIllIIII ='You need to upload an audio'
+_IIIIlIIIIllllllII ='pretrained'
+_IIllllIllIIllllIl ='EXTRACT-MODEL'
+_IllIIIlIIIIIIlIIl ='TRAIN-FEATURE'
+_IIIllIllIIlllIlll ='TRAIN'
+_IlIlllIlllIIlllIl ='EXTRACT-FEATURE'
+_IllIIlllIIIllIIIl ='PRE-PROCESS'
+_IlIlIlIlIIlllIlII ='INFER'
+_IlIIIlIIlIlIIlIII ='HOME'
+_IIlllIIllIIlllIll ='_v2'
+_IlIlIlIIlllIIIllI ='clean_empty_cache'
+_IIIlllIlllIIIIlII ='Bark-tts'
+_IIIIlIIllIIlllIll ='MDX'
+_IlllllIIllllIlIII ='.onnx'
+_IlIIllllIlIIlllII ='aac'
+_IlllllIllIIlIlIIl ='ogg'
+_IlIllIlllIIIIIIIl ='csvdb/stop.csv'
+_IlIIlllllIlllIlIl ='audio-others'
+_IIIlIIllIlIlIllII ='pm'
+_IIIlllIlIlIIIlIll ='weight'
+_IIlllIIIIIlllIIlI ='cpu'
+_IIIlIlIIllllIIIlI ='rmvpe_onnx'
+_IIlIIllIlIIIIlIll ='Edge-tts'
+_IlIIIIIllllIlIlII ='VR'
+_IIIlllllIlIIIIIll ='datasets'
+_IllIIIIIIlIIIIlll ='32k'
+_IllIllIllIllllIIl ='version'
+_IlIIllIllIllIIIIl ='.index'
+_IlIIllIllllIlIIII ='m4a'
+_IIIlIllllIIlIIIIl ='mp3'
+_IlIlllllIIIIIlIlI ='48k'
+_IlIlIIlIllllIIlIl ='.pth'
+_IlIIlllIlIllIIlll ='flac'
+_IIIlIlIlIIIIllllI ='logs'
+_IIIlIIIlIIIIlllll ='D'
+_IlIIIIIIllllIIlll ='G'
+_IllIIIlIllllIIllI ='f0'
+_IIIIlllIlIIIlllll ='.'
+_IlIllIlIIIlllIIIl ='trained'
+_IIlIlIlIIllIIIIll ='wav'
+_IIIllllllIllIIIII ='v2'
+_IlIIIIlllIlIIllll ='r'
+_IIlIIlIIlIlIIIlII ='config'
+_IlIlllIlIlIlIlIll =1. 
+_IIlIIIIIlIlIIIllI ='audios'
+_IIIllIIIlIIllIlII ='40k'
+_IIlllllllllIllIll ='"'
+_IIlIIIlIIIllIIIll ='audio-outputs'
+_IlIIllllIIIlIlIlI ='rmvpe'
+_IlIlIIIlllIllIlll =' '
+_IIllIIIlIIlllIlII ='choices'
+_IlllIIllllIIIIlIl ='value'
+_IlIIIIIIlIlIllIIl ='v1'
+_IIlIlIIllllIlIIlI ='\n'
+_IIIllIllllIlIllIl ='visible'
+_IllIIIllIIIllllIl =None 
+_IlllllIlIIlIlIlII ='update'
+_IIllIIllllllIllII ='__type__'
+_IIIIlIlIIIlIlIlll =False 
+_IlllIIIlllIllIllI =True 
+import sys 
+from shutil import rmtree 
+import shutil ,json ,datetime ,unicodedata 
+from glob import glob1 
+from signal import SIGTERM 
+import librosa ,os 
+IlIIIllllllIllIll =os .getcwd ()
+sys .path .append (IlIIIllllllIllIll )
+import lib .globals .globals as rvc_globals 
+from LazyImport import lazyload 
+import mdx 
+from mdx_processing_script import get_model_list ,id_to_ptm ,prepare_mdx ,run_mdx 
+IlIlllIIIlIlIIlll =lazyload ('math')
+import traceback ,warnings 
+IIlllllllIIIIIlIl =lazyload ('tensorlowest')
+import faiss 
+IIIIIIllIIIlllIIl =lazyload ('ffmpeg')
+import nltk 
+nltk .download ('punkt',quiet =_IlllIIIlllIllIllI )
+from nltk .tokenize import sent_tokenize 
+from bark import generate_audio ,SAMPLE_RATE 
+IIlIlllllIlIlIIlI =lazyload ('numpy')
+IIIIIIlIIIIIIIIII =lazyload ('torch')
+IIIIlIllIlIlIlllI =lazyload ('regex')
+os .environ ['TF_CPP_MIN_LIG_LEVEL']='3'
 os .environ ['IPENBLAS_NUM_THREADS']='1'
 os .environ ['no_proxy']='localhost, 127.0.0.1, ::1'
-import logging ,threading 
+import logging 
 from random import shuffle 
 from subprocess import Popen 
-from time import sleep 
-import faiss ,ffmpeg ,gradio as gr ,soundfile as sf 
+import easy_infer ,audioEffects 
+IllIlIlIIllllIlIl =lazyload ('gradio')
+IIllIIIIlIIIIIIll =lazyload ('soundfile')
+IlIlIIlIlIIllIIIl =IIllIIIIlIIIIIIll .write 
 from config import Config 
-from fairseq import checkpoint_utils 
+import fairseq 
 from i18n import I18nAuto 
 from lib .infer_pack .models import SynthesizerTrnMs256NSFsid ,SynthesizerTrnMs256NSFsid_nono ,SynthesizerTrnMs768NSFsid ,SynthesizerTrnMs768NSFsid_nono 
 from lib .infer_pack .models_onnx import SynthesizerTrnMsNSFsidM 
 from infer_uvr5 import _audio_pre_ ,_audio_pre_new 
-from lib .audio import load_audio 
-from lib .train .process_ckpt import change_info ,extract_small_model ,merge ,show_info 
+from MDXNet import MDXNetDereverb 
+from my_utils import load_audio 
+from train .process_ckpt import change_info ,extract_small_model ,merge ,show_info 
 from vc_infer_pipeline import VC 
 from sklearn .cluster import MiniBatchKMeans 
-logging .getLogger ('numba').setLevel (logging .WARNING )
-IIIIlIlIIIlIllIlI =os .getcwd ()
-IIIlIlllIlIIIIIlI =os .path .join (IIIIlIlIIIlIllIlI ,'TEMP')
-shutil .rmtree (IIIlIlllIlIIIIIlI ,ignore_errors =_IlIlIIllIlIIIllIl )
-shutil .rmtree ('%s/runtime/Lib/site-packages/infer_pack'%IIIIlIlIIIlIllIlI ,ignore_errors =_IlIlIIllIlIIIllIl )
-shutil .rmtree ('%s/runtime/Lib/site-packages/uvr5_pack'%IIIIlIlIIIlIllIlI ,ignore_errors =_IlIlIIllIlIIIllIl )
-os .makedirs (IIIlIlllIlIIIIIlI ,exist_ok =_IlIlIIllIlIIIllIl )
-os .makedirs (os .path .join (IIIIlIlIIIlIllIlI ,_IlllIIIIIlIllIIll ),exist_ok =_IlIlIIllIlIIIllIl )
-os .makedirs (os .path .join (IIIIlIlIIIlIllIlI ,_IllIlIllIlIIIIIll ),exist_ok =_IlIlIIllIlIIIllIl )
-os .environ ['TEMP']=IIIlIlllIlIIIIIlI 
+import time ,threading 
+from shlex import quote as SQuote 
+IIIIlIIlllllIlllI =''
+IlIIIIlllllIllIIl =lambda IlIllIlIlIIlIllII :SQuote (str (IlIllIlIlIIlIllII ))
+IlllllllIIlIlIlIl =os .path .join (IlIIIllllllIllIll ,'TEMP')
+IlIlIlllIIIlIIIlI =os .path .join (IlIIIllllllIllIll ,'runtime/Lib/site-packages')
+IlIlIIIlllIlIIIlI =[_IIIlIlIlIIIIllllI ,_IIlIIIIIlIlIIIllI ,_IIIlllllIlIIIIIll ,'weights']
+rmtree (IlllllllIIlIlIlIl ,ignore_errors =_IlllIIIlllIllIllI )
+rmtree (os .path .join (IlIlIlllIIIlIIIlI ,'infer_pack'),ignore_errors =_IlllIIIlllIllIllI )
+rmtree (os .path .join (IlIlIlllIIIlIIIlI ,'uvr5_pack'),ignore_errors =_IlllIIIlllIllIllI )
+os .makedirs (os .path .join (IlIIIllllllIllIll ,_IIlIIIlIIIllIIIll ),exist_ok =_IlllIIIlllIllIllI )
+os .makedirs (os .path .join (IlIIIllllllIllIll ,_IlIIlllllIlllIlIl ),exist_ok =_IlllIIIlllIllIllI )
+os .makedirs (IlllllllIIlIlIlIl ,exist_ok =_IlllIIIlllIllIllI )
+for IllIlIllIIlllIlIl in IlIlIIIlllIlIIIlI :os .makedirs (os .path .join (IlIIIllllllIllIll ,IllIlIllIIlllIlIl ),exist_ok =_IlllIIIlllIllIllI )
+os .environ ['TEMP']=IlllllllIIlIlIlIl 
 warnings .filterwarnings ('ignore')
-torch .manual_seed (114514 )
-IlllIIlIlIIIIlIlI =Config ()
-IlIIlllIlllIlllII =I18nAuto ()
-IlIIlllIlllIlllII .print ()
-IlIIIIlllllIlIIll =torch .cuda .device_count ()
-IIlIIllIlIIllIIII =[]
-IlIIIllIIllIIlIlI =[]
-IllIlIIIlllIlIlIl =_IIIIlIllllIIIlllI 
-if torch .cuda .is_available ()or IlIIIIlllllIlIIll !=0 :
-	for IIllllIIIIIllIIIl in range (IlIIIIlllllIlIIll ):
-		IIlIIIlIIIIlIIllI =torch .cuda .get_device_name (IIllllIIIIIllIIIl )
-		if any (IllIIIIlIIIIllIll in IIlIIIlIIIIlIIllI .upper ()for IllIIIIlIIIIllIll in ['10','16','20','30','40','A2','A3','A4','P4','A50','500','A60','70','80','90','M4','T4','TITAN']):IllIlIIIlllIlIlIl =_IlIlIIllIlIIIllIl ;IIlIIllIlIIllIIII .append ('%s\t%s'%(IIllllIIIIIllIIIl ,IIlIIIlIIIIlIIllI ));IlIIIllIIllIIlIlI .append (int (torch .cuda .get_device_properties (IIllllIIIIIllIIIl ).total_memory /1024 /1024 /1024 +.4 ))
-if IllIlIIIlllIlIlIl and len (IIlIIllIlIIllIIII )>0 :IIIlIlIIIIIlIllII =_IIlIlIIIlIIlIIIll .join (IIlIIllIlIIllIIII );IlllIIlllllIllIII =min (IlIIIllIIllIIlIlI )//2 
-else :IIIlIlIIIIIlIllII =IlIIlllIlllIlllII ('很遗憾您这没有能用的显卡来支持您训练');IlllIIlllllIllIII =1 
-IlIIIllIIllIllIll ='-'.join ([IIIlllIlllIlllIlI [0 ]for IIIlllIlllIlllIlI in IIlIIllIlIIllIIII ])
-class IIllllIIllllllIll (gr .Button ,gr .components .FormComponent ):
-	""
-	def __init__ (IllIIllIIlllIlIlI ,**IIIlIlllllIlIllIl ):super ().__init__ (variant ='tool',**IIIlIlllllIlIllIl )
-	def get_block_name (IlIlIlIlllIlIlIII ):return 'button'
-IlllIIIIllIlIllll =_IllIIIIIllIIIIIlI 
-def IIlllllIIIlIllIlI ():
-	global IlllIIIIllIlIllll ;IlIIIllIlIIlIlIll ,_IIlIIIllIlIlIllIl ,_IIlIIIllIlIlIllIl =checkpoint_utils .load_model_ensemble_and_task (['/kaggle/input/ax-rmf/hubert_base.pt'],suffix ='');IlllIIIIllIlIllll =IlIIIllIlIIlIlIll [0 ];IlllIIIIllIlIllll =IlllIIIIllIlIllll .to (IlllIIlIlIIIIlIlI .device )
-	if IlllIIlIlIIIIlIlI .is_half :IlllIIIIllIlIllll =IlllIIIIllIlIllll .half ()
-	else :IlllIIIIllIlIllll =IlllIIIIllIlIllll .float ()
-	IlllIIIIllIlIllll .eval ()
-IIIIIlIIlllIIlllI =_IllIlIllIlIIIIIll 
-IIIllIllIlIIlIlII ='uvr5_weights'
-IIlIIIIIIIlIIlIII =_IlllIIIIIlIllIIll 
-IIlIlllIlIIlllllI =[]
-for IlIIlIllIIIIlllIl in os .listdir (IIIIIlIIlllIIlllI ):
-	if IlIIlIllIIIIlllIl .endswith (_IlIIIIllllIIIIlII ):IIlIlllIlIIlllllI .append (IlIIlIllIIIIlllIl )
-IIlIllIlIIIlllIll =[]
-for (IIIllIIlllIllIIll ,IllllIlllIIlIlllI ,IIllllllIlIlllIlI )in os .walk (IIlIIIIIIIlIIlIII ,topdown =_IIIIlIllllIIIlllI ):
-	for IlIIlIllIIIIlllIl in IIllllllIlIlllIlI :
-		if IlIIlIllIIIIlllIl .endswith (_IIIlIIIlIlllIIIIl )and _IllllIlIIIIIIIlII not in IlIIlIllIIIIlllIl :IIlIllIlIIIlllIll .append (_IIlllIIlIIlIIllll %(IIIllIIlllIllIIll ,IlIIlIllIIIIlllIl ))
-IIlllllIlIlIlllIl =[]
-for IlIIlIllIIIIlllIl in os .listdir (IIIllIllIlIIlIlII ):
-	if IlIIlIllIIIIlllIl .endswith (_IlIIIIllllIIIIlII )or 'onnx'in IlIIlIllIIIIlllIl :IIlllllIlIlIlllIl .append (IlIIlIllIIIIlllIl .replace (_IlIIIIllllIIIIlII ,''))
-IllIllIlllIllIIll =_IllIIIIIllIIIIIlI 
-def IIIlIlIlllIlIIIIl (IllIllIIIllllIlII ,IlllIIIlIlIllIlll ,IllIIllIIIlIllIlI ,IIlllllllIlllllll ,IIlllIlllIIIIIlIl ,IIIIllllIIllIllII ,IIllllIlIIIlIllII ,IIllIIlIIlIllIllI ,IIIlllIIIIllIIlII ,IlIllllllIIllIIll ,IlIIIIIIIllIlIllI ,IllllIlIIIllIlIll ):
-	global IlIlIIIIlIllIllll ,IIIlIlIlIllIIIIII ,IllIlIIIlIIIIIlll ,IlllIIIIllIlIllll ,IllIIlIllIlIIIllI ,IllIllIlllIllIIll 
-	if IlllIIIlIlIllIlll is _IllIIIIIllIIIIIlI :return 'You need to upload an audio',_IllIIIIIllIIIIIlI 
-	IllIIllIIIlIllIlI =int (IllIIllIIIlIllIlI )
+IIIIIIlIIIIIIIIII .manual_seed (114514 )
+logging .getLogger ('numba').setLevel (logging .WARNING )
+try :IIIIlllIIlIlIIlII =open (_IlIllIlllIIIIIIIl ,'x');IIIIlllIIlIlIIlII .close ()
+except FileExistsError :pass 
+global IlllIIIllIIIlIllI ,IIIIllIIIIIlIlllI ,IlIIIIlllIIIllllI 
+IlllIIIllIIIlIllI =rvc_globals .DoFormant 
+IIIIllIIIIIlIlllI =rvc_globals .Quefrency 
+IlIIIIlllIIIllllI =rvc_globals .Timbre 
+IlIllIlIlIIlIlIll =Config ()
+if IlIllIlIlIIlIlIll .dml ==_IlllIIIlllIllIllI :
+	def IlllIlIIlIIllIIll (IlIIlIllIlllIlIII ,IIIlIlIIllIIllllI ,IlIIllllIlIlIIIll ):IlIIlIllIlllIlIII .scale =IlIIllllIlIlIIIll ;IIlIIlIIIIlIIlIIl =IIIlIlIIllIIllllI .clone ().detach ();return IIlIIlIIIIlIIlIIl 
+	fairseq .modules .grad_multiply .GradMultiply .forward =IlllIlIIlIIllIIll 
+IIIllIIllIIIIIIlI =I18nAuto ()
+IIIllIIllIIIIIIlI .print ()
+IIlIlIllIlIIlllII =IIIIIIlIIIIIIIIII .cuda .device_count ()
+IIIllIIIIlllIlllI =[]
+IlIIlIlIlllllIlll =[]
+IIIlllIIlIIIlllII =_IIIIlIlIIIlIlIlll 
+IllIlllIlIlIIllIl =['10','16','20','30','40','A2','A3','A4','P4','A50','500','A60','70','80','90','M4','T4','TITAN']
+if IIIIIIlIIIIIIIIII .cuda .is_available ()or IIlIlIllIlIIlllII !=0 :
+	for IIlIlllllIllllIll in range (IIlIlIllIlIIlllII ):
+		IIIIIllllIIlIllIl =IIIIIIlIIIIIIIIII .cuda .get_device_name (IIlIlllllIllllIll ).upper ()
+		if any (IIlIlIIlIlIlIIIlI in IIIIIllllIIlIllIl for IIlIlIIlIlIlIIIlI in IllIlllIlIlIIllIl ):IIIlllIIlIIIlllII =_IlllIIIlllIllIllI ;IIIllIIIIlllIlllI .append ('%s\t%s'%(IIlIlllllIllllIll ,IIIIIllllIIlIllIl ));IlIIlIlIlllllIlll .append (int (IIIIIIlIIIIIIIIII .cuda .get_device_properties (IIlIlllllIllllIll ).total_memory /1e9 +.4 ))
+IIlIIlllIlIlIIIll =_IIlIlIIllllIlIIlI .join (IIIllIIIIlllIlllI )if IIIlllIIlIIIlllII and IIIllIIIIlllIlllI else 'Unfortunately, there is no compatible GPU available to support your training.'
+IIlIllIllIllIIIIl =min (IlIIlIlIlllllIlll )//2 if IIIlllIIlIIIlllII and IIIllIIIIlllIlllI else 1 
+IIIlIlllllIllIlII ='-'.join (IIIlIlllIIllIIlll [0 ]for IIIlIlllIIllIIlll in IIIllIIIIlllIlllI )
+IIIlIlllIIIIlllIl =_IllIIIllIIIllllIl 
+def IlIIlIllIIIIIIlIl ():
+	global IIIlIlllIIIIlllIl ;IlIlllIIllIIIIlII ,_IIllIlIIlllIlIIIl ,_IIllIlIIlllIlIIIl =fairseq .checkpoint_utils .load_model_ensemble_and_task (['/kaggle/input/ax-rmf/hubert_base.pt'],suffix ='');IIIlIlllIIIIlllIl =IlIlllIIllIIIIlII [0 ].to (IlIllIlIlIIlIlIll .device )
+	if IlIllIlIlIIlIlIll .is_half :IIIlIlllIIIIlllIl =IIIlIlllIIIIlllIl .half ()
+	IIIlIlllIIIIlllIl .eval ()
+IlIllllIlIllIlIlI =_IIIlllllIlIIIIIll 
+IllIIllIlllIlIlIl ='weights'
+IIllllIlIlllIIllI ='uvr5_weights'
+IlIlIIIllIIllIlll =_IIIlIlIlIIIIllllI 
+IlIIIllIllllIIIll ='formantshiftcfg'
+IllIIlIIIllIllIII =_IIlIIIIIlIlIIIllI 
+IllIIIIllIIIIlIll =_IlIIlllllIlllIlIl 
+IIlIIIlIIlIllllII ={_IIlIlIlIIllIIIIll ,_IIIlIllllIIlIIIIl ,_IlIIlllIlIllIIlll ,_IlllllIllIIlIlIIl ,'opus',_IlIIllIllllIlIIII ,'mp4',_IlIIllllIlIIlllII ,'alac','wma','aiff','webm','ac3'}
+IIlIIIlIIIlIIlIII =[os .path .join (IlIllllIIIIIIlIII ,IlllIIIllIIIIIIII )for (IlIllllIIIIIIlIII ,_IllIlIllIIllIllIl ,IIlIllIIlIlIlllll )in os .walk (IllIIllIlllIlIlIl )for IlllIIIllIIIIIIII in IIlIllIIlIlIlllll if IlllIIIllIIIIIIII .endswith ((_IlIlIIlIllllIIlIl ,_IlllllIIllllIlIII ))]
+IllIlIIlIlIIIIIlI =[os .path .join (IIIIlIllllIlIlIlI ,IllIlllllllIlllll )for (IIIIlIllllIlIlIlI ,_IIlIIIIIIlIIIllIl ,IllIlIlIllIlIllIl )in os .walk (IlIlIIIllIIllIlll ,topdown =_IIIIlIlIIIlIlIlll )for IllIlllllllIlllll in IllIlIlIllIlIllIl if IllIlllllllIlllll .endswith (_IlIIllIllIllIIIIl )and _IlIllIlIIIlllIIIl not in IllIlllllllIlllll ]
+IIIlIIllllIIIIIII =[os .path .join (IIllIllIlIIIIllII ,IlIIllIllIIIIIllI )for (IIllIllIlIIIIllII ,_IlllIIIIIIlIllllI ,IIlllllllIIIlllIl )in os .walk (IllIIlIIIllIllIII ,topdown =_IIIIlIlIIIlIlIlll )for IlIIllIllIIIIIllI in IIlllllllIIIlllIl if IlIIllIllIIIIIllI .endswith (tuple (IIlIIIlIIlIllllII ))if IlIIllIllIIIIIllI .endswith (tuple (IIlIIIlIIlIllllII ))and not IlIIllIllIIIIIllI .endswith ('.gitignore')]
+IIllIlllIIllIIllI =[os .path .join (IlIlIlIIIIllIIlII ,IIlIllIlllIlllIIl )for (IlIlIlIIIIllIIlII ,_IIlllIlllllIllIll ,IlllIIIllIIlllIlI )in os .walk (IllIIIIllIIIIlIll ,topdown =_IIIIlIlIIIlIlIlll )for IIlIllIlllIlllIIl in IlllIIIllIIlllIlI if IIlIllIlllIlllIIl .endswith (tuple (IIlIIIlIIlIllllII ))]
+IllllIIlIIllIIlll =[IlIIIlIIlIIllIllI .replace (_IlIlIIlIllllIIlIl ,'')for IlIIIlIIlIIllIllI in os .listdir (IIllllIlIlllIIllI )if IlIIIlIIlIIllIllI .endswith (_IlIlIIlIllllIIlIl )or 'onnx'in IlIIIlIIlIIllIllI ]
+IlllIllIlIIlIlIll =lambda :sorted (IIlIIIlIIIlIIlIII )[0 ]if IIlIIIlIIIlIIlIII else ''
+IlIIIIIIIIllIIlIl =[]
+for IIllIllIIIlIlIIII in os .listdir (os .path .join (IlIIIllllllIllIll ,IlIllllIlIllIlIlI )):
+	if _IIIIlllIlIIIlllll not in IIllIllIIIlIlIIII :IlIIIIIIIIllIIlIl .append (os .path .join (easy_infer .find_folder_parent (_IIIIlllIlIIIlllll ,_IIIIlIIIIllllllII ),_IIIlllllIlIIIIIll ,IIllIllIIIlIlIIII ))
+def IlIIIllIlIlIllllI ():
+	if len (IlIIIIIIIIllIIlIl )>0 :return sorted (IlIIIIIIIIllIIlIl )[0 ]
+	else :return ''
+def IIlllIIllllllllll (IIlIIllIllIIlIllI ):
+	IlIlIIllIIlllIIIl =get_model_list ();IIIIIIIllIllIlIIl =list (IlIlIIllIIlllIIIl )
+	if IIlIIllIllIIlIllI ==_IlIIIIIllllIlIlII :return {_IIllIIIlIIlllIlII :IllllIIlIIllIIlll ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+	elif IIlIIllIllIIlIllI ==_IIIIlIIllIIlllIll :return {_IIllIIIlIIlllIlII :IIIIIIIllIllIlIIl ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+IIllIlIIlIlIIllII =easy_infer .get_bark_voice ()
+IlIIIlllIIIlIIIII =easy_infer .get_edge_voice ()
+def IlIlIlllIlllIIIlI (IllllllllIlIllIll ):
+	if IllllllllIlIllIll ==_IIlIIllIlIIIIlIll :return {_IIllIIIlIIlllIlII :IlIIIlllIIIlIIIII ,_IlllIIllllIIIIlIl :'',_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+	elif IllllllllIlIllIll ==_IIIlllIlllIIIIlII :return {_IIllIIIlIIlllIlII :IIllIlIIlIlIIllII ,_IlllIIllllIIIIlIl :'',_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+def IlIIllIllIlIIIlII (IlllllllllllIlIlI ):
+	IllIlllIIIllIlIlI =[]
+	for IlIIlllIlIIlIIlll in os .listdir (os .path .join (IlIIIllllllIllIll ,IlIllllIlIllIlIlI )):
+		if _IIIIlllIlIIIlllll not in IlIIlllIlIIlIIlll :IllIlllIIIllIlIlI .append (os .path .join (easy_infer .find_folder_parent (_IIIIlllIlIIIlllll ,_IIIIlIIIIllllllII ),_IIIlllllIlIIIIIll ,IlIIlllIlIIlIIlll ))
+	return IllIlIlIIllllIlIl .Dropdown .update (choices =IllIlllIIIllIlIlI )
+def IIlllIlIIIlIIlIll ():IlIlllIIllIlIlIII =[os .path .join (IIlIlIIlIlIllllIl ,IIIIIIlIlllllIIlI )for (IIlIlIIlIlIllllIl ,_IllIIIIIllIIIIIIl ,IllIllIlIlIllIIII )in os .walk (IlIlIIIllIIllIlll )for IIIIIIlIlllllIIlI in IllIllIlIlIllIIII if IIIIIIlIlllllIIlI .endswith (_IlIIllIllIllIIIIl )and _IlIllIlIIIlllIIIl not in IIIIIIlIlllllIIlI ];return IlIlllIIllIlIlIII if IlIlllIIllIlIlIII else ''
+def IIIllllIIlIlllIlI ():IIlIlIllIIIlIlllI =[os .path .join (IllIIlIIllIIlIIlI ,IlllIIlIIIIIIllIl )for (IllIIlIIllIIlIIlI ,_IllIlIIIIlIIlIlIl ,IlIlIIllIlIIIIIlI )in os .walk (IlIIIllIllllIIIll )for IlllIIlIIIIIIllIl in IlIlIIllIlIIIIIlI if IlllIIlIIIIIIllIl .endswith ('.txt')];return IIlIlIllIIIlIlllI if IIlIlIllIIIlIlllI else ''
+import soundfile as sf 
+def IIllIIlIIIIIIlIll (IlIlIIlllllIIIlll ,IllllIIIlIllllIlI ,IIIlIlIIllIllllIl ):
+	IIIIIllIIlIlIllIl =1 
+	while _IlllIIIlllIllIllI :
+		IlIIIlIlIlllIlllI =os .path .join (IlIlIIlllllIIIlll ,f"{IllllIIIlIllllIlI}_{IIIIIllIIlIlIllIl}.{IIIlIlIIllIllllIl}")
+		if not os .path .exists (IlIIIlIlIlllIlllI ):return IlIIIlIlIlllIlllI 
+		IIIIIllIIlIlIllIl +=1 
+def IIIlIIllllIllIllI (IIllllIIllIIIIlIl ,IlllIlIIIllIIIlll ,IIllIlIlIIIllllll ,IllllIIIIllIllIlI ,IlIIllIIIlIllIlII ):
+	IlllllIlIlIlIllIl ,IIlllllIlIlllIlll =librosa .load (IIllllIIllIIIIlIl ,sr =_IllIIIllIIIllllIl );IlIlIlIIlIIIllllI ,IlIlllllIlIlllIIl =librosa .load (IlllIlIIIllIIIlll ,sr =_IllIIIllIIIllllIl )
+	if IIlllllIlIlllIlll !=IlIlllllIlIlllIIl :
+		if IIlllllIlIlllIlll >IlIlllllIlIlllIIl :IlIlIlIIlIIIllllI =librosa .resample (IlIlIlIIlIIIllllI ,orig_sr =IlIlllllIlIlllIIl ,target_sr =IIlllllIlIlllIlll )
+		else :IlllllIlIlIlIllIl =librosa .resample (IlllllIlIlIlIllIl ,orig_sr =IIlllllIlIlllIlll ,target_sr =IlIlllllIlIlllIIl )
+	IIlIlIIlIlIllIlIl =min (len (IlllllIlIlIlIllIl ),len (IlIlIlIIlIIIllllI ));IlllllIlIlIlIllIl =librosa .util .fix_length (IlllllIlIlIlIllIl ,IIlIlIIlIlIllIlIl );IlIlIlIIlIIIllllI =librosa .util .fix_length (IlIlIlIIlIIIllllI ,IIlIlIIlIlIllIlIl )
+	if IllllIIIIllIllIlI !=_IlIlllIlIlIlIlIll :IlllllIlIlIlIllIl *=IllllIIIIllIllIlI 
+	if IlIIllIIIlIllIlII !=_IlIlllIlIlIlIlIll :IlIlIlIIlIIIllllI *=IlIIllIIIlIllIlII 
+	IIIIlIlllllllIIlI =IlllllIlIlIlIllIl +IlIlIlIIlIIIllllI ;sf .write (IIllIlIlIIIllllll ,IIIIlIlllllllIIlI ,IIlllllIlIlllIlll )
+def IlllIIlIIIIlllllI (IlIllIlIIlIllllII ,IllIlIIlIIIIlIlIl ,IIlIIIlIlIlIIllll =_IlIlllIlIlIlIlIll ,IIIIIlIIllIIIIIII =_IlIlllIlIlIlIlIll ,IlllllIIllIIlIlII =_IIIIlIlIIIlIlIlll ,IlIllIlIIlllllIIl =_IIIIlIlIIIlIlIlll ,IIlIIlllIlIIlIlIl =_IIIIlIlIIIlIlIlll ):
+	IIIlIlIlIlllIlllI ='Conversion complete!';IllIlIIllIIlIIlII ='combined_audio';IIIllllIIIIlIIlII =os .path .join (IlIIIllllllIllIll ,_IIlIIIlIIIllIIIll );os .makedirs (IIIllllIIIIlIIlII ,exist_ok =_IlllIIIlllIllIllI );IllIlIIIlIIlIIllI =IllIlIIllIIlIIlII ;IIlIIIIIlIIllIllI =_IIlIlIlIIllIIIIll ;IIIlIIllIIIlIlIll =IIllIIlIIIIIIlIll (IIIllllIIIIlIIlII ,IllIlIIIlIIlIIllI ,IIlIIIIIlIIllIllI );print (IlllllIIllIIlIlII );print (IlIllIlIIlllllIIl );print (IIlIIlllIlIIlIlIl )
+	if IlllllIIllIIlIlII or IlIllIlIIlllllIIl or IIlIIlllIlIIlIlIl :IllIlIIIlIIlIIllI ='effect_audio';IIIlIIllIIIlIlIll =IIllIIlIIIIIIlIll (IIIllllIIIIlIIlII ,IllIlIIIlIIlIIllI ,IIlIIIIIlIIllIllI );IIIIIIlIllllIIlIl =audioEffects .process_audio (IllIlIIlIIIIlIlIl ,IIIlIIllIIIlIlIll ,IlllllIIllIIlIlII ,IlIllIlIIlllllIIl ,IIlIIlllIlIIlIlIl );IllIlIIIlIIlIIllI =IllIlIIllIIlIIlII ;IIIlIIllIIIlIlIll =IIllIIlIIIIIIlIll (IIIllllIIIIlIIlII ,IllIlIIIlIIlIIllI ,IIlIIIIIlIIllIllI );IIIlIIllllIllIllI (IlIllIlIIlIllllII ,IIIIIIlIllllIIlIl ,IIIlIIllIIIlIlIll ,IIlIIIlIlIlIIllll ,IIIIIlIIllIIIIIII );return IIIllIIllIIIIIIlI (IIIlIlIlIlllIlllI ),IIIlIIllIIIlIlIll 
+	else :IllIlIIIlIIlIIllI =IllIlIIllIIlIIlII ;IIIlIIllIIIlIlIll =IIllIIlIIIIIIlIll (IIIllllIIIIlIIlII ,IllIlIIIlIIlIIllI ,IIlIIIIIlIIllIllI );IIIlIIllllIllIllI (IlIllIlIIlIllllII ,IllIlIIlIIIIlIlIl ,IIIlIIllIIIlIlIll ,IIlIIIlIlIlIIllll ,IIIIIlIIllIIIIIII );return IIIllIIllIIIIIIlI (IIIlIlIlIlllIlllI ),IIIlIIllIIIlIlIll 
+def IlIIlIIlIIlllIIII (IlllIllIlllIlllIl ,IIlIIIIllIlIIllll ,IIlIlllIlIIIIllIl ,IllIIlIlIIIIllIIl ,IlIllIlllIllIIIIl ,IIlIIllllllIIIlIl ,IlllIIIlllIllIIll ,IIIlIIlIIIIlIIlll ,IIlIllIlIIlllIIIl ,IIllIIIIlllllIllI ,IIllIlIIIIIlIllll ,IIlllIIIIIlIllIIl ,IIIlllIllIllIIlll ,IIIllIllIlIllllIl ,IlIIlllIlIIlIIlII ,IllllIllIIlIlIllI ,IlIIllIlIlIIIllIl ,IIllIlIlIlIlIlIII ,IIIIIlIIIllIIIIll ):
+	global IIlIIIIlIIlIlIIll ;IIlIIIIlIIlIlIIll =0 ;IllIIlIlIlIIllllI =time .time ();global IIllIllIlIlIlIlII ,IIllIIIllIIllllll ,IIIIIlIIIlIllllII ,IIIlIlllIIIIlllIl ,IllIIIIIlllllIlIl ;IlIllIlIllIIlIlll =_IlllIIIlllIllIllI if IIlIIllllllIIIlIl ==_IIIlIlIIllllIIIlI else _IIIIlIlIIIlIlIlll 
+	if not IIlIIIIllIlIIllll and not IIlIlllIlIIIIllIl :return _IIIIllIIllIllIIII ,_IllIIIllIIIllllIl 
+	if not os .path .exists (IIlIIIIllIlIIllll )and not os .path .exists (os .path .join (IlIIIllllllIllIll ,IIlIIIIllIlIIllll )):return "Audio was not properly selected or doesn't exist",_IllIIIllIIIllllIl 
+	IIlIlllIlIIIIllIl =IIlIlllIlIIIIllIl or IIlIIIIllIlIIllll ;print (f"\nStarting inference for '{os.path.basename(IIlIlllIlIIIIllIl)}'");print ('-------------------');IllIIlIlIIIIllIIl =int (IllIIlIlIIIIllIIl )
+	if rvc_globals .NotesIrHertz and IIlIIllllllIIIlIl !=_IlIIllllIIIlIlIlI :IlIIlllIlIIlIIlII =IIIllIIIlIIIlllII (IllllIllIIlIlIllI )if IllllIllIIlIlIllI else 50 ;IlIIllIlIlIIIllIl =IIIllIIIlIIIlllII (IIllIlIlIlIlIlIII )if IIllIlIlIlIlIlIII else 1100 ;print (f"Converted Min pitch: freq - {IlIIlllIlIIlIIlII}\nConverted Max pitch: freq - {IlIIllIlIlIIIllIl}")
+	else :IlIIlllIlIIlIIlII =IlIIlllIlIIlIIlII or 50 ;IlIIllIlIlIIIllIl =IlIIllIlIlIIIllIl or 1100 
 	try :
-		IIlIllIlIIIlllIIl =load_audio (IlllIIIlIlIllIlll ,16000 );IlllllIIlIIlllIIl =np .abs (IIlIllIlIIIlllIIl ).max ()/.95 
-		if IlllllIIlIIlllIIl >1 :IIlIllIlIIIlllIIl /=IlllllIIlIIlllIIl 
-		IllllllIIIlIlllll =[0 ,0 ,0 ]
-		if not IlllIIIIllIlIllll :IIlllllIIIlIllIlI ()
-		IlllIIIIIIllIllIl =IllIllIlllIllIIll .get (_IIllIllIlllIIllIl ,1 );IIIIllllIIllIllII =IIIIllllIIllIllII .strip (_IIIlIllIIIIlIllll ).strip (_IIlIllllIlllIIIIl ).strip (_IIlIlIIIlIIlIIIll ).strip (_IIlIllllIlllIIIIl ).strip (_IIIlIllIIIIlIllll ).replace (_IllllIlIIIIIIIlII ,'added')if IIIIllllIIllIllII !=''else IIllllIlIIIlIllII ;IlIllIIlIIIlIIlII =IllIlIIIlIIIIIlll .pipeline (IlllIIIIllIlIllll ,IIIlIlIlIllIIIIII ,IllIllIIIllllIlII ,IIlIllIlIIIlllIIl ,IlllIIIlIlIllIlll ,IllllllIIIlIlllll ,IllIIllIIIlIllIlI ,IIlllIlllIIIIIlIl ,IIIIllllIIllIllII ,IIllIIlIIlIllIllI ,IlllIIIIIIllIllIl ,IIIlllIIIIllIIlII ,IlIlIIIIlIllIllll ,IlIllllllIIllIIll ,IlIIIIIIIllIlIllI ,IllIIlIllIlIIIllI ,IllllIlIIIllIlIll ,f0_file =IIlllllllIlllllll )
-		if IlIlIIIIlIllIllll !=IlIllllllIIllIIll >=16000 :IlIlIIIIlIllIllll =IlIllllllIIllIIll 
-		IlIlIIIlIlIIllIIl ='Using index:%s.'%IIIIllllIIllIllII if os .path .exists (IIIIllllIIllIllII )else 'Index not used.';return 'Success.\n %s\nTime:\n npy:%ss, f0:%ss, infer:%ss'%(IlIlIIIlIlIIllIIl ,IllllllIIIlIlllll [0 ],IllllllIIIlIlllll [1 ],IllllllIIIlIlllll [2 ]),(IlIlIIIIlIllIllll ,IlIllIIlIIIlIIlII )
-	except :IIIIIllIIlllllIll =traceback .format_exc ();print (IIIIIllIIlllllIll );return IIIIIllIIlllllIll ,(_IllIIIIIllIIIIIlI ,_IllIIIIIllIIIIIlI )
-def IIIlIIllIIIlllIII (IIllllIllIllIlIll ,IlIIIIllIIIlIlllI ,IIlllIIIIIIIIlIlI ,IIIllIIlIIIllIllI ,IIIlIIIlllIlIllIl ,IlIlIlIIlIlIllIIl ,IlIlIIIIlIIllllII ,IIIIIlIlIIIIlIllI ,IllIlIIlIlIIIlllI ,IlIIIIllIIllIIlIl ,IllllIlIlIIlIllII ,IlIlIIIlIlIlIlIlI ,IllIlIlllIIlllIlI ,IlIlIlIIIIllIIIII ):
+		IIlIlllIlIIIIllIl =IIlIlllIlIIIIllIl or IIlIIIIllIlIIllll ;print (f"Attempting to load {IIlIlllIlIIIIllIl}....");IIlIIIllllIIlIIII =load_audio (IIlIlllIlIIIIllIl ,16000 ,DoFormant =rvc_globals .DoFormant ,Quefrency =rvc_globals .Quefrency ,Timbre =rvc_globals .Timbre );IlIIIlIIIIlIIllII =IIlIlllllIlIlIIlI .abs (IIlIIIllllIIlIIII ).max ()/.95 
+		if IlIIIlIIIIlIIllII >1 :IIlIIIllllIIlIIII /=IlIIIlIIIIlIIllII 
+		IIIllIIlIlIIIIIll =[0 ,0 ,0 ]
+		if not IIIlIlllIIIIlllIl :print ('Loading hubert for the first time...');IlIIlIllIIIIIIlIl ()
+		try :IIIIlIIIlIIlIllll =IIIIlIIlIIlllIIIl .get (_IllIIIlIllllIIllI ,1 )
+		except NameError :IIllIllIIlIlIIIII ='Model was not properly selected';print (IIllIllIIlIlIIIII );return IIllIllIIlIlIIIII ,_IllIIIllIIIllllIl 
+		IlllIIIlllIllIIll =IlllIIIlllIllIIll .strip (_IlIlIIIlllIllIlll ).strip (_IIlllllllllIllIll ).strip (_IIlIlIIllllIlIIlI ).strip (_IIlllllllllIllIll ).strip (_IlIlIIIlllIllIlll ).replace (_IlIllIlIIIlllIIIl ,'added')if IlllIIIlllIllIIll !=''else IIIlIIlIIIIlIIlll 
+		try :IIlIlIIlllllIIIll =IIIIIlIIIlIllllII .pipeline (IIIlIlllIIIIlllIl ,IIllIIIllIIllllll ,IlllIllIlllIlllIl ,IIlIIIllllIIlIIII ,IIlIlllIlIIIIllIl ,IIIllIIlIlIIIIIll ,IllIIlIlIIIIllIIl ,IIlIIllllllIIIlIl ,IlllIIIlllIllIIll ,IIlIllIlIIlllIIIl ,IIIIlIIIlIIlIllll ,IIllIIIIlllllIllI ,IIllIllIlIlIlIlII ,IIllIlIIIIIlIllll ,IIlllIIIIIlIllIIl ,IllIIIIIlllllIlIl ,IIIlllIllIllIIlll ,IIIllIllIlIllllIl ,IIIIIlIIIllIIIIll ,IlIllIlIllIIlIlll ,f0_file =IlIllIlllIllIIIIl ,f0_min =IlIIlllIlIIlIIlII ,f0_max =IlIIllIlIlIIIllIl )
+		except AssertionError :IIllIllIIlIlIIIII ='Mismatching index version detected (v1 with v2, or v2 with v1).';print (IIllIllIIlIlIIIII );return IIllIllIIlIlIIIII ,_IllIIIllIIIllllIl 
+		except NameError :IIllIllIIlIlIIIII ='RVC libraries are still loading. Please try again in a few seconds.';print (IIllIllIIlIlIIIII );return IIllIllIIlIlIIIII ,_IllIIIllIIIllllIl 
+		if IIllIllIlIlIlIlII !=IIllIlIIIIIlIllll >=16000 :IIllIllIlIlIlIlII =IIllIlIIIIIlIllll 
+		IllIllllllIIIllIl =_IIIlIllIIIlllIllI %IlllIIIlllIllIIll if os .path .exists (IlllIIIlllIllIIll )else _IlIIlIIllllIIIlIl ;IlllIIIIlIlIlIlIl =time .time ();IIlIIIIlIIlIlIIll =IlllIIIIlIlIlIlIl -IllIIlIlIlIIllllI ;IlIlIlIIlllIlIIll =_IIlIIIlIIIllIIIll ;os .makedirs (IlIlIlIIlllIlIIll ,exist_ok =_IlllIIIlllIllIllI );IlIIlIIlIIIIlIIll ='generated_audio_{}.wav';IlIllIlllllIIIIII =1 
+		while _IlllIIIlllIllIllI :
+			IllIlIlIIlIIIlIII =os .path .join (IlIlIlIIlllIlIIll ,IlIIlIIlIIIIlIIll .format (IlIllIlllllIIIIII ))
+			if not os .path .exists (IllIlIlIIlIIIlIII ):break 
+			IlIllIlllllIIIIII +=1 
+		wavfile .write (IllIlIlIIlIIIlIII ,IIllIllIlIlIlIlII ,IIlIlIIlllllIIIll );print (f"Generated audio saved to: {IllIlIlIIlIIIlIII}");return f"Success.\n {IllIllllllIIIllIl}\nTime:\n npy:{IIIllIIlIlIIIIIll[0]}, f0:{IIIllIIlIlIIIIIll[1]}, infer:{IIIllIIlIlIIIIIll[2]}\nTotal Time: {IIlIIIIlIIlIlIIll} seconds",(IIllIllIlIlIlIlII ,IIlIlIIlllllIIIll )
+	except :IIllIIIlIIIIIIIIl =traceback .format_exc ();print (IIllIIIlIIIIIIIIl );return IIllIIIlIIIIIIIIl ,(_IllIIIllIIIllllIl ,_IllIIIllIIIllllIl )
+def IlllIllIIIIlllllI (IlllllllIIllIIIlI ,IlllIIIIlIIIlIlII ,IlIIIIIllIIlIIllI ,IllIIIlIlIlIIllIl ,IllIllIlIIlllllIl ,IIlIlIllllIlIlIIl ,IIIIIlllllIlIlIIl ,IIIlIIIIIlllIIIll ,IIllIlIIIllIlIIIl ,IlIIIIlIIIllllIlI ,IlIlllIlIIIllIIll ,IIIlIlIIIllIlllIl ,IIIIlllIlIlIlIIIl ,IIIlllIllllIlllII ,IIlIlIIlIIIlIllll ,IIIllIlIIIlIllllI ,IlIllIIIIlIlIlIIl ,IllIlIIlllIIIlIIl ,IlIlllllIlIllllIl ,IlIlIIlIIIIIllIll ):
+	if rvc_globals .NotesIrHertz and IIlIlIllllIlIlIIl !=_IlIIllllIIIlIlIlI :IIIllIlIIIlIllllI =IIIllIIIlIIIlllII (IlIllIIIIlIlIlIIl )if IlIllIIIIlIlIlIIl else 50 ;IllIlIIlllIIIlIIl =IIIllIIIlIIIlllII (IlIlllllIlIllllIl )if IlIlllllIlIllllIl else 1100 ;print (f"Converted Min pitch: freq - {IIIllIlIIIlIllllI}\nConverted Max pitch: freq - {IllIlIIlllIIIlIIl}")
+	else :IIIllIlIIIlIllllI =IIIllIlIIIlIllllI or 50 ;IllIlIIlllIIIlIIl =IllIlIIlllIIIlIIl or 1100 
 	try :
-		IlIIIIllIIIlIlllI =IlIIIIllIIIlIlllI .strip (_IIIlIllIIIIlIllll ).strip (_IIlIllllIlllIIIIl ).strip (_IIlIlIIIlIIlIIIll ).strip (_IIlIllllIlllIIIIl ).strip (_IIIlIllIIIIlIllll );IIlllIIIIIIIIlIlI =IIlllIIIIIIIIlIlI .strip (_IIIlIllIIIIlIllll ).strip (_IIlIllllIlllIIIIl ).strip (_IIlIlIIIlIIlIIIll ).strip (_IIlIllllIlllIIIIl ).strip (_IIIlIllIIIIlIllll );os .makedirs (IIlllIIIIIIIIlIlI ,exist_ok =_IlIlIIllIlIIIllIl )
-		try :
-			if IlIIIIllIIIlIlllI !='':IIIllIIlIIIllIllI =[os .path .join (IlIIIIllIIIlIlllI ,IlIIIIIIlllIIllIl )for IlIIIIIIlllIIllIl in os .listdir (IlIIIIllIIIlIlllI )]
-			else :IIIllIIlIIIllIllI =[IIllllllIlIIIllll .name for IIllllllIlIIIllll in IIIllIIlIIIllIllI ]
-		except :traceback .print_exc ();IIIllIIlIIIllIllI =[IlIlIIllllIllllII .name for IlIlIIllllIllllII in IIIllIIlIIIllIllI ]
-		IIlllllIIlIlllllI =[]
-		for IlIlllllIIlllllIl in IIIllIIlIIIllIllI :
-			IIllIlIllIIllllll ,IIlllIIIIIIllIIIl =IIIlIlIlllIlIIIIl (IIllllIllIllIlIll ,IlIlllllIIlllllIl ,IIIlIIIlllIlIllIl ,_IllIIIIIllIIIIIlI ,IlIlIlIIlIlIllIIl ,IlIlIIIIlIIllllII ,IIIIIlIlIIIIlIllI ,IllIlIIlIlIIIlllI ,IlIIIIllIIllIIlIl ,IllllIlIlIIlIllII ,IlIlIIIlIlIlIlIlI ,IllIlIlllIIlllIlI )
-			if 'Success'in IIllIlIllIIllllll :
+		IlllIIIIlIIIlIlII ,IlIIIIIllIIlIIllI =[IllIlIlIIllIlIIlI .strip (_IlIlIIIlllIllIlll ).strip (_IIlllllllllIllIll ).strip (_IIlIlIIllllIlIIlI ).strip (_IIlllllllllIllIll ).strip (_IlIlIIIlllIllIlll )for IllIlIlIIllIlIIlI in [IlllIIIIlIIIlIlII ,IlIIIIIllIIlIIllI ]];os .makedirs (IlIIIIIllIIlIIllI ,exist_ok =_IlllIIIlllIllIllI );IllIIIlIlIlIIllIl =[os .path .join (IlllIIIIlIIIlIlII ,IlllIllIllIlllIll )for IlllIllIllIlllIll in os .listdir (IlllIIIIlIIIlIlII )]if IlllIIIIlIIIlIlII else [IIIlIIlIIllIIllll .name for IIIlIIlIIllIIllll in IllIIIlIlIlIIllIl ];IlIlIIIlIIIIIIllI =[]
+		for IllllIlIlIIIIIlll in IllIIIlIlIlIIllIl :
+			IlIIlIllIllIllIIl ,IIIlIlIlIIlIllIII =IlIIlIIlIIlllIIII (IlllllllIIllIIIlI ,IllllIlIlIIIIIlll ,_IllIIIllIIIllllIl ,IllIllIlIIlllllIl ,_IllIIIllIIIllllIl ,IIlIlIllllIlIlIIl ,IIIIIlllllIlIlIIl ,IIIlIIIIIlllIIIll ,IIllIlIIIllIlIIIl ,IlIIIIlIIIllllIlI ,IlIlllIlIIIllIIll ,IIIlIlIIIllIlllIl ,IIIIlllIlIlIlIIIl ,IIlIlIIlIIIlIllll ,IIIllIlIIIlIllllI ,IlIllIIIIlIlIlIIl ,IllIlIIlllIIIlIIl ,IlIlllllIlIllllIl ,IlIlIIlIIIIIllIll )
+			if 'Success'in IlIIlIllIllIllIIl :
 				try :
-					IlIllIlllIlIIlIII ,IlllllIllIIIIllll =IIlllIIIIIIllIIIl 
-					if IlIlIlIIIIllIIIII in [_IIIIIIIlIIIlllIIl ,_IlllIlllIIIIllIlI ]:sf .write ('%s/%s.%s'%(IIlllIIIIIIIIlIlI ,os .path .basename (IlIlllllIIlllllIl ),IlIlIlIIIIllIIIII ),IlllllIllIIIIllll ,IlIllIlllIlIIlIII )
-					else :
-						IlIlllllIIlllllIl ='%s/%s.wav'%(IIlllIIIIIIIIlIlI ,os .path .basename (IlIlllllIIlllllIl ));sf .write (IlIlllllIIlllllIl ,IlllllIllIIIIllll ,IlIllIlllIlIIlIII )
-						if os .path .exists (IlIlllllIIlllllIl ):os .system ('ffmpeg -i %s -vn %s -q:a 2 -y'%(IlIlllllIIlllllIl ,IlIlllllIIlllllIl [:-4 ]+'.%s'%IlIlIlIIIIllIIIII ))
-				except :IIllIlIllIIllllll +=traceback .format_exc ()
-			IIlllllIIlIlllllI .append (_IIllIllIIIlIllIIl %(os .path .basename (IlIlllllIIlllllIl ),IIllIlIllIIllllll ));yield _IIlIlIIIlIIlIIIll .join (IIlllllIIlIlllllI )
-		yield _IIlIlIIIlIIlIIIll .join (IIlllllIIlIlllllI )
+					IlIIlIlIlllllIIlI ,IlIlllIIlIlIlIlII =IIIlIlIlIIlIllIII ;IllIIIlIIlIlllIll =os .path .splitext (os .path .basename (IllllIlIlIIIIIlll ))[0 ];IllIIIlIIIIIllllI =f"{IlIIIIIllIIlIIllI}/{IllIIIlIIlIlllIll}.{IIIlllIllllIlllII}";IllllIlIlIIIIIlll ,IlIIIIIlIllIIIIIl =IllIIIlIIIIIllllI ,IIIlllIllllIlllII ;IllllIlIlIIIIIlll ,IlIIIIIlIllIIIIIl =IllIIIlIIIIIllllI if IIIlllIllllIlllII in [_IIlIlIlIIllIIIIll ,_IlIIlllIlIllIIlll ,_IIIlIllllIIlIIIIl ,_IlllllIllIIlIlIIl ,_IlIIllllIlIIlllII ,_IlIIllIllllIlIIII ]else f"{IllIIIlIIIIIllllI}.wav",IIIlllIllllIlllII ;IlIlIIlIlIIllIIIl (IllllIlIlIIIIIlll ,IlIlllIIlIlIlIlII ,IlIIlIlIlllllIIlI )
+					if os .path .exists (IllllIlIlIIIIIlll )and IlIIIIIlIllIIIIIl not in [_IIlIlIlIIllIIIIll ,_IlIIlllIlIllIIlll ,_IIIlIllllIIlIIIIl ,_IlllllIllIIlIlIIl ,_IlIIllllIlIIlllII ,_IlIIllIllllIlIIII ]:sys .stdout .write (f"Running command: ffmpeg -i {IlIIIIlllllIllIIl(IllllIlIlIIIIIlll)} -vn {IlIIIIlllllIllIIl(IllllIlIlIIIIIlll[:-4]+_IIIIlllIlIIIlllll+IlIIIIIlIllIIIIIl)} -q:a 2 -y");os .system (f"ffmpeg -i {IlIIIIlllllIllIIl(IllllIlIlIIIIIlll)} -vn {IlIIIIlllllIllIIl(IllllIlIlIIIIIlll[:-4]+_IIIIlllIlIIIlllll+IlIIIIIlIllIIIIIl)} -q:a 2 -y")
+				except :IlIIlIllIllIllIIl +=traceback .format_exc ();print (f"\nException encountered: {IlIIlIllIllIllIIl}")
+			IlIlIIIlIIIIIIllI .append (f"{os.path.basename(IllllIlIlIIIIIlll)}->{IlIIlIllIllIllIIl}");yield _IIlIlIIllllIlIIlI .join (IlIlIIIlIIIIIIllI )
+		yield _IIlIlIIllllIlIIlI .join (IlIlIIIlIIIIIIllI )
 	except :yield traceback .format_exc ()
-def IlllIIlIIIllIlIlI (IIIIlIIIIlllllIlI ,IllllllllIIlIlIlI ,IlIIllIllIIIIIIlI ,IlIllIlIIIlIlllll ,IIIlllIIIIIIIlIIl ,IIlIllIIlIlIIIlII ,IlllIllIlIlIllIII ):
-	IlIllIlIIIIllllII ='streams';IIIlIlllIIllllIII ='onnx_dereverb_By_FoxJoy';IlIIIIIllllllIIIl =[]
-	try :
-		IllllllllIIlIlIlI =IllllllllIIlIlIlI .strip (_IIIlIllIIIIlIllll ).strip (_IIlIllllIlllIIIIl ).strip (_IIlIlIIIlIIlIIIll ).strip (_IIlIllllIlllIIIIl ).strip (_IIIlIllIIIIlIllll );IlIIllIllIIIIIIlI =IlIIllIllIIIIIIlI .strip (_IIIlIllIIIIlIllll ).strip (_IIlIllllIlllIIIIl ).strip (_IIlIlIIIlIIlIIIll ).strip (_IIlIllllIlllIIIIl ).strip (_IIIlIllIIIIlIllll );IIIlllIIIIIIIlIIl =IIIlllIIIIIIIlIIl .strip (_IIIlIllIIIIlIllll ).strip (_IIlIllllIlllIIIIl ).strip (_IIlIlIIIlIIlIIIll ).strip (_IIlIllllIlllIIIIl ).strip (_IIIlIllIIIIlIllll )
-		if IIIIlIIIIlllllIlI ==IIIlIlllIIllllIII :from MDXNet import MDXNetDereverb ;IIlllllIlIIlIIlIl =MDXNetDereverb (15 )
-		else :IllIllIIIIIIIllIl =_audio_pre_ if 'DeEcho'not in IIIIlIIIIlllllIlI else _audio_pre_new ;IIlllllIlIIlIIlIl =IllIllIIIIIIIllIl (agg =int (IIlIllIIlIlIIIlII ),model_path =os .path .join (IIIllIllIlIIlIlII ,IIIIlIIIIlllllIlI +_IlIIIIllllIIIIlII ),device =IlllIIlIlIIIIlIlI .device ,is_half =IlllIIlIlIIIIlIlI .is_half )
-		if IllllllllIIlIlIlI !='':IlIllIlIIIlIlllll =[os .path .join (IllllllllIIlIlIlI ,IlIlllIlIlIIlIlIl )for IlIlllIlIlIIlIlIl in os .listdir (IllllllllIIlIlIlI )]
-		else :IlIllIlIIIlIlllll =[IIlIlIIIlIIIllIll .name for IIlIlIIIlIIIllIll in IlIllIlIIIlIlllll ]
-		for IlIIllIlIIIIIllll in IlIllIlIIIlIlllll :
-			IIIlllllllIlllIll =os .path .join (IllllllllIIlIlIlI ,IlIIllIlIIIIIllll );IIIlIIIIIIlIIIIlI =1 ;IllIIIIIllllIIlII =0 
-			try :
-				IlIIllIIIlIIllIII =ffmpeg .probe (IIIlllllllIlllIll ,cmd ='ffprobe')
-				if IlIIllIIIlIIllIII [IlIllIlIIIIllllII ][0 ]['channels']==2 and IlIIllIIIlIIllIII [IlIllIlIIIIllllII ][0 ][_IlIIllIIlIIlIllII ]=='44100':IIIlIIIIIIlIIIIlI =0 ;IIlllllIlIIlIIlIl ._path_audio_ (IIIlllllllIlllIll ,IIIlllIIIIIIIlIIl ,IlIIllIllIIIIIIlI ,IlllIllIlIlIllIII );IllIIIIIllllIIlII =1 
-			except :IIIlIIIIIIlIIIIlI =1 ;traceback .print_exc ()
-			if IIIlIIIIIIlIIIIlI ==1 :IIlllIIIIIllIlIII ='%s/%s.reformatted.wav'%(IIIlIlllIlIIIIIlI ,os .path .basename (IIIlllllllIlllIll ));os .system ('ffmpeg -i %s -vn -acodec pcm_s16le -ac 2 -ar 44100 %s -y'%(IIIlllllllIlllIll ,IIlllIIIIIllIlIII ));IIIlllllllIlllIll =IIlllIIIIIllIlIII 
-			try :
-				if IllIIIIIllllIIlII ==0 :IIlllllIlIIlIIlIl ._path_audio_ (IIIlllllllIlllIll ,IIIlllIIIIIIIlIIl ,IlIIllIllIIIIIIlI ,IlllIllIlIlIllIII )
-				IlIIIIIllllllIIIl .append ('%s->Success'%os .path .basename (IIIlllllllIlllIll ));yield _IIlIlIIIlIIlIIIll .join (IlIIIIIllllllIIIl )
-			except :IlIIIIIllllllIIIl .append (_IIllIllIIIlIllIIl %(os .path .basename (IIIlllllllIlllIll ),traceback .format_exc ()));yield _IIlIlIIIlIIlIIIll .join (IlIIIIIllllllIIIl )
-	except :IlIIIIIllllllIIIl .append (traceback .format_exc ());yield _IIlIlIIIlIIlIIIll .join (IlIIIIIllllllIIIl )
-	finally :
+def IIIIllIllIllllIIl (IlllIIIllIllIIlll ,IlIIllllllllIIIIl ,IlIlllIlllIIIlIlI ,IIIlIIIllIllllIlI ,IlIIlIllllIIIIlIl ,IlllIIllIIIlIIIll ,IIlllllIIlIIIIllI ,IIlIllIlIIIlIlIII ):
+	IIIIIIlIIlIlIIlII ='streams';IIIIIlllIlIIlllIl ='onnx_dereverb_By_FoxJoy';IIlIIlIIIlIIlllII =[]
+	if IIlIllIlIIIlIlIII ==_IlIIIIIllllIlIlII :
 		try :
-			if IIIIlIIIIlllllIlI ==IIIlIlllIIllllIII :del IIlllllIlIIlIIlIl .pred .model ;del IIlllllIlIIlIIlIl .pred .model_ 
-			else :del IIlllllIlIIlIIlIl .model ;del IIlllllIlIIlIIlIl 
-		except :traceback .print_exc ()
-		print (_IlIllIIlllIlllIIl )
-		if torch .cuda .is_available ():torch .cuda .empty_cache ()
-	yield _IIlIlIIIlIIlIIIll .join (IlIIIIIllllllIIIl )
-def IIlllllIIlIlIIIII (IlIlIIIlIIlllIlll ):
-	IIIIllllIIlIIlIlI ='';IIllIlIlIlIlIlIll =os .path .join (_IlllIIIIIlIllIIll ,IlIlIIIlIIlllIlll .split (_IlIIIIllIIIlIllll )[0 ],'')
-	for IlIIlIlIlIllllIlI in IIlIllIlIIIlllIll :
-		if IIllIlIlIlIlIlIll in IlIIlIlIlIllllIlI :IIIIllllIIlIIlIlI =IlIIlIlIlIllllIlI ;break 
-	return IIIIllllIIlIIlIlI 
-def IIIllllIIIIIIIIll (IllIIlIllIIIIlIIl ,IllllIIlllllIIlIl ,IIIllllIllllIIIll ):
-	global IIIIIlIIlIlIIIIII ,IlIlIIIIlIllIllll ,IIIlIlIlIllIIIIII ,IllIlIIIlIIIIIlll ,IllIllIlllIllIIll ,IllIIlIllIlIIIllI 
-	if IllIIlIllIIIIlIIl ==''or IllIIlIllIIIIlIIl ==[]:
-		global IlllIIIIllIlIllll 
-		if IlllIIIIllIlIllll is not _IllIIIIIllIIIIIlI :
-			print (_IlIllIIlllIlllIIl );del IIIlIlIlIllIIIIII ,IIIIIlIIlIlIIIIII ,IllIlIIIlIIIIIlll ,IlllIIIIllIlIllll ,IlIlIIIIlIllIllll ;IlllIIIIllIlIllll =IIIlIlIlIllIIIIII =IIIIIlIIlIlIIIIII =IllIlIIIlIIIIIlll =IlllIIIIllIlIllll =IlIlIIIIlIllIllll =_IllIIIIIllIIIIIlI 
-			if torch .cuda .is_available ():torch .cuda .empty_cache ()
-			IIIIIIIlIllIIlIIl =IllIllIlllIllIIll .get (_IIllIllIlllIIllIl ,1 );IllIIlIllIlIIIllI =IllIllIlllIllIIll .get (_IIIIlIIIlIlllIlll ,_IlllllIlIllIIllII )
-			if IllIIlIllIlIIIllI ==_IlllllIlIllIIllII :
-				if IIIIIIIlIllIIlIIl ==1 :IIIlIlIlIllIIIIII =SynthesizerTrnMs256NSFsid (*IllIllIlllIllIIll [_IlllllllIlllllllI ],is_half =IlllIIlIlIIIIlIlI .is_half )
-				else :IIIlIlIlIllIIIIII =SynthesizerTrnMs256NSFsid_nono (*IllIllIlllIllIIll [_IlllllllIlllllllI ])
-			elif IllIIlIllIlIIIllI ==_IIIlllllllIllIIll :
-				if IIIIIIIlIllIIlIIl ==1 :IIIlIlIlIllIIIIII =SynthesizerTrnMs768NSFsid (*IllIllIlllIllIIll [_IlllllllIlllllllI ],is_half =IlllIIlIlIIIIlIlI .is_half )
-				else :IIIlIlIlIllIIIIII =SynthesizerTrnMs768NSFsid_nono (*IllIllIlllIllIIll [_IlllllllIlllllllI ])
-			del IIIlIlIlIllIIIIII ,IllIllIlllIllIIll 
-			if torch .cuda .is_available ():torch .cuda .empty_cache ()
-		return {_IIIIlIlIlllllIlII :_IIIIlIllllIIIlllI ,_IlIIIllIlIlIIlllI :_IIlIlIIIIllIIIIll }
-	IIlIllllIIIlIlIlI =_IIlllIIlIIlIIllll %(IIIIIlIIlllIIlllI ,IllIIlIllIIIIlIIl );print ('loading %s'%IIlIllllIIIlIlIlI );IllIllIlllIllIIll =torch .load (IIlIllllIIIlIlIlI ,map_location =_IlIlIIlIllIllIIll );IlIlIIIIlIllIllll =IllIllIlllIllIIll [_IlllllllIlllllllI ][-1 ];IllIllIlllIllIIll [_IlllllllIlllllllI ][-3 ]=IllIllIlllIllIIll [_IIIIIllIIIIIIIlll ][_IlllllIIIIIIIIlIl ].shape [0 ];IIIIIIIlIllIIlIIl =IllIllIlllIllIIll .get (_IIllIllIlllIIllIl ,1 )
-	if IIIIIIIlIllIIlIIl ==0 :IllllIIlllllIIlIl =IIIllllIllllIIIll ={_IIIIlIlIlllllIlII :_IIIIlIllllIIIlllI ,_IIllIlIlIIIlIlIII :.5 ,_IlIIIllIlIlIIlllI :_IIlIlIIIIllIIIIll }
-	else :IllllIIlllllIIlIl ={_IIIIlIlIlllllIlII :_IlIlIIllIlIIIllIl ,_IIllIlIlIIIlIlIII :IllllIIlllllIIlIl ,_IlIIIllIlIlIIlllI :_IIlIlIIIIllIIIIll };IIIllllIllllIIIll ={_IIIIlIlIlllllIlII :_IlIlIIllIlIIIllIl ,_IIllIlIlIIIlIlIII :IIIllllIllllIIIll ,_IlIIIllIlIlIIlllI :_IIlIlIIIIllIIIIll }
-	IllIIlIllIlIIIllI =IllIllIlllIllIIll .get (_IIIIlIIIlIlllIlll ,_IlllllIlIllIIllII )
-	if IllIIlIllIlIIIllI ==_IlllllIlIllIIllII :
-		if IIIIIIIlIllIIlIIl ==1 :IIIlIlIlIllIIIIII =SynthesizerTrnMs256NSFsid (*IllIllIlllIllIIll [_IlllllllIlllllllI ],is_half =IlllIIlIlIIIIlIlI .is_half )
-		else :IIIlIlIlIllIIIIII =SynthesizerTrnMs256NSFsid_nono (*IllIllIlllIllIIll [_IlllllllIlllllllI ])
-	elif IllIIlIllIlIIIllI ==_IIIlllllllIllIIll :
-		if IIIIIIIlIllIIlIIl ==1 :IIIlIlIlIllIIIIII =SynthesizerTrnMs768NSFsid (*IllIllIlllIllIIll [_IlllllllIlllllllI ],is_half =IlllIIlIlIIIIlIlI .is_half )
-		else :IIIlIlIlIllIIIIII =SynthesizerTrnMs768NSFsid_nono (*IllIllIlllIllIIll [_IlllllllIlllllllI ])
-	del IIIlIlIlIllIIIIII .enc_q ;print (IIIlIlIlIllIIIIII .load_state_dict (IllIllIlllIllIIll [_IIIIIllIIIIIIIlll ],strict =_IIIIlIllllIIIlllI ));IIIlIlIlIllIIIIII .eval ().to (IlllIIlIlIIIIlIlI .device )
-	if IlllIIlIlIIIIlIlI .is_half :IIIlIlIlIllIIIIII =IIIlIlIlIllIIIIII .half ()
-	else :IIIlIlIlIllIIIIII =IIIlIlIlIllIIIIII .float ()
-	IllIlIIIlIIIIIlll =VC (IlIlIIIIlIllIllll ,IlllIIlIlIIIIlIlI );IIIIIlIIlIlIIIIII =IllIllIlllIllIIll [_IlllllllIlllllllI ][-3 ];return {_IIIIlIlIlllllIlII :_IlIlIIllIlIIIllIl ,'maximum':IIIIIlIIlIlIIIIII ,_IlIIIllIlIlIIlllI :_IIlIlIIIIllIIIIll },IllllIIlllllIIlIl ,IIIllllIllllIIIll ,IIlllllIIlIlIIIII (IllIIlIllIIIIlIIl )
-def IlIIIIllllIlIlIlI ():
-	IlIIllIIIllIIIllI =[]
-	for IlIIIllIIIIlIlIIl in os .listdir (IIIIIlIIlllIIlllI ):
-		if IlIIIllIIIIlIlIIl .endswith (_IlIIIIllllIIIIlII ):IlIIllIIIllIIIllI .append (IlIIIllIIIIlIlIIl )
-	IlllIIIIlIlIIIlll =[]
-	for (IlIIllIIllIIllIII ,IlIllIIIIlIlIIIlI ,IIlIIllIIllIIlIII )in os .walk (IIlIIIIIIIlIIlIII ,topdown =_IIIIlIllllIIIlllI ):
-		for IlIIIllIIIIlIlIIl in IIlIIllIIllIIlIII :
-			if IlIIIllIIIIlIlIIl .endswith (_IIIlIIIlIlllIIIIl )and _IllllIlIIIIIIIlII not in IlIIIllIIIIlIlIIl :IlllIIIIlIlIIIlll .append (_IIlllIIlIIlIIllll %(IlIIllIIllIIllIII ,IlIIIllIIIIlIlIIl ))
-	return {_IIIlIlIlIIllIllIl :sorted (IlIIllIIIllIIIllI ),_IlIIIllIlIlIIlllI :_IIlIlIIIIllIIIIll },{_IIIlIlIlIIllIllIl :sorted (IlllIIIIlIlIIIlll ),_IlIIIllIlIlIIlllI :_IIlIlIIIIllIIIIll }
-def IlIIllIIlIllIIIll ():return {_IIllIlIlIIIlIlIII :'',_IlIIIllIlIlIIlllI :_IIlIlIIIIllIIIIll }
-IlIIIllIlllllIlII ={_IllIlIIllIIIlIlIl :32000 ,_IIIllIIlIlIllIIll :40000 ,_IlIIlllIlIlIIlIll :48000 }
-def IlIllllIIIIIllIIl (IIIlllIIIIIlIIIIl ,IlllIllIIllllIIII ):
-	while 1 :
-		if IlllIllIIllllIIII .poll ()is _IllIIIIIllIIIIIlI :sleep (.5 )
-		else :break 
-	IIIlllIIIIIlIIIIl [0 ]=_IlIlIIllIlIIIllIl 
-def IIlIlIIIIllIlIlIl (IIlllIlIlIIlIlIll ,IllIlIIIIlllIIIll ):
-	while 1 :
-		IIllllIIIllIlIllI =1 
-		for IllIlIlllIlIIIIlI in IllIlIIIIlllIIIll :
-			if IllIlIlllIlIIIIlI .poll ()is _IllIIIIIllIIIIIlI :IIllllIIIllIlIllI =0 ;sleep (.5 );break 
-		if IIllllIIIllIlIllI ==1 :break 
-	IIlllIlIlIIlIlIll [0 ]=_IlIlIIllIlIIIllIl 
-def IllIIIllllIlIIlIl (IlIlllIllIIlIlIII ,IlIlIIlIlllIIllIl ,IIllIlIlIIllllIIl ,IllllIlIllIIIIIll ):
-	IllllIlIlllIllIlI ='%s/logs/%s/preprocess.log';IIllIlIlIIllllIIl =IlIIIllIlllllIlII [IIllIlIlIIllllIIl ];os .makedirs (_IIllIIlllllIIIllI %(IIIIlIlIIIlIllIlI ,IlIlIIlIlllIIllIl ),exist_ok =_IlIlIIllIlIIIllIl );IlllIIIllllIlIllI =open (IllllIlIlllIllIlI %(IIIIlIlIIIlIllIlI ,IlIlIIlIlllIIllIl ),'w');IlllIIIllllIlIllI .close ();IIllIIlllIIIlIIIl =IlllIIlIlIIIIlIlI .python_cmd +' trainset_preprocess_pipeline_print.py "%s" %s %s "%s/logs/%s" '%(IlIlllIllIIlIlIII ,IIllIlIlIIllllIIl ,IllllIlIllIIIIIll ,IIIIlIlIIIlIllIlI ,IlIlIIlIlllIIllIl )+str (IlllIIlIlIIIIlIlI .noparallel );print (IIllIIlllIIIlIIIl );IlIIIIIIIlIIIlIII =Popen (IIllIIlllIIIlIIIl ,shell =_IlIlIIllIlIIIllIl );IlIIIIlllllIllIlI =[_IIIIlIllllIIIlllI ];threading .Thread (target =IlIllllIIIIIllIIl ,args =(IlIIIIlllllIllIlI ,IlIIIIIIIlIIIlIII )).start ()
-	while 1 :
-		with open (IllllIlIlllIllIlI %(IIIIlIlIIIlIllIlI ,IlIlIIlIlllIIllIl ),_IllIIIIlllllIllIl )as IlllIIIllllIlIllI :yield IlllIIIllllIlIllI .read ()
-		sleep (1 )
-		if IlIIIIlllllIllIlI [0 ]:break 
-	with open (IllllIlIlllIllIlI %(IIIIlIlIIIlIllIlI ,IlIlIIlIlllIIllIl ),_IllIIIIlllllIllIl )as IlllIIIllllIlIllI :IIIlIIlIIIllllIll =IlllIIIllllIlIllI .read ()
-	print (IIIlIIlIIIllllIll );yield IIIlIIlIIIllllIll 
-def IIlllIIIIIIIlIlIl (IlIIIIIlIlIIIllIl ,IIIllIlllIlIlIlIl ,IlIlllllIlIIlIIll ,IIlIIlIlIllIIIlIl ,IIIlllIIllllIIIII ,IllIIllIlIIlIlIII ,IllllIIIlllIIlllI ):
-	IIIIlIIIIlIlIIlIl ='%s/logs/%s/extract_fl_feature.log';IlIIIIIlIlIIIllIl =IlIIIIIlIlIIIllIl .split ('-');os .makedirs (_IIllIIlllllIIIllI %(IIIIlIlIIIlIllIlI ,IIIlllIIllllIIIII ),exist_ok =_IlIlIIllIlIIIllIl );IIllIIllIllIIIIII =open (IIIIlIIIIlIlIIlIl %(IIIIlIlIIIlIllIlI ,IIIlllIIllllIIIII ),'w');IIllIIllIllIIIIII .close ()
-	if IIlIIlIlIllIIIlIl :
-		if IlIlllllIlIIlIIll !=_IIlIllllIlIlIlIll :
-			IllIIIIlIlIllllll =IlllIIlIlIIIIlIlI .python_cmd +' extract_fl_print.py "%s/logs/%s" %s %s'%(IIIIlIlIIIlIllIlI ,IIIlllIIllllIIIII ,IIIllIlllIlIlIlIl ,IlIlllllIlIIlIIll );print (IllIIIIlIlIllllll );IlIllIlIllllIIlll =Popen (IllIIIIlIlIllllll ,shell =_IlIlIIllIlIIIllIl ,cwd =IIIIlIlIIIlIllIlI );IIIlIllIlIIIlIlIl =[_IIIIlIllllIIIlllI ];threading .Thread (target =IlIllllIIIIIllIIl ,args =(IIIlIllIlIIIlIlIl ,IlIllIlIllllIIlll )).start ()
-			while 1 :
-				with open (IIIIlIIIIlIlIIlIl %(IIIIlIlIIIlIllIlI ,IIIlllIIllllIIIII ),_IllIIIIlllllIllIl )as IIllIIllIllIIIIII :yield IIllIIllIllIIIIII .read ()
-				sleep (1 )
-				if IIIlIllIlIIIlIlIl [0 ]:break 
-			with open (IIIIlIIIIlIlIIlIl %(IIIIlIlIIIlIllIlI ,IIIlllIIllllIIIII ),_IllIIIIlllllIllIl )as IIllIIllIllIIIIII :IIlIlIIllIlIlllIl =IIllIIllIllIIIIII .read ()
-			print (IIlIlIIllIlIlllIl );yield IIlIlIIllIlIlllIl 
-		else :
-			IllllIIIlllIIlllI =IllllIIIlllIIlllI .split ('-');IlIllIllIIIlIIIIl =len (IllllIIIlllIIlllI );IIIlIIlIIlIllIIII =[]
-			for (IllIIIIlllIIlIllI ,IllllIIlIIlIlllIl )in enumerate (IllllIIIlllIIlllI ):IllIIIIlIlIllllll =IlllIIlIlIIIIlIlI .python_cmd +' extract_fl_rmvpe.py %s %s %s "%s/logs/%s" %s '%(IlIllIllIIIlIIIIl ,IllIIIIlllIIlIllI ,IllllIIlIIlIlllIl ,IIIIlIlIIIlIllIlI ,IIIlllIIllllIIIII ,IlllIIlIlIIIIlIlI .is_half );print (IllIIIIlIlIllllll );IlIllIlIllllIIlll =Popen (IllIIIIlIlIllllll ,shell =_IlIlIIllIlIIIllIl ,cwd =IIIIlIlIIIlIllIlI );IIIlIIlIIlIllIIII .append (IlIllIlIllllIIlll )
-			IIIlIllIlIIIlIlIl =[_IIIIlIllllIIIlllI ];threading .Thread (target =IIlIlIIIIllIlIlIl ,args =(IIIlIllIlIIIlIlIl ,IIIlIIlIIlIllIIII )).start ()
-			while 1 :
-				with open (IIIIlIIIIlIlIIlIl %(IIIIlIlIIIlIllIlI ,IIIlllIIllllIIIII ),_IllIIIIlllllIllIl )as IIllIIllIllIIIIII :yield IIllIIllIllIIIIII .read ()
-				sleep (1 )
-				if IIIlIllIlIIIlIlIl [0 ]:break 
-			with open (IIIIlIIIIlIlIIlIl %(IIIIlIlIIIlIllIlI ,IIIlllIIllllIIIII ),_IllIIIIlllllIllIl )as IIllIIllIllIIIIII :IIlIlIIllIlIlllIl =IIllIIllIllIIIIII .read ()
-			print (IIlIlIIllIlIlllIl );yield IIlIlIIllIlIlllIl 
-	'\n    n_part=int(sys.argv[1])\n    i_part=int(sys.argv[2])\n    i_gpu=sys.argv[3]\n    exp_dir=sys.argv[4]\n    os.environ["CUDA_VISIBLE_DEVICES"]=str(i_gpu)\n    ';IlIllIllIIIlIIIIl =len (IlIIIIIlIlIIIllIl );IIIlIIlIIlIllIIII =[]
-	for (IllIIIIlllIIlIllI ,IllllIIlIIlIlllIl )in enumerate (IlIIIIIlIlIIIllIl ):IllIIIIlIlIllllll =IlllIIlIlIIIIlIlI .python_cmd +' extract_feature_print.py %s %s %s %s "%s/logs/%s" %s'%(IlllIIlIlIIIIlIlI .device ,IlIllIllIIIlIIIIl ,IllIIIIlllIIlIllI ,IllllIIlIIlIlllIl ,IIIIlIlIIIlIllIlI ,IIIlllIIllllIIIII ,IllIIllIlIIlIlIII );print (IllIIIIlIlIllllll );IlIllIlIllllIIlll =Popen (IllIIIIlIlIllllll ,shell =_IlIlIIllIlIIIllIl ,cwd =IIIIlIlIIIlIllIlI );IIIlIIlIIlIllIIII .append (IlIllIlIllllIIlll )
-	IIIlIllIlIIIlIlIl =[_IIIIlIllllIIIlllI ];threading .Thread (target =IIlIlIIIIllIlIlIl ,args =(IIIlIllIlIIIlIlIl ,IIIlIIlIIlIllIIII )).start ()
-	while 1 :
-		with open (IIIIlIIIIlIlIIlIl %(IIIIlIlIIIlIllIlI ,IIIlllIIllllIIIII ),_IllIIIIlllllIllIl )as IIllIIllIllIIIIII :yield IIllIIllIllIIIIII .read ()
-		sleep (1 )
-		if IIIlIllIlIIIlIlIl [0 ]:break 
-	with open (IIIIlIIIIlIlIIlIl %(IIIIlIlIIIlIllIlI ,IIIlllIIllllIIIII ),_IllIIIIlllllIllIl )as IIllIIllIllIIIIII :IIlIlIIllIlIlllIl =IIllIIllIllIIIIII .read ()
-	print (IIlIlIIllIlIlllIl );yield IIlIlIIllIlIlllIl 
-def IIIlIIllIIlllIlll (IllIlIllllllIlIll ,IlIIIlllIllIlIllI ,IIIlIIlIIllIllIll ):
-	IIIllIlIIllIIIIIl =''if IIIlIIlIIllIllIll ==_IlllllIlIllIIllII else _IIllIIllIIIIlIlII ;IllIlIlIIIllIIlII =_IIllIllIlllIIllIl if IlIIIlllIllIlIllI else '';IlllIIIIIlIllllIl =os .access (_IllllIlIIlIIIIIlI %(IIIllIlIIllIIIIIl ,IllIlIlIIIllIIlII ,IllIlIllllllIlIll ),os .F_OK );IlllllIIIlIlIlIIl =os .access (_IllIIIIllllIlllll %(IIIllIlIIllIIIIIl ,IllIlIlIIIllIIlII ,IllIlIllllllIlIll ),os .F_OK )
-	if not IlllIIIIIlIllllIl :print (_IllllIlIIlIIIIIlI %(IIIllIlIIllIIIIIl ,IllIlIlIIIllIIlII ,IllIlIllllllIlIll ),_IlIlllIllIIlIIlII )
-	if not IlllllIIIlIlIlIIl :print (_IllIIIIllllIlllll %(IIIllIlIIllIIIIIl ,IllIlIlIIIllIIlII ,IllIlIllllllIlIll ),_IlIlllIllIIlIIlII )
-	return _IllllIlIIlIIIIIlI %(IIIllIlIIllIIIIIl ,IllIlIlIIIllIIlII ,IllIlIllllllIlIll )if IlllIIIIIlIllllIl else '',_IllIIIIllllIlllll %(IIIllIlIIllIIIIIl ,IllIlIlIIIllIIlII ,IllIlIllllllIlIll )if IlllllIIIlIlIlIIl else ''
-def IIIIIlIIllllIlIll (IIlIlIllllIIlIlll ,IIIlllIllllIIllll ,IllllllIlIIIIlIlI ):
-	IlIIIIIIllIIIlIlI =''if IllllllIlIIIIlIlI ==_IlllllIlIllIIllII else _IIllIIllIIIIlIlII 
-	if IIlIlIllllIIlIlll ==_IllIlIIllIIIlIlIl and IllllllIlIIIIlIlI ==_IlllllIlIllIIllII :IIlIlIllllIIlIlll =_IIIllIIlIlIllIIll 
-	IlIlIlllIIllIlIIl ={_IIIlIlIlIIllIllIl :[_IIIllIIlIlIllIIll ,_IlIIlllIlIlIIlIll ],_IlIIIllIlIlIIlllI :_IIlIlIIIIllIIIIll ,_IIllIlIlIIIlIlIII :IIlIlIllllIIlIlll }if IllllllIlIIIIlIlI ==_IlllllIlIllIIllII else {_IIIlIlIlIIllIllIl :[_IIIllIIlIlIllIIll ,_IlIIlllIlIlIIlIll ,_IllIlIIllIIIlIlIl ],_IlIIIllIlIlIIlllI :_IIlIlIIIIllIIIIll ,_IIllIlIlIIIlIlIII :IIlIlIllllIIlIlll };IIIIIIlIlIlllIlIl =_IIllIllIlllIIllIl if IIIlllIllllIIllll else '';IIllllllIIllllIIl =os .access (_IllllIlIIlIIIIIlI %(IlIIIIIIllIIIlIlI ,IIIIIIlIlIlllIlIl ,IIlIlIllllIIlIlll ),os .F_OK );IlIIIIlIllllIIIIl =os .access (_IllIIIIllllIlllll %(IlIIIIIIllIIIlIlI ,IIIIIIlIlIlllIlIl ,IIlIlIllllIIlIlll ),os .F_OK )
-	if not IIllllllIIllllIIl :print (_IllllIlIIlIIIIIlI %(IlIIIIIIllIIIlIlI ,IIIIIIlIlIlllIlIl ,IIlIlIllllIIlIlll ),_IlIlllIllIIlIIlII )
-	if not IlIIIIlIllllIIIIl :print (_IllIIIIllllIlllll %(IlIIIIIIllIIIlIlI ,IIIIIIlIlIlllIlIl ,IIlIlIllllIIlIlll ),_IlIlllIllIIlIIlII )
-	return _IllllIlIIlIIIIIlI %(IlIIIIIIllIIIlIlI ,IIIIIIlIlIlllIlIl ,IIlIlIllllIIlIlll )if IIllllllIIllllIIl else '',_IllIIIIllllIlllll %(IlIIIIIIllIIIlIlI ,IIIIIIlIlIlllIlIl ,IIlIlIllllIIlIlll )if IlIIIIlIllllIIIIl else '',IlIlIlllIIllIlIIl 
-def IlllIIIllIlIIIIlI (IllIllllIllIlIIll ,IlIIIIIIlllIIlIll ,IIllIlIllIIIIIIIl ):
-	IIlIllllIlIllIIIl ='/kaggle/input/ax-rmf/pretrained%s/f0D%s.pth';IIIIllIlIIIllllIl ='/kaggle/input/ax-rmf/pretrained%s/f0G%s.pth';IllIlIIIIIlllIIIl =''if IIllIlIllIIIIIIIl ==_IlllllIlIllIIllII else _IIllIIllIIIIlIlII ;IllIIlllIIlIIIlII =os .access (IIIIllIlIIIllllIl %(IllIlIIIIIlllIIIl ,IlIIIIIIlllIIlIll ),os .F_OK );IIIIIllIIIllIlIll =os .access (IIlIllllIlIllIIIl %(IllIlIIIIIlllIIIl ,IlIIIIIIlllIIlIll ),os .F_OK )
-	if not IllIIlllIIlIIIlII :print (IIIIllIlIIIllllIl %(IllIlIIIIIlllIIIl ,IlIIIIIIlllIIlIll ),_IlIlllIllIIlIIlII )
-	if not IIIIIllIIIllIlIll :print (IIlIllllIlIllIIIl %(IllIlIIIIIlllIIIl ,IlIIIIIIlllIIlIll ),_IlIlllIllIIlIIlII )
-	if IllIllllIllIlIIll :return {_IIIIlIlIlllllIlII :_IlIlIIllIlIIIllIl ,_IlIIIllIlIlIIlllI :_IIlIlIIIIllIIIIll },IIIIllIlIIIllllIl %(IllIlIIIIIlllIIIl ,IlIIIIIIlllIIlIll )if IllIIlllIIlIIIlII else '',IIlIllllIlIllIIIl %(IllIlIIIIIlllIIIl ,IlIIIIIIlllIIlIll )if IIIIIllIIIllIlIll else ''
-	return {_IIIIlIlIlllllIlII :_IIIIlIllllIIIlllI ,_IlIIIllIlIlIIlllI :_IIlIlIIIIllIIIIll },'/kaggle/input/ax-rmf/pretrained%s/G%s.pth'%(IllIlIIIIIlllIIIl ,IlIIIIIIlllIIlIll )if IllIIlllIIlIIIlII else '','/kaggle/input/ax-rmf/pretrained%s/D%s.pth'%(IllIlIIIIIlllIIIl ,IlIIIIIIlllIIlIll )if IIIIIllIIIllIlIll else ''
-def IlllIlIIIIllllIlI (IllIlllIllIllIIlI ,IllIIIIIIlIIlIIII ,IIlIIIIlIlIlIIIll ,IIllllIlIlIIIllll ,IIIlllIllIlllIllI ,IIIIlIllIllIIllIl ,IlIIIlIllIllIIlIl ,IlllllIllIlIIIlII ,IIIllIIIIIlllIlII ,IlllIlIlIIIIlIlIl ,IlIIIlIIlIllIllll ,IIIIIlIIlIlIIlIll ,IlIIlllIIIlllllII ,IIllIllllIIIlIIll ):
-	IIIlIIlIIIIlIIIIl ='\x08';IlIllllIIlIIIIlII =_IIllIIlllllIIIllI %(IIIIlIlIIIlIllIlI ,IllIlllIllIllIIlI );os .makedirs (IlIllllIIlIIIIlII ,exist_ok =_IlIlIIllIlIIIllIl );IIIIlIllllIIIllll =_IIlIllIIIIllIlIII %IlIllllIIlIIIIlII ;IlIIlllIIlIIIllII =_IIllIlIlIIlllIlII %IlIllllIIlIIIIlII if IIllIllllIIIlIIll ==_IlllllIlIllIIllII else _IIllIlllIIlIIIIIl %IlIllllIIlIIIIlII 
-	if IIlIIIIlIlIlIIIll :IIllIIIIIlllIIIlI ='%s/2a_f0'%IlIllllIIlIIIIlII ;IlIIlIIlllIIlllll =_IllllIIllllIIllIl %IlIllllIIlIIIIlII ;IllIlIIIlIlllIlIl =set ([IlIllIlIlIIlllIIl .split (_IlIIIIllIIIlIllll )[0 ]for IlIllIlIlIIlllIIl in os .listdir (IIIIlIllllIIIllll )])&set ([IIllIlIIIIlllllll .split (_IlIIIIllIIIlIllll )[0 ]for IIllIlIIIIlllllll in os .listdir (IlIIlllIIlIIIllII )])&set ([IlIlllIllIIIllIlI .split (_IlIIIIllIIIlIllll )[0 ]for IlIlllIllIIIllIlI in os .listdir (IIllIIIIIlllIIIlI )])&set ([IIIlIIIIllIllIIlI .split (_IlIIIIllIIIlIllll )[0 ]for IIIlIIIIllIllIIlI in os .listdir (IlIIlIIlllIIlllll )])
-	else :IllIlIIIlIlllIlIl =set ([IIIlllllIllIlIlll .split (_IlIIIIllIIIlIllll )[0 ]for IIIlllllIllIlIlll in os .listdir (IIIIlIllllIIIllll )])&set ([IIIlIlIIlIIIIIlll .split (_IlIIIIllIIIlIllll )[0 ]for IIIlIlIIlIIIIIlll in os .listdir (IlIIlllIIlIIIllII )])
-	IlIIllIlIllIIlIII =[]
-	for IIIlIlIIllIlllIII in IllIlIIIlIlllIlIl :
-		if IIlIIIIlIlIlIIIll :IlIIllIlIllIIlIII .append (_IIlllIlllIlllIIIl %(IIIIlIllllIIIllll .replace (_IIlIllllIIllllIll ,_IllIIIlIlllllIlll ),IIIlIlIIllIlllIII ,IlIIlllIIlIIIllII .replace (_IIlIllllIIllllIll ,_IllIIIlIlllllIlll ),IIIlIlIIllIlllIII ,IIllIIIIIlllIIIlI .replace (_IIlIllllIIllllIll ,_IllIIIlIlllllIlll ),IIIlIlIIllIlllIII ,IlIIlIIlllIIlllll .replace (_IIlIllllIIllllIll ,_IllIIIlIlllllIlll ),IIIlIlIIllIlllIII ,IIllllIlIlIIIllll ))
-		else :IlIIllIlIllIIlIII .append (_IIIlIIIllIlllIIIl %(IIIIlIllllIIIllll .replace (_IIlIllllIIllllIll ,_IllIIIlIlllllIlll ),IIIlIlIIllIlllIII ,IlIIlllIIlIIIllII .replace (_IIlIllllIIllllIll ,_IllIIIlIlllllIlll ),IIIlIlIIllIlllIII ,IIllllIlIlIIIllll ))
-	IlIlIllIlIlllllII =256 if IIllIllllIIIlIIll ==_IlllllIlIllIIllII else 768 
-	if IIlIIIIlIlIlIIIll :
-		for _IIlllIlIlIlIIllII in range (2 ):IlIIllIlIllIIlIII .append (_IllllIlIIlIIlIIll %(IIIIlIlIIIlIllIlI ,IllIIIIIIlIIlIIII ,IIIIlIlIIIlIllIlI ,IlIlIllIlIlllllII ,IIIIlIlIIIlIllIlI ,IIIIlIlIIIlIllIlI ,IIllllIlIlIIIllll ))
-	else :
-		for _IIlllIlIlIlIIllII in range (2 ):IlIIllIlIllIIlIII .append (_IIlllIlIlIlllIllI %(IIIIlIlIIIlIllIlI ,IllIIIIIIlIIlIIII ,IIIIlIlIIIlIllIlI ,IlIlIllIlIlllllII ,IIllllIlIlIIIllll ))
-	shuffle (IlIIllIlIllIIlIII )
-	with open (_IllllIllIIlIlIIlI %IlIllllIIlIIIIlII ,'w')as IIIIIIIIIIIIlIlIl :IIIIIIIIIIIIlIlIl .write (_IIlIlIIIlIIlIIIll .join (IlIIllIlIllIIlIII ))
-	print (_IlIIIIlIIlIIllIIl );print ('use gpus:',IlIIIlIIlIllIllll )
-	if IIIllIIIIIlllIlII =='':print ('no pretrained Generator')
-	if IlllIlIlIIIIlIlIl =='':print ('no pretrained Discriminator')
-	if IlIIIlIIlIllIllll :IIIIIIIIlllllIlII =IlllIIlIlIIIIlIlI .python_cmd +_IIIllllIlIllIIlll %(IllIlllIllIllIIlI ,IllIIIIIIlIIlIIII ,1 if IIlIIIIlIlIlIIIll else 0 ,IlIIIlIllIllIIlIl ,IlIIIlIIlIllIllll ,IIIIlIllIllIIllIl ,IIIlllIllIlllIllI ,_IlIlllIIIllIllIll %IIIllIIIIIlllIlII if IIIllIIIIIlllIlII !=''else '',_IIIlIIIllIIIlIllI %IlllIlIlIIIIlIlIl if IlllIlIlIIIIlIlIl !=''else '',1 if IlllllIllIlIIIlII ==IlIIlllIlllIlllII (_IlllIlllIlllIllIl )else 0 ,1 if IIIIIlIIlIlIIlIll ==IlIIlllIlllIlllII (_IlllIlllIlllIllIl )else 0 ,1 if IlIIlllIIIlllllII ==IlIIlllIlllIlllII (_IlllIlllIlllIllIl )else 0 ,IIllIllllIIIlIIll )
-	else :IIIIIIIIlllllIlII =IlllIIlIlIIIIlIlI .python_cmd +_IlIlIllIIIllIllll %(IllIlllIllIllIIlI ,IllIIIIIIlIIlIIII ,1 if IIlIIIIlIlIlIIIll else 0 ,IlIIIlIllIllIIlIl ,IIIIlIllIllIIllIl ,IIIlllIllIlllIllI ,_IlIlllIIIllIllIll %IIIllIIIIIlllIlII if IIIllIIIIIlllIlII !=''else IIIlIIlIIIIlIIIIl ,_IIIlIIIllIIIlIllI %IlllIlIlIIIIlIlIl if IlllIlIlIIIIlIlIl !=''else IIIlIIlIIIIlIIIIl ,1 if IlllllIllIlIIIlII ==IlIIlllIlllIlllII (_IlllIlllIlllIllIl )else 0 ,1 if IIIIIlIIlIlIIlIll ==IlIIlllIlllIlllII (_IlllIlllIlllIllIl )else 0 ,1 if IlIIlllIIIlllllII ==IlIIlllIlllIlllII (_IlllIlllIlllIllIl )else 0 ,IIllIllllIIIlIIll )
-	print (IIIIIIIIlllllIlII );IIllIllllllllIIlI =Popen (IIIIIIIIlllllIlII ,shell =_IlIlIIllIlIIIllIl ,cwd =IIIIlIlIIIlIllIlI );IIllIllllllllIIlI .wait ();return _IlllIIlIlIIlIlIll 
-def IIlIlIllIlllIIIII (IIIIIIlIIlIIIlIII ,IllIIlIIlIllIIIII ):
-	IIIIlIlIIlIIIlIlI =_IIllIIlllllIIIllI %(IIIIlIlIIIlIllIlI ,IIIIIIlIIlIIIlIII );os .makedirs (IIIIlIlIIlIIIlIlI ,exist_ok =_IlIlIIllIlIIIllIl );IIIIIlIllllllIllI =_IIllIlIlIIlllIlII %IIIIlIlIIlIIIlIlI if IllIIlIIlIllIIIII ==_IlllllIlIllIIllII else _IIllIlllIIlIIIIIl %IIIIlIlIIlIIIlIlI 
-	if not os .path .exists (IIIIIlIllllllIllI ):return '请先进行特征提取!'
-	IIllIllIlIIIIlIII =list (os .listdir (IIIIIlIllllllIllI ))
-	if len (IIllIllIlIIIIlIII )==0 :return '请先进行特征提取！'
-	IIlllIIIlllIlIIlI =[];IlIIlIlllIIlIIIlI =[]
-	for IllIlIlIlIlIIlllI in sorted (IIllIllIlIIIIlIII ):IIIIlllIIIIlIIIII =np .load (_IIlllIIlIIlIIllll %(IIIIIlIllllllIllI ,IllIlIlIlIlIIlllI ));IlIIlIlllIIlIIIlI .append (IIIIlllIIIIlIIIII )
-	IlIllIIIIIIllIlll =np .concatenate (IlIIlIlllIIlIIIlI ,0 );IllIllIllllIllllI =np .arange (IlIllIIIIIIllIlll .shape [0 ]);np .random .shuffle (IllIllIllllIllllI );IlIllIIIIIIllIlll =IlIllIIIIIIllIlll [IllIllIllllIllllI ]
-	if IlIllIIIIIIllIlll .shape [0 ]>2e5 :
-		IIlllIIIlllIlIIlI .append (_IIIIlIIlIIlllIlII %IlIllIIIIIIllIlll .shape [0 ]);yield _IIlIlIIIlIIlIIIll .join (IIlllIIIlllIlIIlI )
-		try :IlIllIIIIIIllIlll =MiniBatchKMeans (n_clusters =10000 ,verbose =_IlIlIIllIlIIIllIl ,batch_size =256 *IlllIIlIlIIIIlIlI .n_cpu ,compute_labels =_IIIIlIllllIIIlllI ,init ='random').fit (IlIllIIIIIIllIlll ).cluster_centers_ 
-		except :IlIIIllIIllIIIIlI =traceback .format_exc ();print (IlIIIllIIllIIIIlI );IIlllIIIlllIlIIlI .append (IlIIIllIIllIIIIlI );yield _IIlIlIIIlIIlIIIll .join (IIlllIIIlllIlIIlI )
-	np .save (_IlIIlIIlIlIIlIlIl %IIIIlIlIIlIIIlIlI ,IlIllIIIIIIllIlll );IlIIIIlIIlIlllIII =min (int (16 *np .sqrt (IlIllIIIIIIllIlll .shape [0 ])),IlIllIIIIIIllIlll .shape [0 ]//39 );IIlllIIIlllIlIIlI .append ('%s,%s'%(IlIllIIIIIIllIlll .shape ,IlIIIIlIIlIlllIII ));yield _IIlIlIIIlIIlIIIll .join (IIlllIIIlllIlIIlI );IlIIlIlIIlIllIIIl =faiss .index_factory (256 if IllIIlIIlIllIIIII ==_IlllllIlIllIIllII else 768 ,_IlIIIIllllIIIlIIl %IlIIIIlIIlIlllIII );IIlllIIIlllIlIIlI .append ('training');yield _IIlIlIIIlIIlIIIll .join (IIlllIIIlllIlIIlI );IIlIlIIIIIllllIll =faiss .extract_index_ivf (IlIIlIlIIlIllIIIl );IIlIlIIIIIllllIll .nprobe =1 ;IlIIlIlIIlIllIIIl .train (IlIllIIIIIIllIlll );faiss .write_index (IlIIlIlIIlIllIIIl ,_IllllIIIIlIlIlllI %(IIIIlIlIIlIIIlIlI ,IlIIIIlIIlIlllIII ,IIlIlIIIIIllllIll .nprobe ,IIIIIIlIIlIIIlIII ,IllIIlIIlIllIIIII ));IIlllIIIlllIlIIlI .append ('adding');yield _IIlIlIIIlIIlIIIll .join (IIlllIIIlllIlIIlI );IIIlIlllIIIIIlllI =8192 
-	for IllllllIIlIIlIlII in range (0 ,IlIllIIIIIIllIlll .shape [0 ],IIIlIlllIIIIIlllI ):IlIIlIlIIlIllIIIl .add (IlIllIIIIIIllIlll [IllllllIIlIIlIlII :IllllllIIlIIlIlII +IIIlIlllIIIIIlllI ])
-	faiss .write_index (IlIIlIlIIlIllIIIl ,_IIlIIlllllIlIlIII %(IIIIlIlIIlIIIlIlI ,IlIIIIlIIlIlllIII ,IIlIlIIIIIllllIll .nprobe ,IIIIIIlIIlIIIlIII ,IllIIlIIlIllIIIII ));IIlllIIIlllIlIIlI .append ('成功构建索引，added_IVF%s_Flat_nprobe_%s_%s_%s.index'%(IlIIIIlIIlIlllIII ,IIlIlIIIIIllllIll .nprobe ,IIIIIIlIIlIIIlIII ,IllIIlIIlIllIIIII ));yield _IIlIlIIIlIIlIIIll .join (IIlllIIIlllIlIIlI )
-def IllllllIlllIIllII (IIlIlllIllIIlllll ,IlIllIIIllIlIIIII ,IIlIIlIllIIllIIlI ,IIIIIlIlllIlIllIl ,IIlIIllIlllllIIlI ,IlIlllIllIlIIIlll ,IIIlllIlIllIIlIII ,IIlllIllllIIIIllI ,IlIllIlIllIIIlIII ,IIIIIIIIIIlIllIlI ,IlIlllIlIlIIlIIlI ,IlIIlIlIllIIIlIII ,IIlIIIIlIIlIIIlIl ,IlllIllIllllIIlll ,IllIIIIIllIIIIIll ,IlllIIIIlIIIlIlIl ,IIlIllIlllIlIlllI ,IIlIIIllIIllIllII ):
-	IIlIllIlIlllIIIll =[]
-	def IIIlllllIIlIIlIII (IIIlllIlIIIIIIlIl ):IIlIllIlIlllIIIll .append (IIIlllIlIIIIIIlIl );return _IIlIlIIIlIIlIIIll .join (IIlIllIlIlllIIIll )
-	IllllIlIlIIllllIl =_IIllIIlllllIIIllI %(IIIIlIlIIIlIllIlI ,IIlIlllIllIIlllll );IllllllIIIIlIIllI ='%s/preprocess.log'%IllllIlIlIIllllIl ;IlIIIIllIlIlllllI ='%s/extract_fl_feature.log'%IllllIlIlIIllllIl ;IIlIIlIlIIIlIlIII =_IIlIllIIIIllIlIII %IllllIlIlIIllllIl ;IllIIlIllIIIllIlI =_IIllIlIlIIlllIlII %IllllIlIlIIllllIl if IIlIllIlllIlIlllI ==_IlllllIlIllIIllII else _IIllIlllIIlIIIIIl %IllllIlIlIIllllIl ;os .makedirs (IllllIlIlIIllllIl ,exist_ok =_IlIlIIllIlIIIllIl );open (IllllllIIIIlIIllI ,'w').close ();IIllIllIIIlIlllIl =IlllIIlIlIIIIlIlI .python_cmd +' trainset_preprocess_pipeline_print.py "%s" %s %s "%s" '%(IIIIIlIlllIlIllIl ,IlIIIllIlllllIlII [IlIllIIIllIlIIIII ],IlIlllIllIlIIIlll ,IllllIlIlIIllllIl )+str (IlllIIlIlIIIIlIlI .noparallel );yield IIIlllllIIlIIlIII (IlIIlllIlllIlllII ('step1:正在处理数据'));yield IIIlllllIIlIIlIII (IIllIllIIIlIlllIl );IlllIlIlllIlIlIll =Popen (IIllIllIIIlIlllIl ,shell =_IlIlIIllIlIIIllIl );IlllIlIlllIlIlIll .wait ()
-	with open (IllllllIIIIlIIllI ,_IllIIIIlllllIllIl )as IllIIlllllIllIlll :print (IllIIlllllIllIlll .read ())
-	open (IlIIIIllIlIlllllI ,'w')
-	if IIlIIlIllIIllIIlI :
-		yield IIIlllllIIlIIlIII ('step2a:正在提取音高')
-		if IIIlllIlIllIIlIII !=_IIlIllllIlIlIlIll :IIllIllIIIlIlllIl =IlllIIlIlIIIIlIlI .python_cmd +' extract_fl_print.py "%s" %s %s'%(IllllIlIlIIllllIl ,IlIlllIllIlIIIlll ,IIIlllIlIllIIlIII );yield IIIlllllIIlIIlIII (IIllIllIIIlIlllIl );IlllIlIlllIlIlIll =Popen (IIllIllIIIlIlllIl ,shell =_IlIlIIllIlIIIllIl ,cwd =IIIIlIlIIIlIllIlI );IlllIlIlllIlIlIll .wait ()
-		else :
-			IIlIIIllIIllIllII =IIlIIIllIIllIllII .split ('-');IllIlIllIIllIllIl =len (IIlIIIllIIllIllII );IIIIlIllIIIlllIII =[]
-			for (IIlIIlllIIIllIIlI ,IllIlIlIIlIIlIlII )in enumerate (IIlIIIllIIllIllII ):IIllIllIIIlIlllIl =IlllIIlIlIIIIlIlI .python_cmd +' extract_fl_rmvpe.py %s %s %s "%s" %s '%(IllIlIllIIllIllIl ,IIlIIlllIIIllIIlI ,IllIlIlIIlIIlIlII ,IllllIlIlIIllllIl ,IlllIIlIlIIIIlIlI .is_half );yield IIIlllllIIlIIlIII (IIllIllIIIlIlllIl );IlllIlIlllIlIlIll =Popen (IIllIllIIIlIlllIl ,shell =_IlIlIIllIlIIIllIl ,cwd =IIIIlIlIIIlIllIlI );IIIIlIllIIIlllIII .append (IlllIlIlllIlIlIll )
-			for IlllIlIlllIlIlIll in IIIIlIllIIIlllIII :IlllIlIlllIlIlIll .wait ()
-		with open (IlIIIIllIlIlllllI ,_IllIIIIlllllIllIl )as IllIIlllllIllIlll :print (IllIIlllllIllIlll .read ())
-	else :yield IIIlllllIIlIIlIII (IlIIlllIlllIlllII ('step2a:无需提取音高'))
-	yield IIIlllllIIlIIlIII (IlIIlllIlllIlllII ('step2b:正在提取特征'));IllIIIlIIlIIIlIll =IlllIllIllllIIlll .split ('-');IllIlIllIIllIllIl =len (IllIIIlIIlIIIlIll );IIIIlIllIIIlllIII =[]
-	for (IIlIIlllIIIllIIlI ,IllIlIlIIlIIlIlII )in enumerate (IllIIIlIIlIIIlIll ):IIllIllIIIlIlllIl =IlllIIlIlIIIIlIlI .python_cmd +' extract_feature_print.py %s %s %s %s "%s" %s'%(IlllIIlIlIIIIlIlI .device ,IllIlIllIIllIllIl ,IIlIIlllIIIllIIlI ,IllIlIlIIlIIlIlII ,IllllIlIlIIllllIl ,IIlIllIlllIlIlllI );yield IIIlllllIIlIIlIII (IIllIllIIIlIlllIl );IlllIlIlllIlIlIll =Popen (IIllIllIIIlIlllIl ,shell =_IlIlIIllIlIIIllIl ,cwd =IIIIlIlIIIlIllIlI );IIIIlIllIIIlllIII .append (IlllIlIlllIlIlIll )
-	for IlllIlIlllIlIlIll in IIIIlIllIIIlllIII :IlllIlIlllIlIlIll .wait ()
-	with open (IlIIIIllIlIlllllI ,_IllIIIIlllllIllIl )as IllIIlllllIllIlll :print (IllIIlllllIllIlll .read ())
-	yield IIIlllllIIlIIlIII (IlIIlllIlllIlllII ('step3a:正在训练模型'))
-	if IIlIIlIllIIllIIlI :IlIllIllIllIlllII ='%s/2a_f0'%IllllIlIlIIllllIl ;IIlIlIIllIIIlIIll =_IllllIIllllIIllIl %IllllIlIlIIllllIl ;IIlIIIIIllIIIIlIl =set ([IIllllllIlIIlIlII .split (_IlIIIIllIIIlIllll )[0 ]for IIllllllIlIIlIlII in os .listdir (IIlIIlIlIIIlIlIII )])&set ([IlIIlIIlIIIlIlllI .split (_IlIIIIllIIIlIllll )[0 ]for IlIIlIIlIIIlIlllI in os .listdir (IllIIlIllIIIllIlI )])&set ([IllIIlllIIIlIIIII .split (_IlIIIIllIIIlIllll )[0 ]for IllIIlllIIIlIIIII in os .listdir (IlIllIllIllIlllII )])&set ([IllIlllIlIIlllllI .split (_IlIIIIllIIIlIllll )[0 ]for IllIlllIlIIlllllI in os .listdir (IIlIlIIllIIIlIIll )])
-	else :IIlIIIIIllIIIIlIl =set ([IIllIllIIIIlIlIlI .split (_IlIIIIllIIIlIllll )[0 ]for IIllIllIIIIlIlIlI in os .listdir (IIlIIlIlIIIlIlIII )])&set ([IIllIlIlllIlIIIll .split (_IlIIIIllIIIlIllll )[0 ]for IIllIlIlllIlIIIll in os .listdir (IllIIlIllIIIllIlI )])
-	IIIlIIIIIlIllIIlI =[]
-	for IIlIIIlIllllllIII in IIlIIIIIllIIIIlIl :
-		if IIlIIlIllIIllIIlI :IIIlIIIIIlIllIIlI .append (_IIlllIlllIlllIIIl %(IIlIIlIlIIIlIlIII .replace (_IIlIllllIIllllIll ,_IllIIIlIlllllIlll ),IIlIIIlIllllllIII ,IllIIlIllIIIllIlI .replace (_IIlIllllIIllllIll ,_IllIIIlIlllllIlll ),IIlIIIlIllllllIII ,IlIllIllIllIlllII .replace (_IIlIllllIIllllIll ,_IllIIIlIlllllIlll ),IIlIIIlIllllllIII ,IIlIlIIllIIIlIIll .replace (_IIlIllllIIllllIll ,_IllIIIlIlllllIlll ),IIlIIIlIllllllIII ,IIlIIllIlllllIIlI ))
-		else :IIIlIIIIIlIllIIlI .append (_IIIlIIIllIlllIIIl %(IIlIIlIlIIIlIlIII .replace (_IIlIllllIIllllIll ,_IllIIIlIlllllIlll ),IIlIIIlIllllllIII ,IllIIlIllIIIllIlI .replace (_IIlIllllIIllllIll ,_IllIIIlIlllllIlll ),IIlIIIlIllllllIII ,IIlIIllIlllllIIlI ))
-	IIIIIIllllIlllIIl =256 if IIlIllIlllIlIlllI ==_IlllllIlIllIIllII else 768 
-	if IIlIIlIllIIllIIlI :
-		for _IIIIIIllIIlIlIlII in range (2 ):IIIlIIIIIlIllIIlI .append (_IllllIlIIlIIlIIll %(IIIIlIlIIIlIllIlI ,IlIllIIIllIlIIIII ,IIIIlIlIIIlIllIlI ,IIIIIIllllIlllIIl ,IIIIlIlIIIlIllIlI ,IIIIlIlIIIlIllIlI ,IIlIIllIlllllIIlI ))
-	else :
-		for _IIIIIIllIIlIlIlII in range (2 ):IIIlIIIIIlIllIIlI .append (_IIlllIlIlIlllIllI %(IIIIlIlIIIlIllIlI ,IlIllIIIllIlIIIII ,IIIIlIlIIIlIllIlI ,IIIIIIllllIlllIIl ,IIlIIllIlllllIIlI ))
-	shuffle (IIIlIIIIIlIllIIlI )
-	with open (_IllllIllIIlIlIIlI %IllllIlIlIIllllIl ,'w')as IllIIlllllIllIlll :IllIIlllllIllIlll .write (_IIlIlIIIlIIlIIIll .join (IIIlIIIIIlIllIIlI ))
-	yield IIIlllllIIlIIlIII (_IlIIIIlIIlIIllIIl )
-	if IlllIllIllllIIlll :IIllIllIIIlIlllIl =IlllIIlIlIIIIlIlI .python_cmd +_IIIllllIlIllIIlll %(IIlIlllIllIIlllll ,IlIllIIIllIlIIIII ,1 if IIlIIlIllIIllIIlI else 0 ,IIIIIIIIIIlIllIlI ,IlllIllIllllIIlll ,IlIllIlIllIIIlIII ,IIlllIllllIIIIllI ,_IlIlllIIIllIllIll %IlIIlIlIllIIIlIII if IlIIlIlIllIIIlIII !=''else '',_IIIlIIIllIIIlIllI %IIlIIIIlIIlIIIlIl if IIlIIIIlIIlIIIlIl !=''else '',1 if IlIlllIlIlIIlIIlI ==IlIIlllIlllIlllII (_IlllIlllIlllIllIl )else 0 ,1 if IllIIIIIllIIIIIll ==IlIIlllIlllIlllII (_IlllIlllIlllIllIl )else 0 ,1 if IlllIIIIlIIIlIlIl ==IlIIlllIlllIlllII (_IlllIlllIlllIllIl )else 0 ,IIlIllIlllIlIlllI )
-	else :IIllIllIIIlIlllIl =IlllIIlIlIIIIlIlI .python_cmd +_IlIlIllIIIllIllll %(IIlIlllIllIIlllll ,IlIllIIIllIlIIIII ,1 if IIlIIlIllIIllIIlI else 0 ,IIIIIIIIIIlIllIlI ,IlIllIlIllIIIlIII ,IIlllIllllIIIIllI ,_IlIlllIIIllIllIll %IlIIlIlIllIIIlIII if IlIIlIlIllIIIlIII !=''else '',_IIIlIIIllIIIlIllI %IIlIIIIlIIlIIIlIl if IIlIIIIlIIlIIIlIl !=''else '',1 if IlIlllIlIlIIlIIlI ==IlIIlllIlllIlllII (_IlllIlllIlllIllIl )else 0 ,1 if IllIIIIIllIIIIIll ==IlIIlllIlllIlllII (_IlllIlllIlllIllIl )else 0 ,1 if IlllIIIIlIIIlIlIl ==IlIIlllIlllIlllII (_IlllIlllIlllIllIl )else 0 ,IIlIllIlllIlIlllI )
-	yield IIIlllllIIlIIlIII (IIllIllIIIlIlllIl );IlllIlIlllIlIlIll =Popen (IIllIllIIIlIlllIl ,shell =_IlIlIIllIlIIIllIl ,cwd =IIIIlIlIIIlIllIlI );IlllIlIlllIlIlIll .wait ();yield IIIlllllIIlIIlIII (IlIIlllIlllIlllII (_IlllIIlIlIIlIlIll ));IIlllIIIlIIlllIlI =[];IlllIIlIlIllIIIII =list (os .listdir (IllIIlIllIIIllIlI ))
-	for IIlIIIlIllllllIII in sorted (IlllIIlIlIllIIIII ):IIlIIlIlIllllIIll =np .load (_IIlllIIlIIlIIllll %(IllIIlIllIIIllIlI ,IIlIIIlIllllllIII ));IIlllIIIlIIlllIlI .append (IIlIIlIlIllllIIll )
-	IIIIlIIIIlIIIIllI =np .concatenate (IIlllIIIlIIlllIlI ,0 );IIllIIIIlIllIlIII =np .arange (IIIIlIIIIlIIIIllI .shape [0 ]);np .random .shuffle (IIllIIIIlIllIlIII );IIIIlIIIIlIIIIllI =IIIIlIIIIlIIIIllI [IIllIIIIlIllIlIII ]
-	if IIIIlIIIIlIIIIllI .shape [0 ]>2e5 :
-		IlIllllIIlllIllII =_IIIIlIIlIIlllIlII %IIIIlIIIIlIIIIllI .shape [0 ];print (IlIllllIIlllIllII );yield IIIlllllIIlIIlIII (IlIllllIIlllIllII )
-		try :IIIIlIIIIlIIIIllI =MiniBatchKMeans (n_clusters =10000 ,verbose =_IlIlIIllIlIIIllIl ,batch_size =256 *IlllIIlIlIIIIlIlI .n_cpu ,compute_labels =_IIIIlIllllIIIlllI ,init ='random').fit (IIIIlIIIIlIIIIllI ).cluster_centers_ 
-		except :IlIllllIIlllIllII =traceback .format_exc ();print (IlIllllIIlllIllII );yield IIIlllllIIlIIlIII (IlIllllIIlllIllII )
-	np .save (_IlIIlIIlIlIIlIlIl %IllllIlIlIIllllIl ,IIIIlIIIIlIIIIllI );IlIIlIIllIIIllIIl =min (int (16 *np .sqrt (IIIIlIIIIlIIIIllI .shape [0 ])),IIIIlIIIIlIIIIllI .shape [0 ]//39 );yield IIIlllllIIlIIlIII ('%s,%s'%(IIIIlIIIIlIIIIllI .shape ,IlIIlIIllIIIllIIl ));IlllIIlIIIlllIIIl =faiss .index_factory (256 if IIlIllIlllIlIlllI ==_IlllllIlIllIIllII else 768 ,_IlIIIIllllIIIlIIl %IlIIlIIllIIIllIIl );yield IIIlllllIIlIIlIII ('training index');IlIIlIllIIlIIlIlI =faiss .extract_index_ivf (IlllIIlIIIlllIIIl );IlIIlIllIIlIIlIlI .nprobe =1 ;IlllIIlIIIlllIIIl .train (IIIIlIIIIlIIIIllI );faiss .write_index (IlllIIlIIIlllIIIl ,_IllllIIIIlIlIlllI %(IllllIlIlIIllllIl ,IlIIlIIllIIIllIIl ,IlIIlIllIIlIIlIlI .nprobe ,IIlIlllIllIIlllll ,IIlIllIlllIlIlllI ));yield IIIlllllIIlIIlIII ('adding index');IIIlIIIlllllllIlI =8192 
-	for IlIllIIIlIllllIIl in range (0 ,IIIIlIIIIlIIIIllI .shape [0 ],IIIlIIIlllllllIlI ):IlllIIlIIIlllIIIl .add (IIIIlIIIIlIIIIllI [IlIllIIIlIllllIIl :IlIllIIIlIllllIIl +IIIlIIIlllllllIlI ])
-	faiss .write_index (IlllIIlIIIlllIIIl ,_IIlIIlllllIlIlIII %(IllllIlIlIIllllIl ,IlIIlIIllIIIllIIl ,IlIIlIllIIlIIlIlI .nprobe ,IIlIlllIllIIlllll ,IIlIllIlllIlIlllI ));yield IIIlllllIIlIIlIII ('成功构建索引, added_IVF%s_Flat_nprobe_%s_%s_%s.index'%(IlIIlIIllIIIllIIl ,IlIIlIllIIlIIlIlI .nprobe ,IIlIlllIllIIlllll ,IIlIllIlllIlIlllI ));yield IIIlllllIIlIIlIII (IlIIlllIlllIlllII ('全流程结束！'))
-def IlIIllIIlIIllIIIl (IlllIIlIlIIllIIIl ):
-	IIIlIIllIlllIlIII ='train.log'
-	if not os .path .exists (IlllIIlIlIIllIIIl .replace (os .path .basename (IlllIIlIlIIllIIIl ),IIIlIIllIlllIlIII )):return {_IlIIIllIlIlIIlllI :_IIlIlIIIIllIIIIll },{_IlIIIllIlIlIIlllI :_IIlIlIIIIllIIIIll },{_IlIIIllIlIlIIlllI :_IIlIlIIIIllIIIIll }
-	try :
-		with open (IlllIIlIlIIllIIIl .replace (os .path .basename (IlllIIlIlIIllIIIl ),IIIlIIllIlllIlIII ),_IllIIIIlllllIllIl )as IlIIIlIIlIlIIIIll :IlIllIIIlIllllIll =eval (IlIIIlIIlIlIIIIll .read ().strip (_IIlIlIIIlIIlIIIll ).split (_IIlIlIIIlIIlIIIll )[0 ].split ('\t')[-1 ]);IIIIlIlIIlIllIIlI ,IIlllIIlllllIlIll =IlIllIIIlIllllIll [_IlIIllIIlIIlIllII ],IlIllIIIlIllllIll ['if_f0'];IlIIllIIIlIllllII =_IIIlllllllIllIIll if _IIIIlIIIlIlllIlll in IlIllIIIlIllllIll and IlIllIIIlIllllIll [_IIIIlIIIlIlllIlll ]==_IIIlllllllIllIIll else _IlllllIlIllIIllII ;return IIIIlIlIIlIllIIlI ,str (IIlllIIlllllIlIll ),IlIIllIIIlIllllII 
-	except :traceback .print_exc ();return {_IlIIIllIlIlIIlllI :_IIlIlIIIIllIIIIll },{_IlIIIllIlIlIIlllI :_IIlIlIIIIllIIIIll },{_IlIIIllIlIlIIlllI :_IIlIlIIIIllIIIIll }
-def IlIllIllllIlIlIII (IlIIIIlIIllIlIIll ):
-	if IlIIIIlIIllIlIIll ==_IIlIllllIlIlIlIll :IlIIIIIIIIIIIIIII =_IlIlIIllIlIIIllIl 
-	else :IlIIIIIIIIIIIIIII =_IIIIlIllllIIIlllI 
-	return {_IIIIlIlIlllllIlII :IlIIIIIIIIIIIIIII ,_IlIIIllIlIlIIlllI :_IIlIlIIIIllIIIIll }
-def IIIIlIIlIIlIlllIl (IlllIIIlIlIlllIIl ,IIllIIlIIIllllIIl ):IIIIlllllIllllIII ='rnd';IIIllIllIlIIIllII ='pitchf';IlIlllIIIllIlIlll ='pitch';IIIIIlIlllIIIllIl ='phone';global IllIllIlllIllIIll ;IllIllIlllIllIIll =torch .load (IlllIIIlIlIlllIIl ,map_location =_IlIlIIlIllIllIIll );IllIllIlllIllIIll [_IlllllllIlllllllI ][-3 ]=IllIllIlllIllIIll [_IIIIIllIIIIIIIlll ][_IlllllIIIIIIIIlIl ].shape [0 ];IlIlIllIIIllIlIll =256 if IllIllIlllIllIIll .get (_IIIIlIIIlIlllIlll ,_IlllllIlIllIIllII )==_IlllllIlIllIIllII else 768 ;IIIIlIIIllllllIll =torch .rand (1 ,200 ,IlIlIllIIIllIlIll );IIlllIIlIlIlIIIlI =torch .tensor ([200 ]).long ();IllllIlIlIIIIIIII =torch .randint (size =(1 ,200 ),low =5 ,high =255 );IIIlIllIlIIllllIl =torch .rand (1 ,200 );IlIllllIllllIlllI =torch .LongTensor ([0 ]);IllIllIlIIIlIlIll =torch .rand (1 ,192 ,200 );IllIIIlIIllllllII =_IlIlIIlIllIllIIll ;IllIlIllIIIllIlIl =SynthesizerTrnMsNSFsidM (*IllIllIlllIllIIll [_IlllllllIlllllllI ],is_half =_IIIIlIllllIIIlllI ,version =IllIllIlllIllIIll .get (_IIIIlIIIlIlllIlll ,_IlllllIlIllIIllII ));IllIlIllIIIllIlIl .load_state_dict (IllIllIlllIllIIll [_IIIIIllIIIIIIIlll ],strict =_IIIIlIllllIIIlllI );IllllIIlIlIllIlIl =[IIIIIlIlllIIIllIl ,'phone_lengths',IlIlllIIIllIlIlll ,IIIllIllIlIIIllII ,'ds',IIIIlllllIllllIII ];IlIlIlllIIIlIIlIl =['audio'];torch .onnx .export (IllIlIllIIIllIlIl ,(IIIIlIIIllllllIll .to (IllIIIlIIllllllII ),IIlllIIlIlIlIIIlI .to (IllIIIlIIllllllII ),IllllIlIlIIIIIIII .to (IllIIIlIIllllllII ),IIIlIllIlIIllllIl .to (IllIIIlIIllllllII ),IlIllllIllllIlllI .to (IllIIIlIIllllllII ),IllIllIlIIIlIlIll .to (IllIIIlIIllllllII )),IIllIIlIIIllllIIl ,dynamic_axes ={IIIIIlIlllIIIllIl :[1 ],IlIlllIIIllIlIlll :[1 ],IIIllIllIlIIIllII :[1 ],IIIIlllllIllllIII :[2 ]},do_constant_folding =_IIIIlIllllIIIlllI ,opset_version =13 ,verbose =_IIIIlIllllIIIlllI ,input_names =IllllIIlIlIllIlIl ,output_names =IlIlIlllIIIlIIlIl );return 'Finished'
-with gr .Blocks (theme ='JohnSmith9982/small_and_pretty',title ='AX RVC WebUI')as IlllIlllIIIIllllI :
-	gr .Markdown (value =IlIIlllIlllIlllII ('本软件以MIT协议开源, 作者不对软件具备任何控制力, 使用软件者、传播软件导出的声音者自负全责. <br>如不认可该条款, 则不能使用或引用软件包内任何代码和文件. 详见根目录<b>LICENSE</b>.'))
-	with gr .Tabs ():
-		with gr .TabItem (IlIIlllIlllIlllII ('模型推理')):
-			with gr .Row ():IlllIlllIllIIlIlI =gr .Dropdown (label =IlIIlllIlllIlllII ('推理音色'),choices =sorted (IIlIlllIlIIlllllI ));IIllIlIlIlllIlIII =gr .Button (IlIIlllIlllIlllII ('刷新音色列表和索引路径'),variant =_IIIllIlIIIlllllll );IllIlIlllIlIlIllI =gr .Button (IlIIlllIlllIlllII ('卸载音色省显存'),variant =_IIIllIlIIIlllllll );IlllIIlIlIlIlIIIl =gr .Slider (minimum =0 ,maximum =2333 ,step =1 ,label =IlIIlllIlllIlllII ('请选择说话人id'),value =0 ,visible =_IIIIlIllllIIIlllI ,interactive =_IlIlIIllIlIIIllIl );IllIlIlllIlIlIllI .click (fn =IlIIllIIlIllIIIll ,inputs =[],outputs =[IlllIlllIllIIlIlI ],api_name ='infer_clean')
-			with gr .Group ():
-				gr .Markdown (value =IlIIlllIlllIlllII ('男转女推荐+12key, 女转男推荐-12key, 如果音域爆炸导致音色失真也可以自己调整到合适音域. '))
-				with gr .Row ():
-					with gr .Column ():IlllIlIIIllllIlII =gr .Number (label =IlIIlllIlllIlllII (_IIlIIlllIllIlIIlI ),value =0 );IlIlIIIllllIlIllI =gr .Textbox (label =IlIIlllIlllIlllII ('输入待处理音频文件路径(默认是正确格式示例)'),value ='E:\\codes\\py39\\test-20230416b\\todo-songs\\冬之花clip1.wav');IIlIIIIIIIIlllIlI =gr .Radio (label =IlIIlllIlllIlllII (_IIlIllIIlIIllllll ),choices =[_IlIIlIllIllIlIllI ,_IIllIlIlIIIIIllIl ,'crepe',_IIIIlIlllIllIIIIl ],value =_IlIIlIllIllIlIllI ,interactive =_IlIlIIllIlIIIllIl );IlIllllIIllIIlllI =gr .Slider (minimum =0 ,maximum =7 ,label =IlIIlllIlllIlllII (_IIllIIIlIIlIllIII ),value =3 ,step =1 ,interactive =_IlIlIIllIlIIIllIl )
-					with gr .Column ():IllIIllIlIIIlIIll =gr .Textbox (label =IlIIlllIlllIlllII (_IlIIlIIIIlIlllIII ),value ='',interactive =_IlIlIIllIlIIIllIl );IlllllIIlIllIIlIl =gr .Dropdown (label =IlIIlllIlllIlllII (_IlllllIllIllIllIl ),choices =sorted (IIlIllIlIIIlllIll ),interactive =_IlIlIIllIlIIIllIl );IIllIlIlIlllIlIII .click (fn =IlIIIIllllIlIlIlI ,inputs =[],outputs =[IlllIlllIllIIlIlI ,IlllllIIlIllIIlIl ],api_name ='infer_refresh');IllIlllllIIlIllll =gr .Slider (minimum =0 ,maximum =1 ,label =IlIIlllIlllIlllII ('检索特征占比'),value =.75 ,interactive =_IlIlIIllIlIIIllIl )
-					with gr .Column ():IllIIIlllIllIIIll =gr .Slider (minimum =0 ,maximum =48000 ,label =IlIIlllIlllIlllII (_IIlllllllllllIlII ),value =0 ,step =1 ,interactive =_IlIlIIllIlIIIllIl );IllIIlIIIlIlIlIIl =gr .Slider (minimum =0 ,maximum =1 ,label =IlIIlllIlllIlllII (_IllIlIlIIllIIlIII ),value =.25 ,interactive =_IlIlIIllIlIIIllIl );IIllIlIIlIllIlIIl =gr .Slider (minimum =0 ,maximum =.5 ,label =IlIIlllIlllIlllII (_IIllIllllllIllllI ),value =.33 ,step =.01 ,interactive =_IlIlIIllIlIIIllIl )
-					IlIlIIIIIllIlllll =gr .File (label =IlIIlllIlllIlllII ('F0曲线文件, 可选, 一行一个音高, 代替默认Fl及升降调'));IlIlIIlIIIlIIIlIl =gr .Button (IlIIlllIlllIlllII ('转换'),variant =_IIIllIlIIIlllllll )
-					with gr .Row ():IIlllIlIlllllIIll =gr .Textbox (label =IlIIlllIlllIlllII (_IIIIllllllIlllIlI ));IllIIlIIIllllIllI =gr .Audio (label =IlIIlllIlllIlllII ('输出音频(右下角三个点,点了可以下载)'))
-					IlIlIIlIIIlIIIlIl .click (IIIlIlIlllIlIIIIl ,[IlllIIlIlIlIlIIIl ,IlIlIIIllllIlIllI ,IlllIlIIIllllIlII ,IlIlIIIIIllIlllll ,IIlIIIIIIIIlllIlI ,IllIIllIlIIIlIIll ,IlllllIIlIllIIlIl ,IllIlllllIIlIllll ,IlIllllIIllIIlllI ,IllIIIlllIllIIIll ,IllIIlIIIlIlIlIIl ,IIllIlIIlIllIlIIl ],[IIlllIlIlllllIIll ,IllIIlIIIllllIllI ],api_name ='infer_convert')
-			with gr .Group ():
-				gr .Markdown (value =IlIIlllIlllIlllII ('批量转换, 输入待转换音频文件夹, 或上传多个音频文件, 在指定文件夹(默认opt)下输出转换的音频. '))
-				with gr .Row ():
-					with gr .Column ():IIlIIIIIlIlllllII =gr .Number (label =IlIIlllIlllIlllII (_IIlIIlllIllIlIIlI ),value =0 );IIIllllllIllIlllI =gr .Textbox (label =IlIIlllIlllIlllII ('指定输出文件夹'),value =_IlIIIIlllIIIllIII );IIIIlIIlIIIIlllII =gr .Radio (label =IlIIlllIlllIlllII (_IIlIllIIlIIllllll ),choices =[_IlIIlIllIllIlIllI ,_IIllIlIlIIIIIllIl ,'crepe',_IIIIlIlllIllIIIIl ],value =_IlIIlIllIllIlIllI ,interactive =_IlIlIIllIlIIIllIl );IllllIIIIlIIllIll =gr .Slider (minimum =0 ,maximum =7 ,label =IlIIlllIlllIlllII (_IIllIIIlIIlIllIII ),value =3 ,step =1 ,interactive =_IlIlIIllIlIIIllIl )
-					with gr .Column ():IIIIIIIIllIlIlIll =gr .Textbox (label =IlIIlllIlllIlllII (_IlIIlIIIIlIlllIII ),value ='',interactive =_IlIlIIllIlIIIllIl );IlIllIlIIIIIIIllI =gr .Dropdown (label =IlIIlllIlllIlllII (_IlllllIllIllIllIl ),choices =sorted (IIlIllIlIIIlllIll ),interactive =_IlIlIIllIlIIIllIl );IIllIlIlIlllIlIII .click (fn =lambda :IlIIIIllllIlIlIlI ()[1 ],inputs =[],outputs =IlIllIlIIIIIIIllI ,api_name ='infer_refresh_batch');IIIllIlIIIIlIlIIl =gr .Slider (minimum =0 ,maximum =1 ,label =IlIIlllIlllIlllII ('检索特征占比'),value =1 ,interactive =_IlIlIIllIlIIIllIl )
-					with gr .Column ():IIlIIIlIIllIlllII =gr .Slider (minimum =0 ,maximum =48000 ,label =IlIIlllIlllIlllII (_IIlllllllllllIlII ),value =0 ,step =1 ,interactive =_IlIlIIllIlIIIllIl );IllllIIlIIIlllIIl =gr .Slider (minimum =0 ,maximum =1 ,label =IlIIlllIlllIlllII (_IllIlIlIIllIIlIII ),value =1 ,interactive =_IlIlIIllIlIIIllIl );IIlIlIIlIlIIIIIll =gr .Slider (minimum =0 ,maximum =.5 ,label =IlIIlllIlllIlllII (_IIllIllllllIllllI ),value =.33 ,step =.01 ,interactive =_IlIlIIllIlIIIllIl )
-					with gr .Column ():IllIllllIlllIlllI =gr .Textbox (label =IlIIlllIlllIlllII ('输入待处理音频文件夹路径(去文件管理器地址栏拷就行了)'),value ='E:\\codes\\py39\\test-20230416b\\todo-songs');IlIllllllIIllIlll =gr .File (file_count ='multiple',label =IlIIlllIlllIlllII (_IllIIIlllIlllllll ))
-					with gr .Row ():IIlllllllIIIllIlI =gr .Radio (label =IlIIlllIlllIlllII ('导出文件格式'),choices =[_IIIIIIIlIIIlllIIl ,_IlllIlllIIIIllIlI ,'mp3','m4a'],value =_IlllIlllIIIIllIlI ,interactive =_IlIlIIllIlIIIllIl );IlIlIIIIlIlIllIIl =gr .Button (IlIIlllIlllIlllII ('转换'),variant =_IIIllIlIIIlllllll );IIIllIIIlIlIIlllI =gr .Textbox (label =IlIIlllIlllIlllII (_IIIIllllllIlllIlI ))
-					IlIlIIIIlIlIllIIl .click (IIIlIIllIIIlllIII ,[IlllIIlIlIlIlIIIl ,IllIllllIlllIlllI ,IIIllllllIllIlllI ,IlIllllllIIllIlll ,IIlIIIIIlIlllllII ,IIIIlIIlIIIIlllII ,IIIIIIIIllIlIlIll ,IlIllIlIIIIIIIllI ,IIIllIlIIIIlIlIIl ,IllllIIIIlIIllIll ,IIlIIIlIIllIlllII ,IllllIIlIIIlllIIl ,IIlIlIIlIlIIIIIll ,IIlllllllIIIllIlI ],[IIIllIIIlIlIIlllI ],api_name ='infer_convert_batch')
-			IlllIlllIllIIlIlI .change (fn =IIIllllIIIIIIIIll ,inputs =[IlllIlllIllIIlIlI ,IIllIlIIlIllIlIIl ,IIlIlIIlIlIIIIIll ],outputs =[IlllIIlIlIlIlIIIl ,IIllIlIIlIllIlIIl ,IIlIlIIlIlIIIIIll ,IlllllIIlIllIIlIl ])
-			with gr .Group ():
-				gr .Markdown (value =IlIIlllIlllIlllII ('人声伴奏分离批量处理， 使用UVR5模型。 <br>合格的文件夹路径格式举例： E:\\codes\\py39\\vits_vc_gpu\\白鹭霜华测试样例(去文件管理器地址栏拷就行了)。 <br>模型分为三类： <br>1、保留人声：不带和声的音频选这个，对主人声保留比HP5更好。内置HP2和HP3两个模型，HP3可能轻微漏伴奏但对主人声保留比HP2稍微好一丁点； <br>2、仅保留主人声：带和声的音频选这个，对主人声可能有削弱。内置HP5一个模型； <br> 3、去混响、去延迟模型（by FoxJoy）：<br>\u2003\u2003(1)MDX-Net(onnx_dereverb):对于双通道混响是最好的选择，不能去除单通道混响；<br>&emsp;(234)DeEcho:去除延迟效果。Aggressive比Normal去除得更彻底，DeReverb额外去除混响，可去除单声道混响，但是对高频重的板式混响去不干净。<br>去混响/去延迟，附：<br>1、DeEcho-DeReverb模型的耗时是另外2个DeEcho模型的接近2倍；<br>2、MDX-Net-Dereverb模型挺慢的；<br>3、个人推荐的最干净的配置是先MDX-Net再DeEcho-Aggressive。'))
-				with gr .Row ():
-					with gr .Column ():IIIIllIIllIIIlIll =gr .Textbox (label =IlIIlllIlllIlllII ('输入待处理音频文件夹路径'),value ='E:\\codes\\py39\\test-20230416b\\todo-songs\\todo-songs');IIIlIlIIIlIIlIlIl =gr .File (file_count ='multiple',label =IlIIlllIlllIlllII (_IllIIIlllIlllllll ))
-					with gr .Column ():IllIlIllIIlIIlllI =gr .Dropdown (label =IlIIlllIlllIlllII ('模型'),choices =IIlllllIlIlIlllIl );IIIIIIllllllIllIl =gr .Slider (minimum =0 ,maximum =20 ,step =1 ,label ='人声提取激进程度',value =10 ,interactive =_IlIlIIllIlIIIllIl ,visible =_IIIIlIllllIIIlllI );IlIIIIllIIIllIIlI =gr .Textbox (label =IlIIlllIlllIlllII ('指定输出主人声文件夹'),value =_IlIIIIlllIIIllIII );IIIllIlIIIIIllIll =gr .Textbox (label =IlIIlllIlllIlllII ('指定输出非主人声文件夹'),value =_IlIIIIlllIIIllIII );IllIIIIIlIIllIlll =gr .Radio (label =IlIIlllIlllIlllII ('导出文件格式'),choices =[_IIIIIIIlIIIlllIIl ,_IlllIlllIIIIllIlI ,'mp3','m4a'],value =_IlllIlllIIIIllIlI ,interactive =_IlIlIIllIlIIIllIl )
-					IlllIlllIIIIllIlI =gr .Button (IlIIlllIlllIlllII ('转换'),variant =_IIIllIlIIIlllllll );IIllIllIIllIlIIll =gr .Textbox (label =IlIIlllIlllIlllII (_IIIIllllllIlllIlI ));IlllIlllIIIIllIlI .click (IlllIIlIIIllIlIlI ,[IllIlIllIIlIIlllI ,IIIIllIIllIIIlIll ,IlIIIIllIIIllIIlI ,IIIlIlIIIlIIlIlIl ,IIIllIlIIIIIllIll ,IIIIIIllllllIllIl ,IllIIIIIlIIllIlll ],[IIllIllIIllIlIIll ],api_name ='uvr_convert')
-		with gr .TabItem (IlIIlllIlllIlllII ('训练')):
-			gr .Markdown (value =IlIIlllIlllIlllII ('step1: 填写实验配置. 实验数据放在logs下, 每个实验一个文件夹, 需手工输入实验名路径, 内含实验配置, 日志, 训练得到的模型文件. '))
-			with gr .Row ():IIIIIIllIlllIIlIl =gr .Textbox (label =IlIIlllIlllIlllII ('输入实验名'),value ='mi-test');IIIlllIlIlIIlIlll =gr .Radio (label =IlIIlllIlllIlllII ('目标采样率'),choices =[_IIIllIIlIlIllIIll ],value =_IIIllIIlIlIllIIll ,interactive =_IlIlIIllIlIIIllIl );IlIlllIlIIllllllI =gr .Radio (label =IlIIlllIlllIlllII ('模型是否带音高指导(唱歌一定要, 语音可以不要)'),choices =[_IlIlIIllIlIIIllIl ,_IIIIlIllllIIIlllI ],value =_IlIlIIllIlIIIllIl ,interactive =_IlIlIIllIlIIIllIl );IlIllllllIIlllIll =gr .Radio (label =IlIIlllIlllIlllII ('版本'),choices =[_IIIlllllllIllIIll ],value =_IIIlllllllIllIIll ,interactive =_IlIlIIllIlIIIllIl ,visible =_IlIlIIllIlIIIllIl );IllIIlIllIIlIIIIl =gr .Slider (minimum =0 ,maximum =IlllIIlIlIIIIlIlI .n_cpu ,step =1 ,label =IlIIlllIlllIlllII ('提取音高和处理数据使用的CPU进程数'),value =int (np .ceil (IlllIIlIlIIIIlIlI .n_cpu /1.5 )),interactive =_IlIlIIllIlIIIllIl )
-			with gr .Group ():
-				gr .Markdown (value =IlIIlllIlllIlllII ('step2a: 自动遍历训练文件夹下所有可解码成音频的文件并进行切片归一化, 在实验目录下生成2个wav文件夹; 暂时只支持单人训练. '))
-				with gr .Row ():IIlllllIIlIlIlIlI =gr .Textbox (label =IlIIlllIlllIlllII ('输入训练文件夹路径'),value ='/kaggle/working/dataset');IIlIIIlllIlIlIlll =gr .Slider (minimum =0 ,maximum =4 ,step =1 ,label =IlIIlllIlllIlllII ('请指定说话人id'),value =0 ,interactive =_IlIlIIllIlIIIllIl );IlIlIIIIlIlIllIIl =gr .Button (IlIIlllIlllIlllII ('处理数据'),variant =_IIIllIlIIIlllllll );IlllIIllIlllllIll =gr .Textbox (label =IlIIlllIlllIlllII (_IIIIllllllIlllIlI ),value ='');IlIlIIIIlIlIllIIl .click (IllIIIllllIlIIlIl ,[IIlllllIIlIlIlIlI ,IIIIIIllIlllIIlIl ,IIIlllIlIlIIlIlll ,IllIIlIllIIlIIIIl ],[IlllIIllIlllllIll ],api_name ='train_preprocess')
-			with gr .Group ():
-				gr .Markdown (value =IlIIlllIlllIlllII ('step2b: 使用CPU提取音高(如果模型带音高), 使用GPU提取特征(选择卡号)'))
-				with gr .Row ():
-					with gr .Column ():IlIIllIIlIIllIlll =gr .Textbox (label =IlIIlllIlllIlllII (_IlIIIllIIlIIIIllI ),value =IlIIIllIIllIllIll ,interactive =_IlIlIIllIlIIIllIl );IIIIllllIIIIllllI =gr .Textbox (label =IlIIlllIlllIlllII ('显卡信息'),value =IIIlIlIIIIIlIllII )
-					with gr .Column ():IIIlIlIlIllIllIll =gr .Radio (label =IlIIlllIlllIlllII ('选择音高提取算法:输入歌声可用pm提速,高质量语音但CPU差可用dio提速,harvest质量更好但慢'),choices =[_IlIIlIllIllIlIllI ,_IIllIlIlIIIIIllIl ,'dio',_IIIIlIlllIllIIIIl ,_IIlIllllIlIlIlIll ],value =_IIlIllllIlIlIlIll ,interactive =_IlIlIIllIlIIIllIl );IlIllIIlllllIIlII =gr .Textbox (label =IlIIlllIlllIlllII ('rmvpe卡号配置：以-分隔输入使用的不同进程卡号,例如0-0-1使用在卡l上跑2个进程并在卡1上跑1个进程'),value ='%s-%s'%(IlIIIllIIllIllIll ,IlIIIllIIllIllIll ),interactive =_IlIlIIllIlIIIllIl ,visible =_IlIlIIllIlIIIllIl )
-					IlllIlllIIIIllIlI =gr .Button (IlIIlllIlllIlllII ('特征提取'),variant =_IIIllIlIIIlllllll );IIlIIllIIlIllIIlI =gr .Textbox (label =IlIIlllIlllIlllII (_IIIIllllllIlllIlI ),value ='',max_lines =8 );IIIlIlIlIllIllIll .change (fn =IlIllIllllIlIlIII ,inputs =[IIIlIlIlIllIllIll ],outputs =[IlIllIIlllllIIlII ]);IlllIlllIIIIllIlI .click (IIlllIIIIIIIlIlIl ,[IlIIllIIlIIllIlll ,IllIIlIllIIlIIIIl ,IIIlIlIlIllIllIll ,IlIlllIlIIllllllI ,IIIIIIllIlllIIlIl ,IlIllllllIIlllIll ,IlIllIIlllllIIlII ],[IIlIIllIIlIllIIlI ],api_name ='train_extract_fl_feature')
-			with gr .Group ():
-				gr .Markdown (value =IlIIlllIlllIlllII ('step3: 填写训练设置, 开始训练模型和索引'))
-				with gr .Row ():IlIlIllIIllllIIll =gr .Slider (minimum =0 ,maximum =100 ,step =1 ,label =IlIIlllIlllIlllII ('保存频率save_every_epoch'),value =5 ,interactive =_IlIlIIllIlIIIllIl );IlIlIlIllIlIllIll =gr .Slider (minimum =0 ,maximum =1000 ,step =1 ,label =IlIIlllIlllIlllII ('总训练轮数total_epoch'),value =300 ,interactive =_IlIlIIllIlIIIllIl );IIlIlIllIIIIIIIlI =gr .Slider (minimum =1 ,maximum =40 ,step =1 ,label =IlIIlllIlllIlllII ('每张显卡的batch_size'),value =IlllIIlllllIllIII ,interactive =_IlIlIIllIlIIIllIl );IIIIlllIIllIIlIll =gr .Radio (label =IlIIlllIlllIlllII ('是否仅保存最新的ckpt文件以节省硬盘空间'),choices =[IlIIlllIlllIlllII (_IlllIlllIlllIllIl ),IlIIlllIlllIlllII ('否')],value =IlIIlllIlllIlllII (_IlllIlllIlllIllIl ),interactive =_IlIlIIllIlIIIllIl );IlIlllIllllIIllII =gr .Radio (label =IlIIlllIlllIlllII ('是否缓存所有训练集至显存. 1lmin以下小数据可缓存以加速训练, 大数据缓存会炸显存也加不了多少速'),choices =[IlIIlllIlllIlllII (_IlllIlllIlllIllIl ),IlIIlllIlllIlllII ('否')],value =IlIIlllIlllIlllII ('否'),interactive =_IlIlIIllIlIIIllIl );IlllllIIIIIllllIl =gr .Radio (label =IlIIlllIlllIlllII ('是否在每次保存时间点将最终小模型保存至weights文件夹'),choices =[IlIIlllIlllIlllII (_IlllIlllIlllIllIl ),IlIIlllIlllIlllII ('否')],value =IlIIlllIlllIlllII (_IlllIlllIlllIllIl ),interactive =_IlIlIIllIlIIIllIl )
-				with gr .Row ():IlIIIlIlllllIlIIl =gr .Textbox (label =IlIIlllIlllIlllII ('加载预训练底模G路径'),value ='/kaggle/input/ax-rmf/pretrained_v2/f0G40k.pth',interactive =_IlIlIIllIlIIIllIl );IlIIllIllIlIllIlI =gr .Textbox (label =IlIIlllIlllIlllII ('加载预训练底模D路径'),value ='/kaggle/input/ax-rmf/pretrained_v2/f0D40k.pth',interactive =_IlIlIIllIlIIIllIl );IIIlllIlIlIIlIlll .change (IIIlIIllIIlllIlll ,[IIIlllIlIlIIlIlll ,IlIlllIlIIllllllI ,IlIllllllIIlllIll ],[IlIIIlIlllllIlIIl ,IlIIllIllIlIllIlI ]);IlIllllllIIlllIll .change (IIIIIlIIllllIlIll ,[IIIlllIlIlIIlIlll ,IlIlllIlIIllllllI ,IlIllllllIIlllIll ],[IlIIIlIlllllIlIIl ,IlIIllIllIlIllIlI ,IIIlllIlIlIIlIlll ]);IlIlllIlIIllllllI .change (IlllIIIllIlIIIIlI ,[IlIlllIlIIllllllI ,IIIlllIlIlIIlIlll ,IlIllllllIIlllIll ],[IIIlIlIlIllIllIll ,IlIIIlIlllllIlIIl ,IlIIllIllIlIllIlI ]);IlIIllIlIllIIIlIl =gr .Textbox (label =IlIIlllIlllIlllII (_IlIIIllIIlIIIIllI ),value =IlIIIllIIllIllIll ,interactive =_IlIlIIllIlIIIllIl );IlIlIllIlIIllIIll =gr .Button (IlIIlllIlllIlllII ('训练模型'),variant =_IIIllIlIIIlllllll );IlllllllIIlIllIll =gr .Button (IlIIlllIlllIlllII ('训练特征索引'),variant =_IIIllIlIIIlllllll );IlIIIIIIIIIIlIIlI =gr .Button (IlIIlllIlllIlllII ('一键训练'),variant =_IIIllIlIIIlllllll );IlIIIIIIIlIlIlIlI =gr .Textbox (label =IlIIlllIlllIlllII (_IIIIllllllIlllIlI ),value ='',max_lines =10 );IlIlIllIlIIllIIll .click (IlllIlIIIIllllIlI ,[IIIIIIllIlllIIlIl ,IIIlllIlIlIIlIlll ,IlIlllIlIIllllllI ,IIlIIIlllIlIlIlll ,IlIlIllIIllllIIll ,IlIlIlIllIlIllIll ,IIlIlIllIIIIIIIlI ,IIIIlllIIllIIlIll ,IlIIIlIlllllIlIIl ,IlIIllIllIlIllIlI ,IlIIllIlIllIIIlIl ,IlIlllIllllIIllII ,IlllllIIIIIllllIl ,IlIllllllIIlllIll ],IlIIIIIIIlIlIlIlI ,api_name ='train_start');IlllllllIIlIllIll .click (IIlIlIllIlllIIIII ,[IIIIIIllIlllIIlIl ,IlIllllllIIlllIll ],IlIIIIIIIlIlIlIlI );IlIIIIIIIIIIlIIlI .click (IllllllIlllIIllII ,[IIIIIIllIlllIIlIl ,IIIlllIlIlIIlIlll ,IlIlllIlIIllllllI ,IIlllllIIlIlIlIlI ,IIlIIIlllIlIlIlll ,IllIIlIllIIlIIIIl ,IIIlIlIlIllIllIll ,IlIlIllIIllllIIll ,IlIlIlIllIlIllIll ,IIlIlIllIIIIIIIlI ,IIIIlllIIllIIlIll ,IlIIIlIlllllIlIIl ,IlIIllIllIlIllIlI ,IlIIllIlIllIIIlIl ,IlIlllIllllIIllII ,IlllllIIIIIllllIl ,IlIllllllIIlllIll ,IlIllIIlllllIIlII ],IlIIIIIIIlIlIlIlI ,api_name ='train_start_all')
+			IlIIllllllllIIIIl ,IlIlllIlllIIIlIlI ,IlIIlIllllIIIIlIl =[IIllIIllIlllIlIlI .strip (_IlIlIIIlllIllIlll ).strip (_IIlllllllllIllIll ).strip (_IIlIlIIllllIlIIlI ).strip (_IIlllllllllIllIll ).strip (_IlIlIIIlllIllIlll )for IIllIIllIlllIlIlI in [IlIIllllllllIIIIl ,IlIlllIlllIIIlIlI ,IlIIlIllllIIIIlIl ]];IlIIIlIlIlIIlIIIl =[os .path .join (IlIIllllllllIIIIl ,IlIIlllIIIIIIIlll )for IlIIlllIIIIIIIlll in os .listdir (IlIIllllllllIIIIl )if IlIIlllIIIIIIIlll .endswith (tuple (IIlIIIlIIlIllllII ))];IIIlIllIlIllIIIlI =MDXNetDereverb (15 )if IlllIIIllIllIIlll ==IIIIIlllIlIIlllIl else (_audio_pre_ if 'DeEcho'not in IlllIIIllIllIIlll else _audio_pre_new )(agg =int (IlllIIllIIIlIIIll ),model_path =os .path .join (IIllllIlIlllIIllI ,IlllIIIllIllIIlll +_IlIlIIlIllllIIlIl ),device =IlIllIlIlIIlIlIll .device ,is_half =IlIllIlIlIIlIlIll .is_half )
 			try :
-				if tab_faq =='常见问题解答':
-					with open ('docs/faq.md',_IllIIIIlllllIllIl ,encoding ='utf8')as IlIIllllIIIIIIIlI :IlIIllIIlIlIlIllI =IlIIllllIIIIIIIlI .read ()
-				else :
-					with open ('docs/faq_en.md',_IllIIIIlllllIllIl ,encoding ='utf8')as IlIIllllIIIIIIIlI :IlIIllIIlIlIlIllI =IlIIllllIIIIIIIlI .read ()
-				gr .Markdown (value =IlIIllIIlIlIlIllI )
-			except :gr .Markdown (traceback .format_exc ())
-	if IlllIIlIlIIIIlIlI .iscolab :IlllIlllIIIIllllI .queue (concurrency_count =511 ,max_size =1022 ).launch (server_port =IlllIIlIlIIIIlIlI .listen_port ,share =_IIIIlIllllIIIlllI )
-	else :IlllIlllIIIIllllI .queue (concurrency_count =511 ,max_size =1022 ).launch (server_name ='0.0.0.0',inbrowser =not IlllIIlIlIIIIlIlI .noautoopen ,server_port =IlllIIlIlIIIIlIlI .listen_port ,quiet =_IIIIlIllllIIIlllI ,share =_IIIIlIllllIIIlllI )
+				if IIIlIIIllIllllIlI !=_IllIIIllIIIllllIl :IIIlIIIllIllllIlI =[IIllIIllIlIIIIlIl .name for IIllIIllIlIIIIlIl in IIIlIIIllIllllIlI ]
+				else :IIIlIIIllIllllIlI =IlIIIlIlIlIIlIIIl 
+			except :traceback .print_exc ();IIIlIIIllIllllIlI =IlIIIlIlIlIIlIIIl 
+			print (IIIlIIIllIllllIlI )
+			for IIIIlllIlllIlllII in IIIlIIIllIllllIlI :
+				IIIlIlllllIlIIlII =os .path .join (IlIIllllllllIIIIl ,IIIIlllIlllIlllII );IIllllIIlllIllIII ,IIlllIIlIlIlIlIIl =1 ,0 
+				try :
+					IIlIlIIlIIlllllII =IIIIIIllIIIlllIIl .probe (IIIlIlllllIlIIlII ,cmd ='ffprobe')
+					if IIlIlIIlIIlllllII [IIIIIIlIIlIlIIlII ][0 ]['channels']==2 and IIlIlIIlIIlllllII [IIIIIIlIIlIlIIlII ][0 ][_IIIIIlIlIlIIIlIll ]=='44100':IIllllIIlllIllIII =0 ;IIIlIllIlIllIIIlI ._path_audio_ (IIIlIlllllIlIIlII ,IlIIlIllllIIIIlIl ,IlIlllIlllIIIlIlI ,IIlllllIIlIIIIllI );IIlllIIlIlIlIlIIl =1 
+				except :traceback .print_exc ()
+				if IIllllIIlllIllIII :IIIIllllIIIIIlIIl =f"{IlllllllIIlIlIlIl}/{os.path.basename(IlIIIIlllllIllIIl(IIIlIlllllIlIIlII))}.reformatted.wav";os .system (f"ffmpeg -i {IlIIIIlllllIllIIl(IIIlIlllllIlIIlII)} -vn -acodec pcm_s16le -ac 2 -ar 44100 {IlIIIIlllllIllIIl(IIIIllllIIIIIlIIl)} -y");IIIlIlllllIlIIlII =IIIIllllIIIIIlIIl 
+				try :
+					if not IIlllIIlIlIlIlIIl :IIIlIllIlIllIIIlI ._path_audio_ (IIIlIlllllIlIIlII ,IlIIlIllllIIIIlIl ,IlIlllIlllIIIlIlI ,IIlllllIIlIIIIllI )
+					IIlIIlIIIlIIlllII .append (f"{os.path.basename(IIIlIlllllIlIIlII)}->Success");yield _IIlIlIIllllIlIIlI .join (IIlIIlIIIlIIlllII )
+				except :IIlIIlIIIlIIlllII .append (f"{os.path.basename(IIIlIlllllIlIIlII)}->{traceback.format_exc()}");yield _IIlIlIIllllIlIIlI .join (IIlIIlIIIlIIlllII )
+		except :IIlIIlIIIlIIlllII .append (traceback .format_exc ());yield _IIlIlIIllllIlIIlI .join (IIlIIlIIIlIIlllII )
+		finally :
+			try :
+				if IlllIIIllIllIIlll ==IIIIIlllIlIIlllIl :del IIIlIllIlIllIIIlI .pred .model ;del IIIlIllIlIllIIIlI .pred .model_ 
+				else :del IIIlIllIlIllIIIlI .model 
+				del IIIlIllIlIllIIIlI 
+			except :traceback .print_exc ()
+			print (_IlIlIlIIlllIIIllI )
+			if IIIIIIlIIIIIIIIII .cuda .is_available ():IIIIIIlIIIIIIIIII .cuda .empty_cache ()
+		yield _IIlIlIIllllIlIIlI .join (IIlIIlIIIlIIlllII )
+	elif IIlIllIlIIIlIlIII ==_IIIIlIIllIIlllIll :
+		try :
+			IIlIIlIIIlIIlllII .append (IIIllIIllIIIIIIlI ('Starting audio conversion... (This might take a moment)'));yield _IIlIlIIllllIlIIlI .join (IIlIIlIIIlIIlllII );IlIIllllllllIIIIl ,IlIlllIlllIIIlIlI ,IlIIlIllllIIIIlIl =[IlllIlllIllIllIll .strip (_IlIlIIIlllIllIlll ).strip (_IIlllllllllIllIll ).strip (_IIlIlIIllllIlIIlI ).strip (_IIlllllllllIllIll ).strip (_IlIlIIIlllIllIlll )for IlllIlllIllIllIll in [IlIIllllllllIIIIl ,IlIlllIlllIIIlIlI ,IlIIlIllllIIIIlIl ]];IlIIIlIlIlIIlIIIl =[os .path .join (IlIIllllllllIIIIl ,IlIIlllIlIIllIIIl )for IlIIlllIlIIllIIIl in os .listdir (IlIIllllllllIIIIl )if IlIIlllIlIIllIIIl .endswith (tuple (IIlIIIlIIlIllllII ))]
+			try :
+				if IIIlIIIllIllllIlI !=_IllIIIllIIIllllIl :IIIlIIIllIllllIlI =[IIIlIllIIIlllllIl .name for IIIlIllIIIlllllIl in IIIlIIIllIllllIlI ]
+				else :IIIlIIIllIllllIlI =IlIIIlIlIlIIlIIIl 
+			except :traceback .print_exc ();IIIlIIIllIllllIlI =IlIIIlIlIlIIlIIIl 
+			print (IIIlIIIllIllllIlI );IllIIIllllIlllIIl =_IlllIIIlllIllIllI ;IlIIIIIlllIIIIIll =_IlllIIIlllIllIllI ;IIlIlIIlIlIlIlIIl =_IlllIIIlllIllIllI ;IIllIIlIlllllIllI =3072 ;IlIIlIIIlIlIIIlII =256 ;IIIIlIIIIllIlIIlI =7680 ;IIlIlllIIlllllIII =_IlllIIIlllIllIllI ;IIlllIlllIlIlllIl =1.025 ;IlIIlIlIIIlIIllII ='Vocals_custom';IlIIIlllIlIIIlllI ='Instrumental_custom';IlIlIIlIllllIIIll =_IlllIIIlllIllIllI ;IlIlllIIIIIIIllll =id_to_ptm (IlllIIIllIllIIlll );IIlllIlllIlIlllIl =IIlllIlllIlIlllIl if IIlIlllIIlllllIII or IIlIlIIlIlIlIlIIl else _IllIIIllIIIllllIl ;IIlIIIllllIIlIIIl =prepare_mdx (IlIlllIIIIIIIllll ,IIlIlIIlIlIlIlIIl ,IIllIIlIlllllIllI ,IlIIlIIIlIlIIIlII ,IIIIlIIIIllIlIIlI ,compensation =IIlllIlllIlIlllIl )
+			for IIIIlllIlllIlllII in IIIlIIIllIllllIlI :IIIIIlIIIllIlllll =IlIIlIlIIIlIIllII if IIlIlIIlIlIlIlIIl else _IllIIIllIIIllllIl ;IIlIIIlIlIIlIlIll =IlIIIlllIlIIIlllI if IIlIlIIlIlIlIlIIl else _IllIIIllIIIllllIl ;run_mdx (IlIlllIIIIIIIllll ,IIlIIIllllIIlIIIl ,IIIIlllIlllIlllII ,IIlllllIIlIIIIllI ,diff =IllIIIllllIlllIIl ,suffix =IIIIIlIIIllIlllll ,diff_suffix =IIlIIIlIlIIlIlIll ,denoise =IlIIIIIlllIIIIIll )
+			if IlIlIIlIllllIIIll :
+				print ();print ('[MDX-Net_Colab settings used]');print (f"Model used: {IlIlllIIIIIIIllll}");print (f"Model MD5: {mdx.MDX.get_hash(IlIlllIIIIIIIllll)}");print (f"Model parameters:");print (f"    -dim_f: {IIlIIIllllIIlIIIl.dim_f}");print (f"    -dim_t: {IIlIIIllllIIlIIIl.dim_t}");print (f"    -n_fft: {IIlIIIllllIIlIIIl.n_fft}");print (f"    -compensation: {IIlIIIllllIIlIIIl.compensation}");print ();print ('[Input file]');print ('filename(s): ')
+				for IlIIIIIlIIlIIlIII in IIIlIIIllIllllIlI :print (f"    -{IlIIIIIlIIlIIlIII}");IIlIIlIIIlIIlllII .append (f"{os.path.basename(IlIIIIIlIIlIIlIII)}->Success");yield _IIlIlIIllllIlIIlI .join (IIlIIlIIIlIIlllII )
+		except :IIlIIlIIIlIIlllII .append (traceback .format_exc ());yield _IIlIlIIllllIlIIlI .join (IIlIIlIIIlIIlllII )
+		finally :
+			try :del IIlIIIllllIIlIIIl 
+			except :traceback .print_exc ()
+			print (_IlIlIlIIlllIIIllI )
+			if IIIIIIlIIIIIIIIII .cuda .is_available ():IIIIIIlIIIIIIIIII .cuda .empty_cache ()
+def IIIlllIllllIIIIll (IlllIIIllIlllIlIl ,IIIIIlIIIIlllIIII ,IlllIllIlIlIlIllI ):
+	global IIlIlIIIIllIlIlIl ,IIllIllIlIlIlIlII ,IIllIIIllIIllllll ,IIIIIlIIIlIllllII ,IIIIlIIlIIlllIIIl ,IllIIIIIlllllIlIl ,IIIlIlllIIIIlllIl 
+	if not IlllIIIllIlllIlIl :
+		if IIIlIlllIIIIlllIl is not _IllIIIllIIIllllIl :
+			print (_IlIlIlIIlllIIIllI );del IIllIIIllIIllllll ,IIlIlIIIIllIlIlIl ,IIIIIlIIIlIllllII ,IIIlIlllIIIIlllIl ,IIllIllIlIlIlIlII ;IIIlIlllIIIIlllIl =IIllIIIllIIllllll =IIlIlIIIIllIlIlIl =IIIIIlIIIlIllllII =IIIlIlllIIIIlllIl =IIllIllIlIlIlIlII =_IllIIIllIIIllllIl 
+			if IIIIIIlIIIIIIIIII .cuda .is_available ():IIIIIIlIIIIIIIIII .cuda .empty_cache ()
+			IllllIlIlIIllIlII ,IllIIIIIlllllIlIl =IIIIlIIlIIlllIIIl .get (_IllIIIlIllllIIllI ,1 ),IIIIlIIlIIlllIIIl .get (_IllIllIllIllllIIl ,_IlIIIIIIlIlIllIIl );IIllIIIllIIllllll =(SynthesizerTrnMs256NSFsid if IllIIIIIlllllIlIl ==_IlIIIIIIlIlIllIIl else SynthesizerTrnMs768NSFsid )(*IIIIlIIlIIlllIIIl [_IIlIIlIIlIlIIIlII ],is_half =IlIllIlIlIIlIlIll .is_half )if IllllIlIlIIllIlII ==1 else (SynthesizerTrnMs256NSFsid_nono if IllIIIIIlllllIlIl ==_IlIIIIIIlIlIllIIl else SynthesizerTrnMs768NSFsid_nono )(*IIIIlIIlIIlllIIIl [_IIlIIlIIlIlIIIlII ]);del IIllIIIllIIllllll ,IIIIlIIlIIlllIIIl 
+			if IIIIIIlIIIIIIIIII .cuda .is_available ():IIIIIIlIIIIIIIIII .cuda .empty_cache ()
+			IIIIlIIlIIlllIIIl =_IllIIIllIIIllllIl 
+		return ({_IIIllIllllIlIllIl :_IIIIlIlIIIlIlIlll ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII },)*3 
+	print (f"loading {IlllIIIllIlllIlIl}");IIIIlIIlIIlllIIIl =IIIIIIlIIIIIIIIII .load (IlllIIIllIlllIlIl ,map_location =_IIlllIIIIIlllIIlI );IIllIllIlIlIlIlII =IIIIlIIlIIlllIIIl [_IIlIIlIIlIlIIIlII ][-1 ];IIIIlIIlIIlllIIIl [_IIlIIlIIlIlIIIlII ][-3 ]=IIIIlIIlIIlllIIIl [_IIIlllIlIlIIIlIll ][_IllIIIIlIIllIIlIl ].shape [0 ]
+	if IIIIlIIlIIlllIIIl .get (_IllIIIlIllllIIllI ,1 )==0 :IIIIIlIIIIlllIIII =IlllIllIlIlIlIllI ={_IIIllIllllIlIllIl :_IIIIlIlIIIlIlIlll ,_IlllIIllllIIIIlIl :.5 ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+	else :IIIIIlIIIIlllIIII ={_IIIllIllllIlIllIl :_IlllIIIlllIllIllI ,_IlllIIllllIIIIlIl :IIIIIlIIIIlllIIII ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII };IlllIllIlIlIlIllI ={_IIIllIllllIlIllIl :_IlllIIIlllIllIllI ,_IlllIIllllIIIIlIl :IlllIllIlIlIlIllI ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+	IllIIIIIlllllIlIl =IIIIlIIlIIlllIIIl .get (_IllIllIllIllllIIl ,_IlIIIIIIlIlIllIIl );IIllIIIllIIllllll =(SynthesizerTrnMs256NSFsid if IllIIIIIlllllIlIl ==_IlIIIIIIlIlIllIIl else SynthesizerTrnMs768NSFsid )(*IIIIlIIlIIlllIIIl [_IIlIIlIIlIlIIIlII ],is_half =IlIllIlIlIIlIlIll .is_half )if IIIIlIIlIIlllIIIl .get (_IllIIIlIllllIIllI ,1 )==1 else (SynthesizerTrnMs256NSFsid_nono if IllIIIIIlllllIlIl ==_IlIIIIIIlIlIllIIl else SynthesizerTrnMs768NSFsid_nono )(*IIIIlIIlIIlllIIIl [_IIlIIlIIlIlIIIlII ]);del IIllIIIllIIllllll .enc_q ;print (IIllIIIllIIllllll .load_state_dict (IIIIlIIlIIlllIIIl [_IIIlllIlIlIIIlIll ],strict =_IIIIlIlIIIlIlIlll ));IIllIIIllIIllllll .eval ().to (IlIllIlIlIIlIlIll .device );IIllIIIllIIllllll =IIllIIIllIIllllll .half ()if IlIllIlIlIIlIlIll .is_half else IIllIIIllIIllllll .float ();IIIIIlIIIlIllllII =VC (IIllIllIlIlIlIlII ,IlIllIlIlIIlIlIll );IIlIlIIIIllIlIlIl =IIIIlIIlIIlllIIIl [_IIlIIlIIlIlIIIlII ][-3 ];return {_IIIllIllllIlIllIl :_IIIIlIlIIIlIlIlll ,'maximum':IIlIlIIIIllIlIlIl ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII },IIIIIlIIIIlllIIII ,IlllIllIlIlIlIllI 
+def IlllIIIllllIlllIl ():IllIlIIIlIIIlIlll =[os .path .join (IIIllllIlIlIllIll ,IIllIIlIlIIIIIllI )for (IIIllllIlIlIllIll ,_IlllllIlllIIIIlll ,IIllIllllIIIIllIl )in os .walk (IllIIllIlllIlIlIl )for IIllIIlIlIIIIIllI in IIllIllllIIIIllIl if IIllIIlIlIIIIIllI .endswith ((_IlIlIIlIllllIIlIl ,_IlllllIIllllIlIII ))];IIlllIlllIIllllll =[os .path .join (IIlIIIIlIIIlllIIl ,IlIIIIlllIIlllIlI )for (IIlIIIIlIIIlllIIl ,_IIllIlllIllllllll ,IlllIIIllIIIIlllI )in os .walk (IlIlIIIllIIllIlll ,topdown =_IIIIlIlIIIlIlIlll )for IlIIIIlllIIlllIlI in IlllIIIllIIIIlllI if IlIIIIlllIIlllIlI .endswith (_IlIIllIllIllIIIIl )and _IlIllIlIIIlllIIIl not in IlIIIIlllIIlllIlI ];IlIIlllIIlIIIIIll =[os .path .join (IllIIlIIIllIllIII ,IlllIlIIIllIIIllI )for IlllIlIIIllIIIllI in os .listdir (os .path .join (IlIIIllllllIllIll ,_IIlIIIIIlIlIIIllI ))];return {_IIllIIIlIIlllIlII :sorted (IllIlIIIlIIIlIlll ),_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IIllIIIlIIlllIlII :sorted (IIlllIlllIIllllll ),_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IIllIIIlIIlllIlII :sorted (IlIIlllIIlIIIIIll ),_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+def IlIllIllIIIIllIII ():IIIllIIIlIIllIIIl =[os .path .join (IlIIlIlIIlllIlIII ,IIlIIIIlIIllIIIIl )for (IlIIlIlIIlllIlIII ,_IIIIIIlIllIllIIIl ,IIIIllIIIlllIlIII )in os .walk (IllIIllIlllIlIlIl )for IIlIIIIlIIllIIIIl in IIIIllIIIlllIlIII if IIlIIIIlIIllIIIIl .endswith ((_IlIlIIlIllllIIlIl ,_IlllllIIllllIlIII ))];IlIIIllIlIIlIIlll =[os .path .join (IlIlIlIIlIlIIIlII ,IIIIIlIIlllIlllII )for (IlIlIlIIlIlIIIlII ,_IIIIIlIIIlIIIIIII ,IIlllIIIllIIIllII )in os .walk (IlIlIIIllIIllIlll ,topdown =_IIIIlIlIIIlIlIlll )for IIIIIlIIlllIlllII in IIlllIIIllIIIllII if IIIIIlIIlllIlllII .endswith (_IlIIllIllIllIIIIl )and _IlIllIlIIIlllIIIl not in IIIIIlIIlllIlllII ];return {_IIllIIIlIIlllIlII :sorted (IIIllIIIlIIllIIIl ),_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IIllIIIlIIlllIlII :sorted (IlIIIllIlIIlIIlll ),_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+def IllIIllIllIlIIIll ():IlIllIIlllllIllII =[os .path .join (IllIIlIIIllIllIII ,IIIIIlIllIIlIlllI )for IIIIIlIllIIlIlllI in os .listdir (os .path .join (IlIIIllllllIllIll ,_IIlIIIIIlIlIIIllI ))];IIllIllIlllIIIIII =[os .path .join (IllIIIIllIIIIlIll ,IlIlIlIIlIIlllIlI )for IlIlIlIIlIIlllIlI in os .listdir (os .path .join (IlIIIllllllIllIll ,_IlIIlllllIlllIlIl ))];return {_IIllIIIlIIlllIlII :sorted (IIllIllIlllIIIIII ),_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IIllIIIlIIlllIlII :sorted (IlIllIIlllllIllII ),_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+IIIllIllIllIIIllI ={_IllIIIIIIlIIIIlll :32000 ,_IIIllIIIlIIllIlII :40000 ,_IlIlllllIIIIIlIlI :48000 }
+def IlllIIIIlIIIIlIIl (IIIIIlIlIIIIllllI ,IIIIIlIlIlIlIlllI ):
+	while IIIIIlIlIlIlIlllI .poll ()is _IllIIIllIIIllllIl :time .sleep (.5 )
+	IIIIIlIlIIIIllllI [0 ]=_IlllIIIlllIllIllI 
+def IIlIlIIIlIlllIIll (IlIIlIllIIllIlllI ,IIIIlllllIlIIllII ):
+	while not all (IlIIllIIllIlIIlII .poll ()is not _IllIIIllIIIllllIl for IlIIllIIllIlIIlII in IIIIlllllIlIIllII ):time .sleep (.5 )
+	IlIIlIllIIllIlllI [0 ]=_IlllIIIlllIllIllI 
+def IlIllllllllIlllIl (IlIlIIlIIIlIIIlll ,IlllIIllllIIlIlII ,IllIIllIllllIIlII ):global IlllIIIllIIIlIllI ,IIIIllIIIIIlIlllI ,IlIIIIlllIIIllllI ;IlllIIIllIIIlIllI =IlIlIIlIIIlIIIlll ;IIIIllIIIIIlIlllI =IlllIIllllIIlIlII ;IlIIIIlllIIIllllI =IllIIllIllllIIlII ;rvc_globals .DoFormant =IlIlIIlIIIlIIIlll ;rvc_globals .Quefrency =IlllIIllllIIlIlII ;rvc_globals .Timbre =IllIIllIllllIIlII ;IIllIIllIllIIllll ={_IIIllIllllIlIllIl :IlllIIIllIIIlIllI ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII };return ({_IlllIIllllIIIIlIl :IlllIIIllIIIlIllI ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII },)+(IIllIIllIllIIllll ,)*6 
+def IllIIIllIlIllllll (IIllIIIIlIIIllIll ,IIIIIIllllllllIll ):global IIIIllIIIIIlIlllI ,IlIIIIlllIIIllllI ,IlllIIIllIIIlIllI ;IIIIllIIIIIlIlllI =IIllIIIIlIIIllIll ;IlIIIIlllIIIllllI =IIIIIIllllllllIll ;IlllIIIllIIIlIllI =_IlllIIIlllIllIllI ;rvc_globals .DoFormant =_IlllIIIlllIllIllI ;rvc_globals .Quefrency =IIllIIIIlIIIllIll ;rvc_globals .Timbre =IIIIIIllllllllIll ;return {_IlllIIllllIIIIlIl :IIIIllIIIIIlIlllI ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IlllIIllllIIIIlIl :IlIIIIlllIIIllllI ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+def IIIIIIIIIIIIlIlll (IlIIIIlIlIIlIlIlI ,IIlIllllIlllIIIIl ,IIlllIlIlIllIlllI ):
+	if IlIIIIlIlIIlIlIlI :
+		with open (IlIIIIlIlIIlIlIlI ,_IlIIIIlllIlIIllll )as IllIllIIllIIIllII :IlllIIIIIIlIlIIII =IllIllIIllIIIllII .readlines ();IIlIllllIlllIIIIl ,IIlllIlIlIllIlllI =IlllIIIIIIlIlIIII [0 ].strip (),IlllIIIIIIlIlIIII [1 ]
+		IllIIIllIlIllllll (IIlIllllIlllIIIIl ,IIlllIlIlIllIlllI )
+	else :IIlIllllIlllIIIIl ,IIlllIlIlIllIlllI =IllllIIlIlIlIlIll (IlIIIIlIlIIlIlIlI ,IIlIllllIlllIIIIl ,IIlllIlIlIllIlllI )
+	return {_IIllIIIlIIlllIlII :IIIllllIIlIlllIlI (),_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IlllIIllllIIIIlIl :IIlIllllIlllIIIIl ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IlllIIllllIIIIlIl :IIlllIlIlIllIlllI ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+def IllIIllIllIllIlll (IIlIIllIllllllIII ,IIlIlIIllIlIIIIII ,IlIlIlIllllllIIIl ,IlllllIllllIIlIII ):
+	IlIlIlIllllllIIIl =IIIllIllIllIIIllI [IlIlIlIllllllIIIl ];IIlIlllIllIllIIlI =os .path .join (IlIIIllllllIllIll ,_IIIlIlIlIIIIllllI ,IIlIlIIllIlIIIIII );IIlllllIIIIlIIIII =os .path .join (IIlIlllIllIllIIlI ,'preprocess.log');os .makedirs (IIlIlllIllIllIIlI ,exist_ok =_IlllIIIlllIllIllI )
+	with open (IIlllllIIIIlIIIII ,'w')as IlllIIIIIIIlllIlI :0 
+	IIIlIlIlIIlIIIIII =f"{IlIllIlIlIIlIlIll.python_cmd} trainset_preprocess_pipeline_print.py {IIlIIllIllllllIII} {IlIIIIlllllIllIIl(IlIlIlIllllllIIIl)} {IlIIIIlllllIllIIl(IlllllIllllIIlIII)} {IIlIlllIllIllIIlI} {IlIIIIlllllIllIIl(IlIllIlIlIIlIlIll.noparallel)}";print (IIIlIlIlIIlIIIIII );IlIllIlIlIIIlIIlI =Popen (IIIlIlIlIIlIIIIII ,shell =_IlllIIIlllIllIllI );IlIllIIIlllIIllll =[_IIIIlIlIIIlIlIlll ];threading .Thread (target =IlllIIIIlIIIIlIIl ,args =(IlIllIIIlllIIllll ,IlIllIlIlIIIlIIlI )).start ()
+	while not IlIllIIIlllIIllll [0 ]:
+		with open (IIlllllIIIIlIIIII ,_IlIIIIlllIlIIllll )as IlllIIIIIIIlllIlI :yield IlllIIIIIIIlllIlI .read ()
+		time .sleep (1 )
+	with open (IIlllllIIIIlIIIII ,_IlIIIIlllIlIIllll )as IlllIIIIIIIlllIlI :IlIIlllIIIIllIlIl =IlllIIIIIIIlllIlI .read ()
+	print (IlIIlllIIIIllIlIl );yield IlIIlllIIIIllIlIl 
+def IllllIllIllIIIllI (IIlIllIllIIlIllll ,IIllIIIllIIlIIlII ,IlIlIIlllIIIIIllI ,IllIllllIIIlllIll ,IlIllIllllIIIIlll ,IIIlIlIlIIlIIIIIl ,IllIlIllIlIllllIl ):
+	IIlIllIllIIlIllll =IIlIllIllIIlIllll .split ('-');IllIIlIIIlIIlIIII =f"{IlIIIllllllIllIll}/logs/{IlIllIllllIIIIlll}";IlIIllIlIIIIIIlII =f"{IllIIlIIIlIIlIIII}/extract_fl_feature.log";os .makedirs (IllIIlIIIlIIlIIII ,exist_ok =_IlllIIIlllIllIllI )
+	with open (IlIIllIlIIIIIIlII ,'w')as IIIIlIlllIllllllI :0 
+	if IllIllllIIIlllIll :
+		IlIIllIlIlllIllIl =f"{IlIllIlIlIIlIlIll.python_cmd} extract_fl_print.py {IllIIlIIIlIIlIIII} {IlIIIIlllllIllIIl(IIllIIIllIIlIIlII)} {IlIIIIlllllIllIIl(IlIlIIlllIIIIIllI)} {IlIIIIlllllIllIIl(IllIlIllIlIllllIl)}";print (IlIIllIlIlllIllIl );IIIlIllIlllIlllll =Popen (IlIIllIlIlllIllIl ,shell =_IlllIIIlllIllIllI ,cwd =IlIIIllllllIllIll );IIIIIlIllIlIlIlII =[_IIIIlIlIIIlIlIlll ];threading .Thread (target =IlllIIIIlIIIIlIIl ,args =(IIIIIlIllIlIlIlII ,IIIlIllIlllIlllll )).start ()
+		while not IIIIIlIllIlIlIlII [0 ]:
+			with open (IlIIllIlIIIIIIlII ,_IlIIIIlllIlIIllll )as IIIIlIlllIllllllI :yield IIIIlIlllIllllllI .read ()
+			time .sleep (1 )
+	IlIIllllllIIIIllI =len (IIlIllIllIIlIllll );IIlIlIllllIlIlIll =[]
+	for (IIIllIIIIIIlIllll ,IIlIlllIIlIIlIIlI )in enumerate (IIlIllIllIIlIllll ):IlIIllIlIlllIllIl =f"{IlIllIlIlIIlIlIll.python_cmd} extract_feature_print.py {IlIIIIlllllIllIIl(IlIllIlIlIIlIlIll.device)} {IlIIIIlllllIllIIl(IlIIllllllIIIIllI)} {IlIIIIlllllIllIIl(IIIllIIIIIIlIllll)} {IlIIIIlllllIllIIl(IIlIlllIIlIIlIIlI)} {IllIIlIIIlIIlIIII} {IlIIIIlllllIllIIl(IIIlIlIlIIlIIIIIl)}";print (IlIIllIlIlllIllIl );IIIlIllIlllIlllll =Popen (IlIIllIlIlllIllIl ,shell =_IlllIIIlllIllIllI ,cwd =IlIIIllllllIllIll );IIlIlIllllIlIlIll .append (IIIlIllIlllIlllll )
+	IIIIIlIllIlIlIlII =[_IIIIlIlIIIlIlIlll ];threading .Thread (target =IIlIlIIIlIlllIIll ,args =(IIIIIlIllIlIlIlII ,IIlIlIllllIlIlIll )).start ()
+	while not IIIIIlIllIlIlIlII [0 ]:
+		with open (IlIIllIlIIIIIIlII ,_IlIIIIlllIlIIllll )as IIIIlIlllIllllllI :yield IIIIlIlllIllllllI .read ()
+		time .sleep (1 )
+	with open (IlIIllIlIIIIIIlII ,_IlIIIIlllIlIIllll )as IIIIlIlllIllllllI :IIlllIIIIIlllIIlI =IIIIlIlllIllllllI .read ()
+	print (IIlllIIIIIlllIIlI );yield IIlllIIIIIlllIIlI 
+def IllllllIIIIlIIIIl (IIIIIIIlIlllIIllI ,IIlllllIIIlIIIIIl ,IlIlllIlllIIllllI ):
+	IlIlIIIlllIIlllll =''if IlIlllIlllIIllllI ==_IlIIIIIIlIlIllIIl else _IIlllIIllIIlllIll ;IIIllIIIllIlIlIII =_IllIIIlIllllIIllI if IIlllllIIIlIIIIIl else '';IIllIlIlIlIlIIIll ={_IlIIIIIIllllIIlll :'',_IIIlIIIlIIIIlllll :''}
+	for IllIIllllllIlIlIl in IIllIlIlIlIlIIIll :
+		IIllllIIlIIllllII =f"/kaggle/input/ax-rmf/pretrained{IlIlIIIlllIIlllll}/{IIIllIIIllIlIlIII}{IllIIllllllIlIlIl}{IIIIIIIlIlllIIllI}.pth"
+		if os .access (IIllllIIlIIllllII ,os .F_OK ):IIllIlIlIlIlIIIll [IllIIllllllIlIlIl ]=IIllllIIlIIllllII 
+		else :print (f"{IIllllIIlIIllllII} doesn't exist, will not use pretrained model.")
+	return IIllIlIlIlIlIIIll [_IlIIIIIIllllIIlll ],IIllIlIlIlIlIIIll [_IIIlIIIlIIIIlllll ]
+def IlllIIIlIIIllllII (IIIIlIIlllIIIllll ,IlllIlIlllIIIlllI ,IlllIlIlIIIIIlllI ):
+	IIIlIlIllIIlIllIl =''if IlllIlIlIIIIIlllI ==_IlIIIIIIlIlIllIIl else _IIlllIIllIIlllIll ;IIIIlIIlllIIIllll =_IIIllIIIlIIllIlII if IIIIlIIlllIIIllll ==_IllIIIIIIlIIIIlll and IlllIlIlIIIIIlllI ==_IlIIIIIIlIlIllIIl else IIIIlIIlllIIIllll ;IlIIIIllllIlIllII ={_IIllIIIlIIlllIlII :[_IIIllIIIlIIllIlII ,_IlIlllllIIIIIlIlI ],_IIllIIllllllIllII :_IlllllIlIIlIlIlII ,_IlllIIllllIIIIlIl :IIIIlIIlllIIIllll }if IlllIlIlIIIIIlllI ==_IlIIIIIIlIlIllIIl else {_IIllIIIlIIlllIlII :[_IIIllIIIlIIllIlII ,_IlIlllllIIIIIlIlI ,_IllIIIIIIlIIIIlll ],_IIllIIllllllIllII :_IlllllIlIIlIlIlII ,_IlllIIllllIIIIlIl :IIIIlIIlllIIIllll };IIIlIIlIlllIIIIII =_IllIIIlIllllIIllI if IlllIlIlllIIIlllI else '';IIlIIlIlIIllIllll ={_IlIIIIIIllllIIlll :'',_IIIlIIIlIIIIlllll :''}
+	for IlllIlIlIlllIIIll in IIlIIlIlIIllIllll :
+		IlllIIlIlIIIlIlll =f"/kaggle/input/ax-rmf/pretrained{IIIlIlIllIIlIllIl}/{IIIlIIlIlllIIIIII}{IlllIlIlIlllIIIll}{IIIIlIIlllIIIllll}.pth"
+		if os .access (IlllIIlIlIIIlIlll ,os .F_OK ):IIlIIlIlIIllIllll [IlllIlIlIlllIIIll ]=IlllIIlIlIIIlIlll 
+		else :print (f"{IlllIIlIlIIIlIlll} doesn't exist, will not use pretrained model.")
+	return IIlIIlIlIIllIllll [_IlIIIIIIllllIIlll ],IIlIIlIlIIllIllll [_IIIlIIIlIIIIlllll ],IlIIIIllllIlIllII 
+def IIlllIIIlIlIllIll (IlIlIIIIlIlIllIIl ,IIIllIlllllIIIlll ,IllIllIIlIlIIlIII ):
+	IIlllIIIIIIIIIIlI =''if IllIllIIlIlIIlIII ==_IlIIIIIIlIlIllIIl else _IIlllIIllIIlllIll ;IIIlIllIlIIlIIIII ='/kaggle/input/ax-rmf/pretrained%s/f0%s%s.pth';IIIIlIIlIIlIIlIll ={_IlIIIIIIllllIIlll :'',_IIIlIIIlIIIIlllll :''}
+	for IlIllIlIlIllIIlIl in IIIIlIIlIIlIIlIll :
+		IIIlIIIIIIIIllIll =IIIlIllIlIIlIIIII %(IIlllIIIIIIIIIIlI ,IlIllIlIlIllIIlIl ,IIIllIlllllIIIlll )
+		if os .access (IIIlIIIIIIIIllIll ,os .F_OK ):IIIIlIIlIIlIIlIll [IlIllIlIlIllIIlIl ]=IIIlIIIIIIIIllIll 
+		else :print (IIIlIIIIIIIIllIll ,"doesn't exist, will not use pretrained model")
+	return {_IIIllIllllIlIllIl :IlIlIIIIlIlIllIIl ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII },IIIIlIIlIIlIIlIll [_IlIIIIIIllllIIlll ],IIIIlIIlIIlIIlIll [_IIIlIIIlIIIIlllll ],{_IIIllIllllIlIllIl :IlIlIIIIlIlIllIIl ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+global IIllllIIlIlIlIlll 
+def IIllIIllIlIIlllII (IIIIllIIIIIIlIIII ,IIIIllIlIllllIIII ):
+	IIlllIIIlllllllIl =1 ;IlllIlIlIIlIIIlII =os .path .join (IIIIllIIIIIIlIIII ,'1_16k_wavs')
+	if os .path .isdir (IlllIlIlIIlIIIlII ):
+		IllIIlIIIllIlllIl =len (glob1 (IlllIlIlIIlIIIlII ,'*.wav'))
+		if IllIIlIIIllIlllIl >0 :
+			IIlllIIIlllllllIl =IlIlllIIIlIlIIlll .ceil (IllIIlIIIllIlllIl /IIIIllIlIllllIIII )
+			if IIlllIIIlllllllIl >1 :IIlllIIIlllllllIl +=1 
+	return IIlllIIIlllllllIl 
+global IIIIllIllIllIIIll ,IlIlIIllIllIIIIII 
+def IllIIlllIlllIIIIl (IlIlllIIlllIIIlll ,IIlIlIIIIIlIllIlI ,IllIIlIlIlIIIlIII ,IIlIIlIIIIIIlllIl ,IlllllllIIIIlIllI ,IIllIlIIllllIllll ,IllIllIIIIlIllIll ,IIIIIlIIlIIIllIIl ,IIllIllllIlllIIll ,IIlIIlIlIIlllIlIl ,IllIIIllIlllllIlI ,IlIIIIlllIlIIlllI ,IllllIlIlIlllIIIl ,IllllllIlIlIlIlIl ):
+	with open (_IlIllIlllIIIIIIIl ,'w+')as IlIlIIIIIIIllllll :IlIlIIIIIIIllllll .write ('False')
+	IllllllIllIIlIlIl =os .path .join (IlIIIllllllIllIll ,_IIIlIlIlIIIIllllI ,IlIlllIIlllIIIlll );os .makedirs (IllllllIllIIlIlIl ,exist_ok =_IlllIIIlllIllIllI );IIIIlllllIlIlIlll =os .path .join (IllllllIllIIlIlIl ,'0_gt_wavs');IIllllIIllllIllll ='256'if IllllllIlIlIlIlIl ==_IlIIIIIIlIlIllIIl else '768';IIIllIlIlIllllIII =os .path .join (IllllllIllIIlIlIl ,f"3_feature{IIllllIIllllIllll}");IllIIlIlllllIlllI =IIllIIllIlIIlllII (IllllllIllIIlIlIl ,IllIllIIIIlIllIll );IIIllIIIlIIllIIlI =[IIIIlllllIlIlIlll ,IIIllIlIlIllllIII ]
+	if IllIIlIlIlIIIlIII :IlIIllIlIIIlIllll =f"{IllllllIllIIlIlIl}/2a_f0";IllIIllIllIIlIlll =f"{IllllllIllIIlIlIl}/2b-f0nsf";IIIllIIIlIIllIIlI .extend ([IlIIllIlIIIlIllll ,IllIIllIllIIlIlll ])
+	IlIIIlIIIlIlIIIlI =set (IIIIlIIlllIIlIlII .split (_IIIIlllIlIIIlllll )[0 ]for IlllIlIIIIIIIIIII in IIIllIIIlIIllIIlI for IIIIlIIlllIIlIlII in os .listdir (IlllIlIIIIIIIIIII ))
+	def IIlllIlIlIIlIlllI (IIIlIllIlllllIlll ):
+		IIlllIllIIIIlIIIl =[IIIIlllllIlIlIlll ,IIIllIlIlIllllIII ]
+		if IllIIlIlIlIIIlIII :IIlllIllIIIIlIIIl .extend ([IlIIllIlIIIlIllll ,IllIIllIllIIlIlll ])
+		return '|'.join ([IIIllIllIlllIIlII .replace ('\\','\\\\')+'/'+IIIlIllIlllllIlll +('.wav.npy'if IIIllIllIlllIIlII in [IlIIllIlIIIlIllll ,IllIIllIllIIlIlll ]else '.wav'if IIIllIllIlllIIlII ==IIIIlllllIlIlIlll else '.npy')for IIIllIllIlllIIlII in IIlllIllIIIIlIIIl ])
+	IIlIIlIIIIllllIll =[f"{IIlllIlIlIIlIlllI(IlIIllIIlIlIlIlII)}|{IIlIIlIIIIIIlllIl}"for IlIIllIIlIlIlIlII in IlIIIlIIIlIlIIIlI ];IIIlIIlIIIIIlllII =f"{IlIIIllllllIllIll}/logs/mute"
+	for _IIlIlIlIllIIllIII in range (2 ):
+		IlIlllIllIIIIIIII =f"{IIIlIIlIIIIIlllII}/0_gt_wavs/mute{IIlIlIIIIIlIllIlI}.wav|{mute_dir}/3_feature{IIllllIIllllIllll}/mute.npy"
+		if IllIIlIlIlIIIlIII :IlIlllIllIIIIIIII +=f"|{IIIlIIlIIIIIlllII}/2a_f0/mute.wav.npy|{mute_dir}/2b-f0nsf/mute.wav.npy"
+		IIlIIlIIIIllllIll .append (IlIlllIllIIIIIIII +f"|{IIlIIlIIIIIIlllIl}")
+	shuffle (IIlIIlIIIIllllIll )
+	with open (f"{IllllllIllIIlIlIl}/filelist.txt",'w')as IlIIlIIIIlIllIlII :IlIIlIIIIlIllIlII .write (_IIlIlIIllllIlIIlI .join (IIlIIlIIIIllllIll ))
+	print ('write filelist done');print ('use gpus:',IllIIIllIlllllIlI )
+	if IIllIllllIlllIIll =='':print ('no pretrained Generator')
+	if IIlIIlIlIIlllIlIl =='':print ('no pretrained Discriminator')
+	IIlllIlIlIIlIllIl =f"-pg {IIllIllllIlllIIll}"if IIllIllllIlllIIll else '';IllIlIIllllIlllIl =f"-pd {IIlIIlIlIIlllIlIl}"if IIlIIlIlIIlllIlIl else '';IIIllIIIlllIIIIII =f"{IlIllIlIlIIlIlIll.python_cmd} train_nsf_sim_cache_sid_load_pretrain.py -e {IlIlllIIlllIIIlll} -sr {IIlIlIIIIIlIllIlI} -f0 {int(IllIIlIlIlIIIlIII)} -bs {IllIllIIIIlIllIll} -g {IllIIIllIlllllIlI if IllIIIllIlllllIlI is not _IllIIIllIIIllllIl else''} -te {IIllIlIIllllIllll} -se {IlllllllIIIIlIllI} {IIlllIlIlIIlIllIl} {IllIlIIllllIlllIl} -l {int(IIIIIlIIlIIIllIIl)} -c {int(IlIIIIlllIlIIlllI)} -sw {int(IllllIlIlIlllIIIl)} -v {IllllllIlIlIlIlIl} -li {IllIIlIlllllIlllI}";print (IIIllIIIlllIIIIII );global IIIIllIIlIllIIllI ;IIIIllIIlIllIIllI =Popen (IIIllIIIlllIIIIII ,shell =_IlllIIIlllIllIllI ,cwd =IlIIIllllllIllIll );global IIIIllIllIllIIIll ;IIIIllIllIllIIIll =IIIIllIIlIllIIllI .pid ;IIIIllIIlIllIIllI .wait ();return IIIllIIllIIIIIIlI ('Training is done, check train.log'),{_IIIllIllllIlIllIl :_IIIIlIlIIIlIlIlll ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IIIllIllllIlIllIl :_IlllIIIlllIllIllI ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+def IIIIllIllllllIllI (IlIIIIIIIIllIIllI ,IIIlIIlIIIIIIllII ):
+	IlIlIlllIIllllIII =os .path .join (IlIIIllllllIllIll ,_IIIlIlIlIIIIllllI ,IlIIIIIIIIllIIllI );os .makedirs (IlIlIlllIIllllIII ,exist_ok =_IlllIIIlllIllIllI );IlIIllllIIIIIlIIl ='256'if IIIlIIlIIIIIIllII ==_IlIIIIIIlIlIllIIl else '768';IlIlllllIIlllIlII =os .path .join (IlIlIlllIIllllIII ,f"3_feature{IlIIllllIIIIIlIIl}")
+	if not os .path .exists (IlIlllllIIlllIlII )or len (os .listdir (IlIlllllIIlllIlII ))==0 :return '请先进行特征提取!'
+	IlIIIlIIllIlIlIIl =[IIlIlllllIlIlIIlI .load (os .path .join (IlIlllllIIlllIlII ,IIllIIlIlllIlIllI ))for IIllIIlIlllIlIllI in sorted (os .listdir (IlIlllllIIlllIlII ))];IIIlIIIllllIIIlII =IIlIlllllIlIlIIlI .concatenate (IlIIIlIIllIlIlIIl ,0 );IIlIlllllIlIlIIlI .random .shuffle (IIIlIIIllllIIIlII );IlllllllIIllllIlI =[]
+	if IIIlIIIllllIIIlII .shape [0 ]>2 *10 **5 :
+		IlllllllIIllllIlI .append ('Trying doing kmeans %s shape to 10k centers.'%IIIlIIIllllIIIlII .shape [0 ]);yield _IIlIlIIllllIlIIlI .join (IlllllllIIllllIlI )
+		try :IIIlIIIllllIIIlII =MiniBatchKMeans (n_clusters =10000 ,verbose =_IlllIIIlllIllIllI ,batch_size =256 *IlIllIlIlIIlIlIll .n_cpu ,compute_labels =_IIIIlIlIIIlIlIlll ,init ='random').fit (IIIlIIIllllIIIlII ).cluster_centers_ 
+		except Exception as IllIIlllIIIllIIlI :IlllllllIIllllIlI .append (str (IllIIlllIIIllIIlI ));yield _IIlIlIIllllIlIIlI .join (IlllllllIIllllIlI )
+	IIlIlllllIlIlIIlI .save (os .path .join (IlIlIlllIIllllIII ,'total_fea.npy'),IIIlIIIllllIIIlII );IlIlIlIllIIlIIIIl =min (int (16 *IIlIlllllIlIlIIlI .sqrt (IIIlIIIllllIIIlII .shape [0 ])),IIIlIIIllllIIIlII .shape [0 ]//39 );IlllllllIIllllIlI .append ('%s,%s'%(IIIlIIIllllIIIlII .shape ,IlIlIlIllIIlIIIIl ));yield _IIlIlIIllllIlIIlI .join (IlllllllIIllllIlI );IIIlllllllIIIlIIl =faiss .index_factory (int (IlIIllllIIIIIlIIl ),f"IVF{IlIlIlIllIIlIIIIl},Flat");IllIIIllIIIIIIIll =faiss .extract_index_ivf (IIIlllllllIIIlIIl );IllIIIllIIIIIIIll .nprobe =1 ;IIIlllllllIIIlIIl .train (IIIlIIIllllIIIlII );IIIlIIIlIIllIlllI =f"{IlIlIlllIIllllIII}/trained_IVF{IlIlIlIllIIlIIIIl}_Flat_nprobe_{IllIIIllIIIIIIIll.nprobe}_{IlIIIIIIIIllIIllI}_{IIIlIIlIIIIIIllII}.index";faiss .write_index (IIIlllllllIIIlIIl ,IIIlIIIlIIllIlllI );IlllllllIIllllIlI .append ('adding');yield _IIlIlIIllllIlIIlI .join (IlllllllIIllllIlI );IlIllIIlIlIlIIIlI =8192 
+	for IlIIlllIIlIlllIlI in range (0 ,IIIlIIIllllIIIlII .shape [0 ],IlIllIIlIlIlIIIlI ):IIIlllllllIIIlIIl .add (IIIlIIIllllIIIlII [IlIIlllIIlIlllIlI :IlIIlllIIlIlllIlI +IlIllIIlIlIlIIIlI ])
+	IIIlIIIlIIllIlllI =f"{IlIlIlllIIllllIII}/added_IVF{IlIlIlIllIIlIIIIl}_Flat_nprobe_{IllIIIllIIIIIIIll.nprobe}_{IlIIIIIIIIllIIllI}_{IIIlIIlIIIIIIllII}.index";faiss .write_index (IIIlllllllIIIlIIl ,IIIlIIIlIIllIlllI );IlllllllIIllllIlI .append (f"Successful Index Construction，added_IVF{IlIlIlIllIIlIIIIl}_Flat_nprobe_{IllIIIllIIIIIIIll.nprobe}_{IlIIIIIIIIllIIllI}_{IIIlIIlIIIIIIllII}.index");yield _IIlIlIIllllIlIIlI .join (IlllllllIIllllIlI )
+def IIIIIIlIIIlIlIIIl (IIlIllIlIIIIIIIIl ):
+	IlIIlIIIlIIllIIIl =os .path .join (os .path .dirname (IIlIllIlIIIIIIIIl ),'train.log')
+	if not os .path .exists (IlIIlIIIlIIllIIIl ):return {_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+	try :
+		with open (IlIIlIIIlIIllIIIl ,_IlIIIIlllIlIIllll )as IIlIllIIIIIIIllIl :IlIllIllIIlllIIII =next (IIlIllIIIIIIIllIl ).strip ();IlIIlIlIlllIlIlIl =eval (IlIllIllIIlllIIII .split ('\t')[-1 ]);IlIlllIlIIlIlllll ,IIIlllllIlIIllIlI =IlIIlIlIlllIlIlIl .get (_IIIIIlIlIlIIIlIll ),IlIIlIlIlllIlIlIl .get ('if_f0');IlIllIIlIIIlllIlI =_IIIllllllIllIIIII if IlIIlIlIlllIlIlIl .get (_IllIllIllIllllIIl )==_IIIllllllIllIIIII else _IlIIIIIIlIlIllIIl ;return IlIlllIlIIlIlllll ,str (IIIlllllIlIIllIlI ),IlIllIIlIIIlllIlI 
+	except Exception as IllIlllIlllIlIllI :print (f"Exception occurred: {str(IllIlllIlllIlIllI)}, Traceback: {traceback.format_exc()}");return {_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+def IlIllIlIlllIIllII (IlIlllIllllllIlII ,IIIlIllllIllIIllI ):IlllllIIIlIllIIlI ='rnd';IlIIIIllIIlIlIIII ='pitchf';IIlIllIlIIllllIIl ='pitch';IIlllIlIllllIllIl ='phone';IIlIIllllIIllllIl =IIIIIIlIIIIIIIIII .device (_IIlllIIIIIlllIIlI );IIlIIlIIIlIlIlllI =IIIIIIlIIIIIIIIII .load (IlIlllIllllllIlII ,map_location =IIlIIllllIIllllIl );IIIIIIIIIllllIllI =256 if IIlIIlIIIlIlIlllI .get (_IllIllIllIllllIIl ,_IlIIIIIIlIlIllIIl )==_IlIIIIIIlIlIllIIl else 768 ;IIIIllIlIIllllllI ={IIlllIlIllllIllIl :IIIIIIlIIIIIIIIII .rand (1 ,200 ,IIIIIIIIIllllIllI ),'phone_lengths':IIIIIIlIIIIIIIIII .LongTensor ([200 ]),IIlIllIlIIllllIIl :IIIIIIlIIIIIIIIII .randint (5 ,255 ,(1 ,200 )),IlIIIIllIIlIlIIII :IIIIIIlIIIIIIIIII .rand (1 ,200 ),'ds':IIIIIIlIIIIIIIIII .zeros (1 ).long (),IlllllIIIlIllIIlI :IIIIIIlIIIIIIIIII .rand (1 ,192 ,200 )};IIlIIlIIIlIlIlllI [_IIlIIlIIlIlIIIlII ][-3 ]=IIlIIlIIIlIlIlllI [_IIIlllIlIlIIIlIll ][_IllIIIIlIIllIIlIl ].shape [0 ];IllIlllllIlllIIII =SynthesizerTrnMsNSFsidM (*IIlIIlIIIlIlIlllI [_IIlIIlIIlIlIIIlII ],is_half =_IIIIlIlIIIlIlIlll ,version =IIlIIlIIIlIlIlllI .get (_IllIllIllIllllIIl ,_IlIIIIIIlIlIllIIl ));IllIlllllIlllIIII .load_state_dict (IIlIIlIIIlIlIlllI [_IIIlllIlIlIIIlIll ],strict =_IIIIlIlIIIlIlIlll );IllIlllllIlllIIII =IllIlllllIlllIIII .to (IIlIIllllIIllllIl );IIlIlIllIllllllll ={IIlllIlIllllIllIl :[1 ],IIlIllIlIIllllIIl :[1 ],IlIIIIllIIlIlIIII :[1 ],IlllllIIIlIllIIlI :[2 ]};IIIIIIlIIIIIIIIII .onnx .export (IllIlllllIlllIIII ,tuple (IllIIIIlIIlIlllll .to (IIlIIllllIIllllIl )for IllIIIIlIIlIlllll in IIIIllIlIIllllllI .values ()),IIIlIllllIllIIllI ,dynamic_axes =IIlIlIllIllllllll ,do_constant_folding =_IIIIlIlIIIlIlIlll ,opset_version =13 ,verbose =_IIIIlIlIIIlIlIlll ,input_names =list (IIIIllIlIIllllllI .keys ()),output_names =['audio']);return 'Finished'
+import scipy .io .wavfile as wavfile 
+IIIIIlIIlIlIIllll =_IlIIIlIIlIlIIlIII 
+def IlIIIllIIIIlllIIl (IllIllIlIllIIllII ):IllllIIlIIIIIlIIl ='(?:(?<=\\s)|^)"(.*?)"(?=\\s|$)|(\\S+)';IIllIlIllIlIllIII =IIIIlIllIlIlIlllI .findall (IllllIIlIIIIIlIIl ,IllIllIlIllIIllII );IIllIlIllIlIllIII =[IlIIlIIlIlIIIIllI [0 ]if IlIIlIIlIlIIIIllI [0 ]else IlIIlIIlIlIIIIllI [1 ]for IlIIlIIlIlIIIIllI in IIllIlIllIlIllIII ];return IIllIlIllIlIllIII 
+IlIIlllIIlllIlIIl =lambda IIIllllllllllIlll :all (IlIllllllIIIIlIll is not _IllIIIllIIIllllIl for IlIllllllIIIIlIll in IIIllllllllllIlll )
+def IIIlIIlIIlIIIIllI (IlIlIlIIIIIIIlllI ):
+	IlIllllIIlllIlIIl ,IllIlllIllIIlIlIl ,IlIIIllIlIlllIIlI ,IlllllIIIlIlIIlII ,IlllIIIlIIIIllIII ,IIlIllIIIIIIIllII ,IIlIIlllIlllllIlI ,IIIlllIlIllIlIIll ,IIlIlIlIIlIllIIII ,IIllIIlIIIlIIlllI ,IlllIllIlIIlllIII ,IlllIIIIlIIllllII ,IIllllIllIIIIllII ,_IlIllIIllIlIllIII ,IlllIIlIllIIIIlIl ,IllIlllIIlIlIIIIl ,IIlllllIlllIlIIll =IlIIIllIIIIlllIIl (IlIlIlIIIIIIIlllI )[:17 ];IlllIIIlIIIIllIII ,IIIlllIlIllIlIIll ,IIlIlIlIIlIllIIII ,IIllIIlIIIlIIlllI =map (int ,[IlllIIIlIIIIllIII ,IIIlllIlIllIlIIll ,IIlIlIlIIlIllIIII ,IIllIIlIIIlIIlllI ]);IIlIllIIIIIIIllII ,IlllIllIlIIlllIII ,IlllIIIIlIIllllII ,IIllllIllIIIIllII =map (float ,[IIlIllIIIIIIIllII ,IlllIllIlIIlllIII ,IlllIIIIlIIllllII ,IIllllIllIIIIllII ])
+	if IIlllllIlllIlIIll .lower ()=='false':IlIIIllIlIIIIIIII =_IlIlllIlIlIlIlIll ;IlIIIIllIIlIlIIlI =_IlIlllIlIlIlIlIll 
+	else :IlIIIllIlIIIIIIII ,IlIIIIllIIlIlIIlI =map (float ,IlIIIllIIIIlllIIl (IlIlIlIIIIIIIlllI )[17 :19 ])
+	rvc_globals .DoFormant =IIlllllIlllIlIIll .lower ()=='true';rvc_globals .Quefrency =IlIIIllIlIIIIIIII ;rvc_globals .Timbre =IlIIIIllIIlIlIIlI ;IIlIlIIllIIlIIIlI ='Infer-CLI:';IlIlIllIIIIIIIIlI =f"audio-others/{IlIIIllIlIlllIIlI}";print (f"{IIlIlIIllIIlIIIlI} Starting the inference...");IIIIlIIIlIllIIIll =IIIlllIllllIIIIll (IlIllllIIlllIlIIl ,IIllllIllIIIIllII ,IIllllIllIIIIllII );print (IIIIlIIIlIllIIIll );print (f"{IIlIlIIllIIlIIIlI} Performing inference...");IIIllIlIllIlIIllI =IlIIlIIlIIlllIIII (IlllIIIlIIIIllIII ,IllIlllIllIIlIlIl ,IllIlllIllIIlIlIl ,IIlIllIIIIIIIllII ,_IllIIIllIIIllllIl ,IIlIIlllIlllllIlI ,IlllllIIIlIlIIlII ,IlllllIIIlIlIIlII ,IlllIIIIlIIllllII ,IIlIlIlIIlIllIIII ,IIllIIlIIIlIIlllI ,IlllIllIlIIlllIII ,IIllllIllIIIIllII ,IIIlllIlIllIlIIll ,f0_min =IlllIIlIllIIIIlIl ,note_min =_IllIIIllIIIllllIl ,f0_max =IllIlllIIlIlIIIIl ,note_max =_IllIIIllIIIllllIl ,fl_autotune =_IIIIlIlIIIlIlIlll )
+	if 'Success.'in IIIllIlIllIlIIllI [0 ]:print (f"{IIlIlIIllIIlIIIlI} Inference succeeded. Writing to {IlIlIllIIIIIIIIlI}...");wavfile .write (IlIlIllIIIIIIIIlI ,IIIllIlIllIlIIllI [1 ][0 ],IIIllIlIllIlIIllI [1 ][1 ]);print (f"{IIlIlIIllIIlIIIlI} Finished! Saved output to {IlIlIllIIIIIIIIlI}")
+	else :print (f"{IIlIlIIllIIlIIIlI} Inference failed. Here's the traceback: {IIIllIlIllIlIIllI[0]}")
+def IIlIIlIlIIllIlIIl (IIIllllIIIllllllI ):print ('Pre-process: Starting...');IlIIlllIIlllIlIIl (IllIIllIllIllIlll (*IlIIIllIIIIlllIIl (IIIllllIIIllllllI )[:3 ],int (IlIIIllIIIIlllIIl (IIIllllIIIllllllI )[3 ])));print ('Pre-process: Finished')
+def IIIlIlIlIlIIlIllI (IllIlIIllIIlIlllI ):IlIIlIllIllIlIlII ,IlIlIllIIlIIlIlll ,IIlIlllIIIIlIlIll ,IIlIlIllIlIIllIII ,IlIIIlIlIIIIlIlll ,IIllllIlIIlIlIIIl ,IlllllIIIIIIIlIII =IlIIIllIIIIlllIIl (IllIlIIllIIlIlllI );IIlIlllIIIIlIlIll =int (IIlIlllIIIIlIlIll );IIlIlIllIlIIllIII =bool (int (IIlIlIllIlIIllIII ));IIllllIlIIlIlIIIl =int (IIllllIlIIlIlIIIl );print (f"Extract Feature Has Pitch: {IIlIlIllIlIIllIII}Extract Feature Version: {IlllllIIIIIIIlIII}Feature Extraction: Starting...");IlllllllllllIlIIl =IllllIllIllIIIllI (IlIlIllIIlIIlIlll ,IIlIlllIIIIlIlIll ,IlIIIlIlIIIIlIlll ,IIlIlIllIlIIllIII ,IlIIlIllIllIlIlII ,IlllllIIIIIIIlIII ,IIllllIlIIlIlIIIl );IlIIlllIIlllIlIIl (IlllllllllllIlIIl );print ('Feature Extraction: Finished')
+def IIIllIlllIIIlIlIl (IlIllIlIIlIIIIIll ):IlIllIlIIlIIIIIll =IlIIIllIIIIlllIIl (IlIllIlIIlIIIIIll );IllIIIIlIIIlllIlI =IlIllIlIIlIIIIIll [0 ];IlIlllIIIlIlIIIll =IlIllIlIIlIIIIIll [1 ];IIlIIlIIlIIIIllIl =[bool (int (IIIIIlIlllIIlllll ))for IIIIIlIlllIIlllll in IlIllIlIIlIIIIIll [2 :11 ]];IIIIIlIllIllIllII =IlIllIlIIlIIIIIll [11 ];IIIIllllIlIlIIlII ='/kaggle/input/ax-rmf/pretrained/'if IIIIIlIllIllIllII ==_IlIIIIIIlIlIllIIl else '/kaggle/input/ax-rmf/pretrained_v2/';IIllIllIlIIIIllll =f"{IIIIllllIlIlIIlII}f0G{IlIlllIIIlIlIIIll}.pth";IllIIIllIlllllIll =f"{IIIIllllIlIlIIlII}f0D{IlIlllIIIlIlIIIll}.pth";print ('Train-CLI: Training...');IllIIlllIlllIIIIl (IllIIIIlIIIlllIlI ,IlIlllIIIlIlIIIll ,*IIlIIlIIlIIIIllIl ,IIllIllIlIIIIllll ,IllIIIllIlllllIll ,IIIIIlIllIllIllII )
+def IIIIlIlIIIIIIIIII (IIllIIlIIIlIlIIlI ):IlIIIlllllllIllIl ='Train Feature Index-CLI';print (f"{IlIIIlllllllIllIl}: Training... Please wait");IlIIlllIIlllIlIIl (IIIIllIllllllIllI (*IlIIIllIIIIlllIIl (IIllIIlIIIlIlIIlI )));print (f"{IlIIIlllllllIllIl}: Done!")
+def IllIIIIlIllIIllIl (IlIIIIlIIIIIlllII ):IIIIlIIlllIlIllll =extract_small_model (*IlIIIllIIIIlllIIl (IlIIIIlIIIIIlllII ));print ('Extract Small Model: Success!'if IIIIlIIlllIlIllll =='Success.'else f"{IIIIlIIlllIlIllll}\nExtract Small Model: Failed!")
+def IllllIIlIlIlIlIll (IIlIIIlIIlIIlIIIl ,IllIlIIlllIlIIIll ,IIlIIlIlllIIIlIlI ):
+	if IIlIIIlIIlIIlIIIl :
+		try :
+			with open (IIlIIIlIIlIIlIIIl ,_IlIIIIlllIlIIllll )as IlIIIlIIIlIllIlII :IIIlIlllIIIlllIll =IlIIIlIIIlIllIlII .read ().splitlines ()
+			IllIlIIlllIlIIIll ,IIlIIlIlllIIIlIlI =IIIlIlllIIIlllIll [0 ],IIIlIlllIIIlllIll [1 ];IllIIIllIlIllllll (IllIlIIlllIlIIIll ,IIlIIlIlllIIIlIlI )
+		except IndexError :print ("Error: File does not have enough lines to read 'qfer' and 'tmbr'")
+		except FileNotFoundError :print ('Error: File does not exist')
+		except Exception as IllllIIlllIIIIllI :print ('An unexpected error occurred',IllllIIlllIIIIllI )
+	return {_IlllIIllllIIIIlIl :IllIlIIlllIlIIIll ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IlllIIllllIIIIlIl :IIlIIlIlllIIIlIlI ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+def IIllIlIlIIIIIlIII ():IllIlIlIIIlIIlIII ={_IlIIIlIIlIlIIlIII :'\n    go home            : Takes you back to home with a navigation list.\n    go infer           : Takes you to inference command execution.\n    go pre-process     : Takes you to training step.1) pre-process command execution.\n    go extract-feature : Takes you to training step.2) extract-feature command execution.\n    go train           : Takes you to training step.3) being or continue training command execution.\n    go train-feature   : Takes you to the train feature index command execution.\n    go extract-model   : Takes you to the extract small model command execution.',_IlIlIlIlIIlllIlII :"\n    arg 1) model name with .pth in ./weights: mi-test.pth\n    arg 2) source audio path: myFolder\\MySource.wav\n    arg 3) output file name to be placed in './audio-others': MyTest.wav\n    arg 4) feature index file path: logs/mi-test/added_IVF3l42_Flat_nprobe_1.index\n    arg 5) speaker id: 0\n    arg 6) transposition: 0\n    arg 7) f0 method: harvest (pm, harvest, crepe, crepe-tiny, hybrid[x,x,x,x], mangio-crepe, mangio-crepe-tiny, rmvpe)\n    arg 8) crepe hop length: 160\n    arg 9) harvest median filter radius: 3 (0-7)\n    arg 10) post resample rate: 0\n    arg 11) mix volume envelope: 1\n    arg 12) feature index ratio: 0.78 (0-1)\n    arg 13) Voiceless Consonant Protection (Less Artifact): 0.33 (Smaller number = more protection. 0.50 means Dont Use.)\n    arg 14) Whether to formant shift the inference audio before conversion: False (if set to false, you can ignore setting the quefrency and timbre values for formanting)\n    arg 15)* Quefrency for formanting: 8.0 (no need to set if arg14 is False/false)\n    arg 16)* Timbre for formanting: 1.2 (no need to set if arg14 is False/false) \n\nExample: mi-test.pth saudio/Sidney.wav myTest.wav logs/mi-test/added_index.index 0 -2 harvest 160 3 0 1 0.95 0.33 0.45 True 8.0 1.2",_IllIIlllIIIllIIIl :'\n    arg 1) Model folder name in ./logs: mi-test\n    arg 2) Trainset directory: mydataset (or) E:\\my-data-set\n    arg 3) Sample rate: 40k (32k, 40k, 48k)\n    arg 4) Number of CPU threads to use: 8 \n\nExample: mi-test mydataset 40k 24',_IlIlllIlllIIlllIl :'\n    arg 1) Model folder name in ./logs: mi-test\n    arg 2) Gpu card slot: 0 (0-1-2 if using 3 GPUs)\n    arg 3) Number of CPU threads to use: 8\n    arg 4) Has Pitch Guidance?: 1 (0 for no, 1 for yes)\n    arg 5) f0 Method: harvest (pm, harvest, dio, crepe)\n    arg 6) Crepe hop length: 128\n    arg 7) Version for pre-trained models: v2 (use either v1 or v2)\n\nExample: mi-test 0 24 1 harvest 128 v2',_IIIllIllIIlllIlll :'\n    arg 1) Model folder name in ./logs: mi-test\n    arg 2) Sample rate: 40k (32k, 40k, 48k)\n    arg 3) Has Pitch Guidance?: 1 (0 for no, 1 for yes)\n    arg 4) speaker id: 0\n    arg 5) Save epoch iteration: 50\n    arg 6) Total epochs: 10000\n    arg 7) Batch size: 8\n    arg 8) Gpu card slot: 0 (0-1-2 if using 3 GPUs)\n    arg 9) Save only the latest checkpoint: 0 (0 for no, 1 for yes)\n    arg 10) Whether to cache training set to vram: 0 (0 for no, 1 for yes)\n    arg 11) Save extracted small model every generation?: 0 (0 for no, 1 for yes)\n    arg 12) Model architecture version: v2 (use either v1 or v2)\n\nExample: mi-test 40k 1 0 50 10000 8 0 0 0 0 v2',_IllIIIlIIIIIIlIIl :'\n    arg 1) Model folder name in ./logs: mi-test\n    arg 2) Model architecture version: v2 (use either v1 or v2)\n\nExample: mi-test v2',_IIllllIllIIllllIl :'\n    arg 1) Model Path: logs/mi-test/G_168000.pth\n    arg 2) Model save name: MyModel\n    arg 3) Sample rate: 40k (32k, 40k, 48k)\n    arg 4) Has Pitch Guidance?: 1 (0 for no, 1 for yes)\n    arg 5) Model information: "My Model"\n    arg 6) Model architecture version: v2 (use either v1 or v2)\n\nExample: logs/mi-test/G_168000.pth MyModel 40k 1 "Created by Cole Mangio" v2'};print (IllIlIlIIIlIIlIII .get (IIIIIlIIlIlIIllll ,'Invalid page'))
+def IIlIlIlIIIlllIlIl (IlllIIlllIIlIIlll ):global IIIIIlIIlIlIIllll ;IIIIIlIIlIlIIllll =IlllIIlllIIlIIlll ;return 0 
+def IIIlIllIIlllIIIll (IlIIlllIlllIIIIIl ):
+	IlIIlIlIIIIlIIIIl ={'go home':_IlIIIlIIlIlIIlIII ,'go infer':_IlIlIlIlIIlllIlII ,'go pre-process':_IllIIlllIIIllIIIl ,'go extract-feature':_IlIlllIlllIIlllIl ,'go train':_IIIllIllIIlllIlll ,'go train-feature':_IllIIIlIIIIIIlIIl ,'go extract-model':_IIllllIllIIllllIl };IlIIlllIIIIIIIIII ={_IlIlIlIlIIlllIlII :IIIlIIlIIlIIIIllI ,_IllIIlllIIIllIIIl :IIlIIlIlIIllIlIIl ,_IlIlllIlllIIlllIl :IIIlIlIlIlIIlIllI ,_IIIllIllIIlllIlll :IIIllIlllIIIlIlIl ,_IllIIIlIIIIIIlIIl :IIIIlIlIIIIIIIIII ,_IIllllIllIIllllIl :IllIIIIlIllIIllIl }
+	if IlIIlllIlllIIIIIl in IlIIlIlIIIIlIIIIl :return IIlIlIlIIIlllIlIl (IlIIlIlIIIIlIIIIl [IlIIlllIlllIIIIIl ])
+	if IlIIlllIlllIIIIIl [:3 ]=='go ':print (f"page '{IlIIlllIlllIIIIIl[3:]}' does not exist!");return 0 
+	if IIIIIlIIlIlIIllll in IlIIlllIIIIIIIIII :IlIIlllIIIIIIIIII [IIIIIlIIlIlIIllll ](IlIIlllIlllIIIIIl )
+def IlIlllIllIIlllIll ():
+	while _IlllIIIlllIllIllI :
+		print (f"\nYou are currently in '{IIIIIlIIlIlIIllll}':");IIllIlIlIIIIIlIII ();print (f"{IIIIIlIIlIlIIllll}: ",end ='')
+		try :IIIlIllIIlllIIIll (input ())
+		except Exception as IlIlIlIIIIIIIIllI :print (f"An error occurred: {traceback.format_exc()}")
+if IlIllIlIlIIlIlIll .is_cli :print ('\n\nMangio-RVC-Fork v2 CLI App!\nWelcome to the CLI version of RVC. Please read the documentation on https://github.com/Mangio621/Mangio-RVC-Fork (README.MD) to understand how to use this app.\n');IlIlllIllIIlllIll ()
+"\ndef get_presets():\n    data = None\n    with open('../inference-presets.json', 'r') as file:\n        data = json.load(file)\n    preset_names = []\n    for preset in data['presets']:\n        preset_names.append(preset['name'])\n    \n    return preset_names\n"
+def IllllIIIIlIlllIll (IIllIIIllIlIlIIll ):
+	IlIlllIIIIIllIlll =IIllIIIllIlIlIIll !=_IlIIllllIIIlIlIlI 
+	if rvc_globals .NotesIrHertz :return {_IIIllIllllIlIllIl :_IIIIlIlIIIlIlIlll ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IIIllIllllIlIllIl :IlIlllIIIIIllIlll ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IIIllIllllIlIllIl :_IIIIlIlIIIlIlIlll ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IIIllIllllIlIllIl :IlIlllIIIIIllIlll ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+	else :return {_IIIllIllllIlIllIl :IlIlllIIIIIllIlll ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IIIllIllllIlIllIl :_IIIIlIlIIIlIlIlll ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IIIllIllllIlIllIl :IlIlllIIIIIllIlll ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IIIllIllllIlIllIl :_IIIIlIlIIIlIlIlll ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+def IIIlIllIIllIIIlII (IIllIlllIIIlIIIIl ):
+	IIllIllIllIIlIlll =IIIIlIllIlIlIlllI .sub ('\\.pth|\\.onnx$','',IIllIlllIIIlIIIIl );IIllIIIIllIIlIIII =os .path .split (IIllIllIllIIlIlll )[-1 ]
+	if IIIIlIllIlIlIlllI .match ('.+_e\\d+_s\\d+$',IIllIIIIllIIlIIII ):IlllllIIlIIlIIlIl =IIllIIIIllIIlIIII .rsplit ('_',2 )[0 ]
+	else :IlllllIIlIIlIIlIl =IIllIIIIllIIlIIII 
+	IlIIIIIlIlIllIlll =os .path .join (IlIlIIIllIIllIlll ,IlllllIIlIIlIIlIl );IlllIIlIIIIIIlIII =[IlIIIIIlIlIllIlll ]if os .path .exists (IlIIIIIlIlIllIlll )else [];IlllIIlIIIIIIlIII .append (IlIlIIIllIIllIlll );IIllIIIIllIlIIlll =[]
+	for IlIIIlIIIlllIIIIl in IlllIIlIIIIIIlIII :
+		for IllIIlllIIIIIlIlI in os .listdir (IlIIIlIIIlllIIIIl ):
+			if IllIIlllIIIIIlIlI .endswith (_IlIIllIllIllIIIIl )and _IlIllIlIIIlllIIIl not in IllIIlllIIIIIlIlI :
+				IIIIIIIIllIIIllII =any (IIlIlIIlllIIlIIlI .lower ()in IllIIlllIIIIIlIlI .lower ()for IIlIlIIlllIIlIIlI in [IIllIIIIllIIlIIII ,IlllllIIlIIlIIlIl ]);IIIlIlllllIllIlll =IlIIIlIIIlllIIIIl ==IlIIIIIlIlIllIlll 
+				if IIIIIIIIllIIIllII or IIIlIlllllIllIlll :
+					IIIllIlllIlIIIlIl =os .path .join (IlIIIlIIIlllIIIIl ,IllIIlllIIIIIlIlI )
+					if IIIllIlllIlIIIlIl in IllIlIIlIlIIIIIlI :IIllIIIIllIlIIlll .append ((IIIllIlllIlIIIlIl ,os .path .getsize (IIIllIlllIlIIIlIl ),_IlIlIIIlllIllIlll not in IllIIlllIIIIIlIlI ))
+	if IIllIIIIllIlIIlll :IIllIIIIllIlIIlll .sort (key =lambda IllIllIlIIlIIlIIl :(-IllIllIlIIlIIlIIl [2 ],-IllIllIlIIlIIlIIl [1 ]));IIIllllIIIlIIllIl =IIllIIIIllIlIIlll [0 ][0 ];return IIIllllIIIlIIllIl ,IIIllllIIIlIIllIl 
+	return '',''
+def IIIIllIIIIIlIllll (IlIIlllIlIIlIllll ):
+	if IlIIlllIlIIlIllll :
+		try :
+			with open (_IlIllIlllIIIIIIIl ,'w+')as IIIIIlIIIIlIlIllI :IIIIIlIIIIlIlIllI .write ('True')
+			os .kill (IIIIllIllIllIIIll ,SIGTERM )
+		except Exception as IlIIIlIlIIIIlIIIl :print (f"Couldn't click due to {IlIIIlIlIIIIlIIIl}")
+		return {_IIIllIllllIlIllIl :_IlllIIIlllIllIllI ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IIIllIllllIlIllIl :_IIIIlIlIIIlIlIlll ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+	return {_IIIllIllllIlIllIl :_IIIIlIlIIIlIlIlll ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII },{_IIIllIllllIlIllIl :_IlllIIIlllIllIllI ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+IIllIlIIIIlIlllIl ='weights/'
+def IIIllIIIlIIIlllII (IIIIIlIlIIlIlIlll ):IIIIlIIIIIlIIIlll ={'C':-9 ,'C#':-8 ,_IIIlIIIlIIIIlllll :-7 ,'D#':-6 ,'E':-5 ,'F':-4 ,'F#':-3 ,_IlIIIIIIllllIIlll :-2 ,'G#':-1 ,'A':0 ,'A#':1 ,'B':2 };IlllIllIlIlIIlllI ,IllIlIllIlIlIIlII =IIIIIlIlIIlIlIlll [:-1 ],int (IIIIIlIlIIlIlIlll [-1 ]);IIIIlIIIIIlIlIIll =IIIIlIIIIIlIIIlll [IlllIllIlIlIIlllI ];IlllIIlIIIIIlIllI =12 *(IllIlIllIlIlIIlII -4 )+IIIIlIIIIIlIlIIll ;IllIIlIllIIlllIll =44e1 *(2. **(_IlIlllIlIlIlIlIll /12 ))**IlllIIlIIIIIlIllI ;return IllIIlIllIIlllIll 
+def IIllIlllIIllIllIl (IIIlIIlIllIIllllI ):
+	if IIIlIIlIllIIllllI is _IllIIIllIIIllllIl :0 
+	else :IlIIIllIllllllIIl =IIIlIIlIllIIllllI ;IIIIlllIIlIlllIll =datetime .datetime .now ().strftime ('%Y-%m-%d_%H-%M-%S')+'.wav';IIlIIIllIlIIIlIlI ='./audios/'+IIIIlllIIlIlllIll ;shutil .move (IlIIIllIllllllIIl ,IIlIIIllIlIIIlIlI );return IIIIlllIIlIlllIll 
+def IllllIIlllIIlIlII (IllIIlIlIIIllIIll ):
+	if IllIIlIlIIIllIIll is _IllIIIllIIIllllIl :0 
+	else :
+		IlIIllllllllIlIIl =IllIIlIlIIIllIIll .name ;IlIIlIIIIIIllllIl =os .path .join (_IIlIIIIIlIlIIIllI ,os .path .basename (IlIIllllllllIlIIl ))
+		if os .path .exists (IlIIlIIIIIIllllIl ):os .remove (IlIIlIIIIIIllllIl );print (_IIlIIlllIllIIIIlI )
+		shutil .move (IlIIllllllllIlIIl ,IlIIlIIIIIIllllIl )
+def IllIIllIIlIIIlIll (IlIIIllIIlllIllII ):
+	IIIIlIlIllIlIlIII =IlIIIllIIlllIllII .name ;IIlIllllIIlIllIIl =os .path .join (_IIlIIIIIlIlIIIllI ,os .path .basename (IIIIlIlIllIlIlIII ))
+	if os .path .exists (IIlIllllIIlIllIIl ):os .remove (IIlIllllIIlIllIIl );print (_IIlIIlllIllIIIIlI )
+	shutil .move (IIIIlIlIllIlIlIII ,IIlIllllIIlIllIIl );return IIlIllllIIlIllIIl 
+from gtts import gTTS 
+import edge_tts ,asyncio 
+def IIlllIIIlIIllllll (IIlIIllIIIlIIlIII ,IlllIIllIlIIlIIIl ,IIIlIlIIIlIlllIII ,IlIlIllIIIlllIIll ,IIIllIlIlIlllIlII ,IIlIIIIlllIIIlIIl ,IIIlllllllIIIlIlI ,IlIIlIIIllIlIIlll ,IlllIlIlllIIIIlIl ,IlIllIlllIIlIIllI ,IIIlllllIlIIllIll ,IIlIllIIIllIllIIl ,IIIIIIIllIIlIIIlI ,IIlllIIlIIlIlIlII ,IIlllllIIllllIlll ):
+	global IIllIllIlIlIlIlII ,IIllIIIllIIllllll ,IIIIIlIIIlIllllII ,IIIlIlllIIIIlllIl ,IllIIIIIlllllIlIl ,IIIIlIIlIIlllIIIl 
+	if IlllIIllIlIIlIIIl is _IllIIIllIIIllllIl :return _IIIIllIIllIllIIII ,_IllIIIllIIIllllIl 
+	IIIlIlIIIlIlllIII =int (IIIlIlIIIlIlllIII )
+	try :
+		IIllIIllllllIIIIl =load_audio (IlllIIllIlIIlIIIl ,16000 );IlIlIlIlIllllIlll =IIlIlllllIlIlIIlI .abs (IIllIIllllllIIIIl ).max ()/.95 
+		if IlIlIlIlIllllIlll >1 :IIllIIllllllIIIIl /=IlIlIlIlIllllIlll 
+		IIIlIlllIlIlIIIIl =[0 ,0 ,0 ]
+		if not IIIlIlllIIIIlllIl :IlIIlIllIIIIIIlIl ()
+		IlIIIlIIllIlllllI =IIIIlIIlIIlllIIIl .get (_IllIIIlIllllIIllI ,1 );IIlIIIIlllIIIlIIl =IIlIIIIlllIIIlIIl .strip (_IlIlIIIlllIllIlll ).strip (_IIlllllllllIllIll ).strip (_IIlIlIIllllIlIIlI ).strip (_IIlllllllllIllIll ).strip (_IlIlIIIlllIllIlll ).replace (_IlIllIlIIIlllIIIl ,'added')if IIlIIIIlllIIIlIIl !=''else IIIlllllllIIIlIlI ;IIIIllIllIlIlIlll =IIIIIlIIIlIllllII .pipeline (IIIlIlllIIIIlllIl ,IIllIIIllIIllllll ,IIlIIllIIIlIIlIII ,IIllIIllllllIIIIl ,IlllIIllIlIIlIIIl ,IIIlIlllIlIlIIIIl ,IIIlIlIIIlIlllIII ,IIIllIlIlIlllIlII ,IIlIIIIlllIIIlIIl ,IlIIlIIIllIlIIlll ,IlIIIlIIllIlllllI ,IlllIlIlllIIIIlIl ,IIllIllIlIlIlIlII ,IlIllIlllIIlIIllI ,IIIlllllIlIIllIll ,IllIIIIIlllllIlIl ,IIlIllIIIllIllIIl ,IIIIIIIllIIlIIIlI ,IIlllIIlIIlIlIlII ,IIlllllIIllllIlll ,f0_file =IlIlIllIIIlllIIll )
+		if IIllIllIlIlIlIlII !=IlIllIlllIIlIIllI >=16000 :IIllIllIlIlIlIlII =IlIllIlllIIlIIllI 
+		IIlllIlllllllllIl =_IIIlIllIIIlllIllI %IIlIIIIlllIIIlIIl if os .path .exists (IIlIIIIlllIIIlIIl )else _IlIIlIIllllIIIlIl ;return 'Success.\n %s\nTime:\n npy:%ss, f0:%ss, infer:%ss'%(IIlllIlllllllllIl ,IIIlIlllIlIlIIIIl [0 ],IIIlIlllIlIlIIIIl [1 ],IIIlIlllIlIlIIIIl [2 ]),(IIllIllIlIlIlIlII ,IIIIllIllIlIlIlll )
+	except :IIllIlllIlllIIlIl =traceback .format_exc ();print (IIllIlllIlllIIlIl );return IIllIlllIlllIIlIl ,(_IllIIIllIIIllllIl ,_IllIIIllIIIllllIl )
+def IlllIllIllIIIIlIl (_IIIIIIIllIIIlIlIl ,IIIIIlIIIIlIIlIlI ,IllIIlllIIIIlIlIl ='',IllIlIIllIIIlllll =0 ,IIllIIIIllllIIIlI =_IIIlIIllIlIlIllII ,IIIlIIllIIIIlIIll =float (.66 ),IllIIIIIllIIlIlll =float (64 ),IlIlIIIlllIllIlIl =_IIIIlIlIIIlIlIlll ,IIIIlIIllIIIIlIIl =_IIIIlIlIIIlIlIlll ,IIlIIlIllllIIIIII ='',IIllIllllllIIIIII =''):
+	IIIlllIllllIIIIll (sid =IllIIlllIIIIlIlIl ,to_return_protectl =.33 ,to_return_protect1 =.33 )
+	for _IIIlllIlIllIlIllI in _IIIIIIIllIIIlIlIl :
+		IIIIlIlIIIIlIIIIl ='audio2/'+IIIIIlIIIIlIIlIlI [_IIIlllIlIllIlIllI ]if _IIIlllIlIllIlIllI !=_IlIIIllIlIIlIIIlI else IIIIIlIIIIlIIlIlI [0 ]
+		try :print (IIIIIlIIIIlIIlIlI [_IIIlllIlIllIlIllI ],IllIIlllIIIIlIlIl )
+		except :pass 
+		IIlllIlIIllllllll ,(IllllllIllIllIlll ,IIlIlIIIIIIlIIIll )=IIlllIIIlIIllllll (sid =0 ,input_audio_path =IIIIlIlIIIIlIIIIl ,f0_up_key =IllIlIIllIIIlllll ,f0_file =_IllIIIllIIIllllIl ,f0_method =IIllIIIIllllIIIlI ,file_index =IIlIIlIllllIIIIII ,file_index2 =IIllIllllllIIIIII ,index_rate =IIIlIIllIIIIlIIll ,filter_radius =int (3 ),resample_sr =int (0 ),rms_mix_rate =float (.25 ),protect =float (.33 ),crepe_hop_length =IllIIIIIllIIlIlll ,fl_autotune =IlIlIIIlllIllIlIl ,rmvpe_onnx =IIIIlIIllIIIIlIIl );sf .write (file =IIIIlIlIIIIlIIIIl ,samplerate =IllllllIllIllIlll ,data =IIlIlIIIIIIlIIIll )
+def IIIlIIIlIllIIIIlI (IlllIllIlllIlllII ,IIIIllIIlIllIlIIl ):
+	try :return IlllIllIlllIlllII .to (IIIIllIIlIllIlIIl )
+	except Exception as IIlllIIIIIllIlIII :print (IIlllIIIIIllIlIII );return IlllIllIlllIlllII 
+def __bark__ (IIlIIlllIIIlllIll ,IllIlllIIlIlIIIII ):IlIIllIllllIIlIII ='tts';IllIIlllIIIIIllll ='suno/bark';os .makedirs (os .path .join (IlIIIllllllIllIll ,IlIIllIllllIIlIII ),exist_ok =_IlllIIIlllIllIllI );from transformers import AutoProcessor ,BarkModel ;IIIIlIllllIIIlIlI ='cuda:0'if IIIIIIlIIIIIIIIII .cuda .is_available ()else _IIlllIIIIIlllIIlI ;IlIlIllllIIIllllI =IIIIIIlIIIIIIIIII .float32 if _IIlllIIIIIlllIIlI in IIIIlIllllIIIlIlI else IIIIIIlIIIIIIIIII .float16 ;IlIIllIlIIlIIlllI =AutoProcessor .from_pretrained (IllIIlllIIIIIllll ,cache_dir =os .path .join (IlIIIllllllIllIll ,IlIIllIllllIIlIII ,IllIIlllIIIIIllll ),torch_dtype =IlIlIllllIIIllllI );IIlIlIIlIllIllllI =BarkModel .from_pretrained (IllIIlllIIIIIllll ,cache_dir =os .path .join (IlIIIllllllIllIll ,IlIIllIllllIIlIII ,IllIIlllIIIIIllll ),torch_dtype =IlIlIllllIIIllllI ).to (IIIIlIllllIIIlIlI );IlIIIIIIlIlIlllII =IlIIllIlIIlIIlllI (text =[IIlIIlllIIIlllIll ],return_tensors ='pt',voice_preset =IllIlllIIlIlIIIII );IllIIIIIIIllIIIII ={IlIIIlIIllIIlIIll :IIIlIIIlIllIIIIlI (IIIlIIlIIIIlIIlII ,IIIIlIllllIIIlIlI )if hasattr (IIIlIIlIIIIlIIlII ,'to')else IIIlIIlIIIIlIIlII for (IlIIIlIIllIIlIIll ,IIIlIIlIIIIlIIlII )in IlIIIIIIlIlIlllII .items ()};IIIlIlllllIlIIlIl =IIlIlIIlIllIllllI .generate (**IllIIIIIIIllIIIII ,do_sample =_IlllIIIlllIllIllI );IllIIIIIIllIIllII =IIlIlIIlIllIllllI .generation_config .sample_rate ;IllIllIIlIlIIIlll =IIIlIlllllIlIIlIl .cpu ().numpy ().squeeze ();return IllIllIIlIlIIIlll ,IllIIIIIIllIIllII 
+def IIIIllIIIIIIIIIII (IllIIlIlIllIIlllI ,IIIIIIllllIIIlIIl ,IlllIlllIIllllIll ,IIlIlIlIlIIlIIlII ,IIlIIIIIIIlllIllI ,IllIlIlIllIIIlIIl ,IllIlIlIIlIllIIII ,IlIIlIIIIllllllII ,IlIIlIlIIIIIIlllI ,IIllIIIlllIlIIIII ):
+	IIllIIllIllIlIIIl ='converted_bark.wav';IlIlIIIlIIllIlIlI ='bark_out.wav';IIIIIlIIlllIIllll ='converted_tts.wav'
+	if IIIIIIllllIIIlIIl ==_IllIIIllIIIllllIl :return 
+	IIllIIllIllIlIlIl =os .path .join (IlIIIllllllIllIll ,_IIlIIIlIIIllIIIll ,IIIIIlIIlllIIllll );IIIlllIlIlIllIIII =_IlllIIIlllIllIllI if IllIlIlIllIIIlIIl ==_IIIlIlIIllllIIIlI else _IIIIlIlIIIlIlIlll 
+	if 'SET_LIMIT'==os .getenv ('DEMO'):
+		if len (IllIIlIlIllIIlllI )>60 :IllIIlIlIllIIlllI =IllIIlIlIllIIlllI [:60 ];print ('DEMO; limit to 60 characters')
+	IlIlIIIllllIllllI =IIIIIIllllIIIlIIl [:2 ]
+	if IIllIIIlllIlIIIII ==_IIlIIllIlIIIIlIll :
+		try :asyncio .run (edge_tts .Communicate (IllIIlIlIllIIlllI ,'-'.join (IIIIIIllllIIIlIIl .split ('-')[:-1 ])).save (IIllIIllIllIlIlIl ))
+		except :
+			try :IlllllIlIIIIIIIIl =gTTS (IllIIlIlIllIIlllI ,lang =IlIlIIIllllIllllI );IlllllIlIIIIIIIIl .save (IIllIIllIllIlIlIl );IlllllIlIIIIIIIIl .save ;print (f"No audio was received. Please change the tts voice for {IIIIIIllllIIIlIIl}. USING gTTS.")
+			except :IlllllIlIIIIIIIIl =gTTS ('a',lang =IlIlIIIllllIllllI );IlllllIlIIIIIIIIl .save (IIllIIllIllIlIlIl );print ('Error: Audio will be replaced.')
+		os .system ('cp audio-outputs/converted_tts.wav audio-outputs/real_tts.wav');IlllIllIllIIIIlIl ([_IlIIIllIlIIlIIIlI ],['audio-outputs/converted_tts.wav'],model_voice_path =IlllIlllIIllllIll ,transpose =IIlIIIIIIIlllIllI ,f0method =IllIlIlIllIIIlIIl ,index_rate_ =IllIlIlIIlIllIIII ,crepe_hop_length_ =IlIIlIIIIllllllII ,fl_autotune =IlIIlIlIIIIIIlllI ,rmvpe_onnx =IIIlllIlIlIllIIII ,file_index ='',file_index2 =IIlIlIlIlIIlIIlII );return os .path .join (IlIIIllllllIllIll ,_IIlIIIlIIIllIIIll ,IIIIIlIIlllIIllll ),os .path .join (IlIIIllllllIllIll ,_IIlIIIlIIIllIIIll ,'real_tts.wav')
+	elif IIllIIIlllIlIIIII ==_IIIlllIlllIIIIlII :
+		try :
+			IIIlllIllllIIIIll (sid =IlllIlllIIllllIll ,to_return_protectl =.33 ,to_return_protect1 =.33 );IllIIlIIllIIIIlIl =IllIIlIlIllIIlllI .replace (_IIlIlIIllllIlIIlI ,_IlIlIIIlllIllIlll ).strip ();IlIIllllIIIIlIIll =sent_tokenize (IllIIlIIllIIIIlIl );print (IlIIllllIIIIlIIll );IllIllIIlIIIIlllI =IIlIlllllIlIlIIlI .zeros (int (.25 *SAMPLE_RATE ));IllIlIlIlIlIllIII =[];IlllllIIlIlIIIlIl =os .path .join (IlIIIllllllIllIll ,_IIlIIIlIIIllIIIll ,IlIlIIIlIIllIlIlI )
+			for IIIlIIlIlllIlIlll in IlIIllllIIIIlIIll :IIIllllIIIlIIllII ,_IIlIIllIIlIlIIIll =__bark__ (IIIlIIlIlllIlIlll ,IIIIIIllllIIIlIIl .split ('-')[0 ]);IllIlIlIlIlIllIII +=[IIIllllIIIlIIllII ,IllIllIIlIIIIlllI .copy ()]
+			sf .write (file =IlllllIIlIlIIIlIl ,samplerate =SAMPLE_RATE ,data =IIlIlllllIlIlIIlI .concatenate (IllIlIlIlIlIllIII ));IIIllIIlIIIlIIIIl ,(IlllIIIIlllIIIlIl ,IlIlIlIlIlIIIlIlI )=IIlllIIIlIIllllll (sid =0 ,input_audio_path =os .path .join (IlIIIllllllIllIll ,_IIlIIIlIIIllIIIll ,IlIlIIIlIIllIlIlI ),f0_up_key =IIlIIIIIIIlllIllI ,f0_file =_IllIIIllIIIllllIl ,f0_method =IllIlIlIllIIIlIIl ,file_index ='',file_index2 =IIlIlIlIlIIlIIlII ,index_rate =IllIlIlIIlIllIIII ,filter_radius =int (3 ),resample_sr =int (0 ),rms_mix_rate =float (.25 ),protect =float (.33 ),crepe_hop_length =IlIIlIIIIllllllII ,fl_autotune =IlIIlIlIIIIIIlllI ,rmvpe_onnx =IIIlllIlIlIllIIII );wavfile .write (os .path .join (IlIIIllllllIllIll ,_IIlIIIlIIIllIIIll ,IIllIIllIllIlIIIl ),rate =IlllIIIIlllIIIlIl ,data =IlIlIlIlIlIIIlIlI );return os .path .join (IlIIIllllllIllIll ,_IIlIIIlIIIllIIIll ,IIllIIllIllIlIIIl ),IlllllIIlIlIIIlIl 
+		except Exception as IlIlIllllllIlIlll :print (f"{IlIlIllllllIlIlll}");return _IllIIIllIIIllllIl ,_IllIIIllIIIllllIl 
+def IlllIlllIIlllIIII (IlIIIllIllIlllIlI =IllIlIlIIllllIlIl .themes .Soft ()):
+	IlIIllIlllIlIllIl ='Model information to be placed:';IIIIIllIIllIlIIll ='Model architecture version:';IIIIIllIIIIIlIlIl ='Name:';IllIlIllllIIlIIlI ='-0.5';IlIIIlIIlIlIlIIII ="Provide the GPU index(es) separated by '-', like 0-1-2 for using GPUs 0, 1, and 2:";IIlIllllIllllIIIl ='You can also input audio files in batches. Choose one of the two options. Priority is given to reading from the folder.';IlIlllIlllIllIllI ='Export audio (click on the three dots in the lower right corner to download)';IlIIllIIllIlIIIll ='Default value is 1.0';IIlIlIIIIllllllII ='Protect voiceless consonants and breath sounds to prevent artifacts such as tearing in electronic music. Set to 0.5 to disable. Decrease the value to increase protection, but it may reduce indexing accuracy:';IIlllIllIllllIllI ='Use the volume envelope of the input to replace or mix with the volume envelope of the output. The closer the ratio is to 1, the more the output envelope is used:';IIlIlIIIIIIIIIIIl ='Resample the output audio in post-processing to the final sample rate. Set to 0 for no resampling:';IIlIIlIIIlIIIllll ='Feature search database file path:';IlllIlllIIIlIIIlI ='Max pitch:';IIlIIIllllllIIllI ='Min pitch:';IIIIlIlllIIlllIII ='If >=3: apply median filtering to the harvested pitch results. The value represents the filter radius and can reduce breathiness.';IIlIlIIlIlIlIllIl ='Mangio-Crepe Hop Length (Only applies to mangio-crepe): Hop length refers to the time it takes for the speaker to jump to a dramatic pitch. Lower hop lengths take more time to infer but are more pitch accurate.';IIIlIIllIllllllIl ='Enable autotune';IIIlIlIlIIlIllIIl ='crepe-tiny';IIlIIIllllIIIlIII ='Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12):';IllIIlIlIlIIllIIl ='Search feature ratio:';IlllIIllIlIIIIIIl ='Auto-detect index path and select from the dropdown:';IlIllIllllIlIlllI ='filepath';IllllIlIllIIlllIl ='Drag your audio here:';IlIllIlIIIIIlIlII ='Refresh';IlIIIIlIIIIlIIIll ='Path to Model:';IIIllIIIIIIIlIIll ='Model information to be placed';IIlllIllIIIIIIllI ='Name for saving';IIIIllllIIIlllIlI ='Whether the model has pitch guidance.';IlIIlIIIIllIIllIl ='Target sample rate:';IlIlIllIlIIIIlIII ='multiple';IlIlIIlllIIIIIIIl ='opt';IIlllllIllllIllII ='crepe';IlIllIIIIIlllllII ='dio';IIIllIlIllIllllII ='harvest';IlIIlllIllIIlIIII ='Select the pitch extraction algorithm:';IllIlllIlIIlIIllI ='Advanced Settings';IlIlIIllllIlIIIII ='Convert';IllIlIlllIlIIllII ='rmvpe+';IIIIlIlIlllIlIIll ='Path to model';IIIIlIllIllllllll ='mangio-crepe-tiny';IIIlllIlIllllIllI ='mangio-crepe';IlllIIIlllllIIIll ='Output information:';IIlIIIIlIlIIlIlll ='primary';IlllIlIlIllllIlII =IIlIIIlIIIlIIlIII [0 ]if IIlIIIlIIIlIIlIII else ''
+	with IllIlIlIIllllIlIl .Blocks (theme ='JohnSmith9982/small_and_pretty',title ='AX-RVC')as IIlllIIllIlIlllll :
+		IllIlIlIIllllIlIl .HTML ('<h1> 🍏 AX-RVC (Mangio-RVC-Fork) </h1>')
+		with IllIlIlIIllllIlIl .Tabs ():
+			with IllIlIlIIllllIlIl .TabItem (IIIllIIllIIIIIIlI ('Model Inference')):
+				with IllIlIlIIllllIlIl .Row ():IIIlIIIlIlIIIIIIl =IllIlIlIIllllIlIl .Dropdown (label =IIIllIIllIIIIIIlI ('Inferencing voice:'),choices =sorted (IIlIIIlIIIlIIlIII ),value =IlllIlIlIllllIlII );IIlIlIlllllllIllI =IllIlIlIIllllIlIl .Button (IIIllIIllIIIIIIlI (IlIllIlIIIIIlIlII ),variant =IIlIIIIlIlIIlIlll );IIlIlIllIllIlIllI =IllIlIlIIllllIlIl .Button (IIIllIIllIIIIIIlI ('Unload voice to save GPU memory'),variant =IIlIIIIlIlIIlIlll );IIlIlIllIllIlIllI .click (fn =lambda :{_IlllIIllllIIIIlIl :'',_IIllIIllllllIllII :_IlllllIlIIlIlIlII },inputs =[],outputs =[IIIlIIIlIlIIIIIIl ])
+				with IllIlIlIIllllIlIl .TabItem (IIIllIIllIIIIIIlI ('Single')):
+					with IllIlIlIIllllIlIl .Row ():IllllIlIIlIIlIlll =IllIlIlIIllllIlIl .Slider (minimum =0 ,maximum =2333 ,step =1 ,label =IIIllIIllIIIIIIlI ('Select Speaker/Singer ID:'),value =0 ,visible =_IIIIlIlIIIlIlIlll ,interactive =_IlllIIIlllIllIllI )
+					with IllIlIlIIllllIlIl .Group ():
+						with IllIlIlIIllllIlIl .Row ():
+							with IllIlIlIIllllIlIl .Column ():IllIlIIIlllIIlllI =IllIlIlIIllllIlIl .File (label =IIIllIIllIIIIIIlI (IllllIlIllIIlllIl ));IlllIlIllllIIIIlI =IllIlIlIIllllIlIl .Audio (source ='microphone',label =IIIllIIllIIIIIIlI ('Or record an audio:'),type =IlIllIllllIlIlllI );IlIIIIIlllllIlIIl =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI ('Manual path to the audio file to be processed'),value =os .path .join (IlIIIllllllIllIll ,_IIlIIIIIlIlIIIllI ,'someguy.mp3'),visible =_IIIIlIlIIIlIlIlll );IllIlIIIIlllIIlII =IllIlIlIIllllIlIl .Dropdown (label =IIIllIIllIIIIIIlI ('Auto detect audio path and select from the dropdown:'),choices =sorted (IIIlIIllllIIIIIII ),value ='',interactive =_IlllIIIlllIllIllI );IllIlIIIIlllIIlII .select (fn =lambda :'',inputs =[],outputs =[IlIIIIIlllllIlIIl ]);IlIIIIIlllllIlIIl .input (fn =lambda :'',inputs =[],outputs =[IllIlIIIIlllIIlII ]);IllIlIIIlllIIlllI .upload (fn =IllIIllIIlIIIlIll ,inputs =[IllIlIIIlllIIlllI ],outputs =[IlIIIIIlllllIlIIl ]);IllIlIIIlllIIlllI .upload (fn =easy_infer .change_choices2 ,inputs =[],outputs =[IllIlIIIIlllIIlII ]);IlllIlIllllIIIIlI .change (fn =IIllIlllIIllIllIl ,inputs =[IlllIlIllllIIIIlI ],outputs =[IlIIIIIlllllIlIIl ]);IlllIlIllllIIIIlI .change (fn =easy_infer .change_choices2 ,inputs =[],outputs =[IllIlIIIIlllIIlII ])
+							IlIIllIlllllIllll ,_IlllIIlIIllllllll =IIIlIllIIllIIIlII (IIIlIIIlIlIIIIIIl .value )
+							with IllIlIlIIllllIlIl .Column ():
+								IlIIIllIIIlIIIlIl =IllIlIlIIllllIlIl .Dropdown (label =IIIllIIllIIIIIIlI (IlllIIllIlIIIIIIl ),choices =IIlllIlIIIlIIlIll (),value =IlIIllIlllllIllll ,interactive =_IlllIIIlllIllIllI ,allow_custom_value =_IlllIIIlllIllIllI );IIlIlIllIIIlllllI =IllIlIlIIllllIlIl .Slider (minimum =0 ,maximum =1 ,label =IIIllIIllIIIIIIlI (IllIIlIlIlIIllIIl ),value =.75 ,interactive =_IlllIIIlllIllIllI );IIlIlIlllllllIllI .click (fn =IlllIIIllllIlllIl ,inputs =[],outputs =[IIIlIIIlIlIIIIIIl ,IlIIIllIIIlIIIlIl ,IllIlIIIIlllIIlII ])
+								with IllIlIlIIllllIlIl .Column ():IIlIIlIlllIllllIl =IllIlIlIIllllIlIl .Number (label =IIIllIIllIIIIIIlI (IIlIIIllllIIIlIII ),value =0 )
+					with IllIlIlIIllllIlIl .Group ():
+						with IllIlIlIIllllIlIl .Accordion (label =IIIllIIllIIIIIIlI (IllIlllIlIIlIIllI ),open =_IIIIlIlIIIlIlIlll ):
+							with IllIlIlIIllllIlIl .Row ():
+								with IllIlIlIIllllIlIl .Column ():IIIlIIllIIllIlllI =IllIlIlIIllllIlIl .Radio (label =IIIllIIllIIIIIIlI (IlIIlllIllIIlIIII ),choices =[_IIIlIIllIlIlIllII ,IIIllIlIllIllllII ,IlIllIIIIIlllllII ,IIlllllIllllIllII ,IIIlIlIlIIlIllIIl ,IIIlllIlIllllIllI ,IIIIlIllIllllllll ,_IlIIllllIIIlIlIlI ,_IIIlIlIIllllIIIlI ,IllIlIlllIlIIllII ],value =IllIlIlllIlIIllII ,interactive =_IlllIIIlllIllIllI );IlllIllIIllIIIlIl =IllIlIlIIllllIlIl .Checkbox (label =IIIlIIllIllllllIl ,interactive =_IlllIIIlllIllIllI );IlIIlIIlllllIIIll =IllIlIlIIllllIlIl .Checkbox (value =bool (IlllIIIllIIIlIllI ),label =IIIllIIllIIIIIIlI ('Formant shift inference audio'),info =IIIllIIllIIIIIIlI ('Used for male to female and vice-versa conversions'),interactive =_IlllIIIlllIllIllI ,visible =_IlllIIIlllIllIllI );IlIIllIIlIllllIII =IllIlIlIIllllIlIl .Slider (minimum =1 ,maximum =512 ,step =1 ,label =IIIllIIllIIIIIIlI (IIlIlIIlIlIlIllIl ),value =120 ,interactive =_IlllIIIlllIllIllI ,visible =_IIIIlIlIIIlIlIlll );IlIIIIIIllllIIlll =IllIlIlIIllllIlIl .Slider (minimum =0 ,maximum =7 ,label =IIIllIIllIIIIIIlI (IIIIlIlllIIlllIII ),value =3 ,step =1 ,interactive =_IlllIIIlllIllIllI );IIIlIllIIIIIIIIIl =IllIlIlIIllllIlIl .Slider (label =IIIllIIllIIIIIIlI (IIlIIIllllllIIllI ),info =IIIllIIllIIIIIIlI ('Specify minimal pitch for inference [HZ]'),step =.1 ,minimum =1 ,scale =0 ,value =50 ,maximum =16000 ,interactive =_IlllIIIlllIllIllI ,visible =not rvc_globals .NotesIrHertz and IIIlIIllIIllIlllI .value !=_IlIIllllIIIlIlIlI );IIIlIIlIIIllIlIll =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IIlIIIllllllIIllI ),info =IIIllIIllIIIIIIlI ('Specify minimal pitch for inference [NOTE][OCTAVE]'),placeholder ='C5',visible =rvc_globals .NotesIrHertz and IIIlIIllIIllIlllI .value !=_IlIIllllIIIlIlIlI ,interactive =_IlllIIIlllIllIllI );IIlIIlIIllllIlIll =IllIlIlIIllllIlIl .Slider (label =IIIllIIllIIIIIIlI (IlllIlllIIIlIIIlI ),info =IIIllIIllIIIIIIlI ('Specify max pitch for inference [HZ]'),step =.1 ,minimum =1 ,scale =0 ,value =1100 ,maximum =16000 ,interactive =_IlllIIIlllIllIllI ,visible =not rvc_globals .NotesIrHertz and IIIlIIllIIllIlllI .value !=_IlIIllllIIIlIlIlI );IIlIlIIIlIlIlIlII =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IlllIlllIIIlIIIlI ),info =IIIllIIllIIIIIIlI ('Specify max pitch for inference [NOTE][OCTAVE]'),placeholder ='C6',visible =rvc_globals .NotesIrHertz and IIIlIIllIIllIlllI .value !=_IlIIllllIIIlIlIlI ,interactive =_IlllIIIlllIllIllI );IlIllllIlIlIlIlll =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IIlIIlIIIlIIIllll ),value ='',interactive =_IlllIIIlllIllIllI )
+								IIIlIIllIIllIlllI .change (fn =lambda IlllIlIIIIIlIlllI :{_IIIllIllllIlIllIl :IlllIlIIIIIlIlllI in [IIIlllIlIllllIllI ,IIIIlIllIllllllll ],_IIllIIllllllIllII :_IlllllIlIIlIlIlII },inputs =[IIIlIIllIIllIlllI ],outputs =[IlIIllIIlIllllIII ]);IIIlIIllIIllIlllI .change (fn =IllllIIIIlIlllIll ,inputs =[IIIlIIllIIllIlllI ],outputs =[IIIlIllIIIIIIIIIl ,IIIlIIlIIIllIlIll ,IIlIIlIIllllIlIll ,IIlIlIIIlIlIlIlII ])
+								with IllIlIlIIllllIlIl .Column ():IllIIlllIlIIIlIII =IllIlIlIIllllIlIl .Slider (minimum =0 ,maximum =48000 ,label =IIIllIIllIIIIIIlI (IIlIlIIIIIIIIIIIl ),value =0 ,step =1 ,interactive =_IlllIIIlllIllIllI );IllIIIlIIlllIIlII =IllIlIlIIllllIlIl .Slider (minimum =0 ,maximum =1 ,label =IIIllIIllIIIIIIlI (IIlllIllIllllIllI ),value =.25 ,interactive =_IlllIIIlllIllIllI );IIIIlIlllllIIllII =IllIlIlIIllllIlIl .Slider (minimum =0 ,maximum =.5 ,label =IIIllIIllIIIIIIlI (IIlIlIIIIllllllII ),value =.33 ,step =.01 ,interactive =_IlllIIIlllIllIllI );IllIlIIllIllllIIl =IllIlIlIIllllIlIl .File (label =IIIllIIllIIIIIIlI ('F0 curve file (optional). One pitch per line. Replaces the default F0 and pitch modulation:'));IIIllIIlIIllllIII =IllIlIlIIllllIlIl .Dropdown (value ='',choices =IIIllllIIlIlllIlI (),label =IIIllIIllIIIIIIlI ('Browse presets for formanting'),info =IIIllIIllIIIIIIlI ('Presets are located in formantshiftcfg/ folder'),visible =bool (IlllIIIllIIIlIllI ));IIIllIIIlIIllIlII =IllIlIlIIllllIlIl .Button (value ='🔄',visible =bool (IlllIIIllIIIlIllI ),variant =IIlIIIIlIlIIlIlll );IllIllIIlIlIlIIlI =IllIlIlIIllllIlIl .Slider (value =IIIIllIIIIIlIlllI ,info =IIIllIIllIIIIIIlI (IlIIllIIllIlIIIll ),label =IIIllIIllIIIIIIlI ('Quefrency for formant shifting'),minimum =.0 ,maximum =16. ,step =.1 ,visible =bool (IlllIIIllIIIlIllI ),interactive =_IlllIIIlllIllIllI );IIIIIIIIllIlIllll =IllIlIlIIllllIlIl .Slider (value =IlIIIIlllIIIllllI ,info =IIIllIIllIIIIIIlI (IlIIllIIllIlIIIll ),label =IIIllIIllIIIIIIlI ('Timbre for formant shifting'),minimum =.0 ,maximum =16. ,step =.1 ,visible =bool (IlllIIIllIIIlIllI ),interactive =_IlllIIIlllIllIllI );IlIlIIIIlllIlIllI =IllIlIlIIllllIlIl .Button (IIIllIIllIIIIIIlI ('Apply'),variant =IIlIIIIlIlIIlIlll ,visible =bool (IlllIIIllIIIlIllI ))
+								IIIllIIlIIllllIII .change (fn =IllllIIlIlIlIlIll ,inputs =[IIIllIIlIIllllIII ,IllIllIIlIlIlIIlI ,IIIIIIIIllIlIllll ],outputs =[IllIllIIlIlIlIIlI ,IIIIIIIIllIlIllll ]);IlIIlIIlllllIIIll .change (fn =IlIllllllllIlllIl ,inputs =[IlIIlIIlllllIIIll ,IllIllIIlIlIlIIlI ,IIIIIIIIllIlIllll ],outputs =[IlIIlIIlllllIIIll ,IllIllIIlIlIlIIlI ,IIIIIIIIllIlIllll ,IlIlIIIIlllIlIllI ,IIIllIIlIIllllIII ,IIIllIIIlIIllIlII ]);IlIlIIIIlllIlIllI .click (fn =IllIIIllIlIllllll ,inputs =[IllIllIIlIlIlIIlI ,IIIIIIIIllIlIllll ],outputs =[IllIllIIlIlIlIIlI ,IIIIIIIIllIlIllll ]);IIIllIIIlIIllIlII .click (fn =IIIIIIIIIIIIlIlll ,inputs =[IIIllIIlIIllllIII ,IllIllIIlIlIlIIlI ,IIIIIIIIllIlIllll ],outputs =[IIIllIIlIIllllIII ,IllIllIIlIlIlIIlI ,IIIIIIIIllIlIllll ])
+					with IllIlIlIIllllIlIl .Row ():IIIlIIllIIlllIlII =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IlllIIIlllllIIIll ));IIlIIIIIlIIlIlllI =IllIlIlIIllllIlIl .Audio (label =IIIllIIllIIIIIIlI (IlIlllIlllIllIllI ))
+					IllllIIlIIlIlllIl =IllIlIlIIllllIlIl .Button (IIIllIIllIIIIIIlI (IlIlIIllllIlIIIII ),variant =IIlIIIIlIlIIlIlll ).style (full_width =_IlllIIIlllIllIllI )
+					with IllIlIlIIllllIlIl .Group ():
+						with IllIlIlIIllllIlIl .Row ():IllllIIlIIlIlllIl .click (IlIIlIIlIIlllIIII ,[IllllIlIIlIIlIlll ,IlIIIIIlllllIlIIl ,IllIlIIIIlllIIlII ,IIlIIlIlllIllllIl ,IllIlIIllIllllIIl ,IIIlIIllIIllIlllI ,IlIllllIlIlIlIlll ,IlIIIllIIIlIIIlIl ,IIlIlIllIIIlllllI ,IlIIIIIIllllIIlll ,IllIIlllIlIIIlIII ,IllIIIlIIlllIIlII ,IIIIlIlllllIIllII ,IlIIllIIlIllllIII ,IIIlIllIIIIIIIIIl ,IIIlIIlIIIllIlIll ,IIlIIlIIllllIlIll ,IIlIlIIIlIlIlIlII ,IlllIllIIllIIIlIl ],[IIIlIIllIIlllIlII ,IIlIIIIIlIIlIlllI ])
+				with IllIlIlIIllllIlIl .TabItem (IIIllIIllIIIIIIlI ('Batch')):
+					with IllIlIlIIllllIlIl .Group ():
+						with IllIlIlIIllllIlIl .Row ():
+							with IllIlIlIIllllIlIl .Column ():IIIllIlIlIIlIIIIl =IllIlIlIIllllIlIl .Number (label =IIIllIIllIIIIIIlI (IIlIIIllllIIIlIII ),value =0 );IlllIlIlllIIIIIII =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI ('Specify output folder:'),value =IlIlIIlllIIIIIIIl );IIIIIlIIIlIllIIll =IllIlIlIIllllIlIl .Dropdown (label =IIIllIIllIIIIIIlI (IlllIIllIlIIIIIIl ),choices =IIlllIlIIIlIIlIll (),value =IlIIllIlllllIllll ,interactive =_IlllIIIlllIllIllI );IIIlIIIlIlIIIIIIl .select (fn =IIIlIllIIllIIIlII ,inputs =[IIIlIIIlIlIIIIIIl ],outputs =[IlIIIllIIIlIIIlIl ,IIIIIlIIIlIllIIll ]);IIlIlIlllllllIllI .click (fn =lambda :IlllIIIllllIlllIl ()[1 ],inputs =[],outputs =IIIIIlIIIlIllIIll );IIIIlIlIlIIllIllI =IllIlIlIIllllIlIl .Slider (minimum =0 ,maximum =1 ,label =IIIllIIllIIIIIIlI (IllIIlIlIlIIllIIl ),value =.75 ,interactive =_IlllIIIlllIllIllI )
+							with IllIlIlIIllllIlIl .Column ():IllllIllIIlllllll =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI ('Enter the path of the audio folder to be processed (copy it from the address bar of the file manager):'),value =os .path .join (IlIIIllllllIllIll ,_IIlIIIIIlIlIIIllI ),lines =2 );IllIIlllIlIlllIlI =IllIlIlIIllllIlIl .File (file_count =IlIlIllIlIIIIlIII ,label =IIIllIIllIIIIIIlI (IIlIllllIllllIIIl ))
+					with IllIlIlIIllllIlIl .Row ():
+						with IllIlIlIIllllIlIl .Column ():
+							IllIlIlllIIlIllIl =IllIlIlIIllllIlIl .Checkbox (value =_IIIIlIlIIIlIlIlll ,label =IIIllIIllIIIIIIlI (IllIlllIlIIlIIllI ),interactive =_IlllIIIlllIllIllI )
+							with IllIlIlIIllllIlIl .Row (visible =_IIIIlIlIIIlIlIlll )as IIlIlllIllIIIIlll :
+								with IllIlIlIIllllIlIl .Row (label =IIIllIIllIIIIIIlI (IllIlllIlIIlIIllI ),open =_IIIIlIlIIIlIlIlll ):
+									with IllIlIlIIllllIlIl .Column ():IllIllllIlllIIllI =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IIlIIlIIIlIIIllll ),value ='',interactive =_IlllIIIlllIllIllI );IllIlIIIlllIIllll =IllIlIlIIllllIlIl .Radio (label =IIIllIIllIIIIIIlI (IlIIlllIllIIlIIII ),choices =[_IIIlIIllIlIlIllII ,IIIllIlIllIllllII ,IlIllIIIIIlllllII ,IIlllllIllllIllII ,IIIlIlIlIIlIllIIl ,IIIlllIlIllllIllI ,IIIIlIllIllllllll ,_IlIIllllIIIlIlIlI ,_IIIlIlIIllllIIIlI ,IllIlIlllIlIIllII ],value =IllIlIlllIlIIllII ,interactive =_IlllIIIlllIllIllI );IlllIllIIllIIIlIl =IllIlIlIIllllIlIl .Checkbox (label =IIIlIIllIllllllIl ,interactive =_IlllIIIlllIllIllI );IIllllIlIIllIllll =IllIlIlIIllllIlIl .Radio (label =IIIllIIllIIIIIIlI ('Export file format'),choices =[_IIlIlIlIIllIIIIll ,_IlIIlllIlIllIIlll ,_IIIlIllllIIlIIIIl ,_IlIIllIllllIlIIII ],value =_IIlIlIlIIllIIIIll ,interactive =_IlllIIIlllIllIllI )
+								with IllIlIlIIllllIlIl .Column ():IIlllllIlIIllllIl =IllIlIlIIllllIlIl .Slider (minimum =0 ,maximum =48000 ,label =IIIllIIllIIIIIIlI (IIlIlIIIIIIIIIIIl ),value =0 ,step =1 ,interactive =_IlllIIIlllIllIllI );IlIIIlIIIlIllIllI =IllIlIlIIllllIlIl .Slider (minimum =0 ,maximum =1 ,label =IIIllIIllIIIIIIlI (IIlllIllIllllIllI ),value =1 ,interactive =_IlllIIIlllIllIllI );IIIIlIIllIIllIlll =IllIlIlIIllllIlIl .Slider (minimum =0 ,maximum =.5 ,label =IIIllIIllIIIIIIlI (IIlIlIIIIllllllII ),value =.33 ,step =.01 ,interactive =_IlllIIIlllIllIllI );IIIllllIIIlIIIlII =IllIlIlIIllllIlIl .Slider (minimum =0 ,maximum =7 ,label =IIIllIIllIIIIIIlI (IIIIlIlllIIlllIII ),value =3 ,step =1 ,interactive =_IlllIIIlllIllIllI )
+							IIllIlIIllIlIlIlI =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IlllIIIlllllIIIll ));IIlIIlIlIlIlIIlll =IllIlIlIIllllIlIl .Button (IIIllIIllIIIIIIlI (IlIlIIllllIlIIIII ),variant =IIlIIIIlIlIIlIlll );IIlIIlIlIlIlIIlll .click (IlllIllIIIIlllllI ,[IllllIlIIlIIlIlll ,IllllIllIIlllllll ,IlllIlIlllIIIIIII ,IllIIlllIlIlllIlI ,IIIllIlIlIIlIIIIl ,IllIlIIIlllIIllll ,IllIllllIlllIIllI ,IIIIIlIIIlIllIIll ,IIIIlIlIlIIllIllI ,IIIllllIIIlIIIlII ,IIlllllIlIIllllIl ,IlIIIlIIIlIllIllI ,IIIIlIIllIIllIlll ,IIllllIlIIllIllll ,IlIIllIIlIllllIII ,IIIlIllIIIIIIIIIl if not rvc_globals .NotesIrHertz else IIIlIIlIIIllIlIll ,IIlIIlIIllllIlIll if not rvc_globals .NotesIrHertz else IIlIlIIIlIlIlIlII ,IlllIllIIllIIIlIl ],[IIllIlIIllIlIlIlI ])
+					IIIlIIIlIlIIIIIIl .change (fn =IIIlllIllllIIIIll ,inputs =[IIIlIIIlIlIIIIIIl ,IIIIlIlllllIIllII ,IIIIlIIllIIllIlll ],outputs =[IllllIlIIlIIlIlll ,IIIIlIlllllIIllII ,IIIIlIIllIIllIlll ]);IllllIlIIlIIlIlll ,IIIIlIlllllIIllII ,IIIIlIIllIIllIlll =IIIlllIllllIIIIll (IIIlIIIlIlIIIIIIl .value ,IIIIlIlllllIIllII ,IIIIlIIllIIllIlll )
+					def IlIlIIlllIlIIIIIl (IIIlIIlIlIlllllIl ):return {_IIIllIllllIlIllIl :IIIlIIlIlIlllllIl ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII }
+					IllIlIlllIIlIllIl .change (fn =IlIlIIlllIlIIIIIl ,inputs =[IllIlIlllIIlIllIl ],outputs =[IIlIlllIllIIIIlll ])
+			with IllIlIlIIllllIlIl .TabItem (IIIllIIllIIIIIIlI ('Train')):
+				with IllIlIlIIllllIlIl .Accordion (label =IIIllIIllIIIIIIlI ('Step 1: Processing data')):
+					with IllIlIlIIllllIlIl .Row ():IlllIllllIlIlIIll =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI ('Enter the model name:'),value =IIIllIIllIIIIIIlI ('Model_Name'));IlllIIllllIllIllI =IllIlIlIIllllIlIl .Radio (label =IIIllIIllIIIIIIlI (IlIIlIIIIllIIllIl ),choices =[_IIIllIIIlIIllIlII ,_IlIlllllIIIIIlIlI ,_IllIIIIIIlIIIIlll ],value =_IIIllIIIlIIllIlII ,interactive =_IlllIIIlllIllIllI );IIllIlIIlIIIIlllI =IllIlIlIIllllIlIl .Checkbox (label =IIIllIIllIIIIIIlI (IIIIllllIIIlllIlI ),value =_IlllIIIlllIllIllI ,interactive =_IlllIIIlllIllIllI );IIIllIIIlllIllIII =IllIlIlIIllllIlIl .Radio (label =IIIllIIllIIIIIIlI ('Version:'),choices =[_IlIIIIIIlIlIllIIl ,_IIIllllllIllIIIII ],value =_IIIllllllIllIIIII ,interactive =_IlllIIIlllIllIllI ,visible =_IlllIIIlllIllIllI );IlIIIIlIlIIlIlllI =IllIlIlIIllllIlIl .Slider (minimum =0 ,maximum =IlIllIlIlIIlIlIll .n_cpu ,step =1 ,label =IIIllIIllIIIIIIlI ('Number of CPU processes:'),value =int (IIlIlllllIlIlIIlI .ceil (IlIllIlIlIIlIlIll .n_cpu /1.5 )),interactive =_IlllIIIlllIllIllI )
+				with IllIlIlIIllllIlIl .Group ():
+					with IllIlIlIIllllIlIl .Accordion (label =IIIllIIllIIIIIIlI ('Step 2: Skipping pitch extraction')):
+						with IllIlIlIIllllIlIl .Row ():
+							with IllIlIlIIllllIlIl .Column ():IlIlIIIllIIIllIIl =IllIlIlIIllllIlIl .Dropdown (choices =sorted (IlIIIIIIIIllIIlIl ),label =IIIllIIllIIIIIIlI ('Select your dataset:'),value =IlIIIllIlIlIllllI ());IIIlllIIlllIlIlll =IllIlIlIIllllIlIl .Button (IIIllIIllIIIIIIlI ('Update list'),variant =IIlIIIIlIlIIlIlll )
+							IllIIIllIIIIIlllI =IllIlIlIIllllIlIl .Slider (minimum =0 ,maximum =4 ,step =1 ,label =IIIllIIllIIIIIIlI ('Specify the model ID:'),value =0 ,interactive =_IlllIIIlllIllIllI );IIIlllIIlllIlIlll .click (easy_infer .update_dataset_list ,[IllIIIllIIIIIlllI ],IlIlIIIllIIIllIIl );IIlIIlIlIlIlIIlll =IllIlIlIIllllIlIl .Button (IIIllIIllIIIIIIlI ('Process data'),variant =IIlIIIIlIlIIlIlll );IIlIllIlIIIIIIIII =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IlllIIIlllllIIIll ),value ='');IIlIIlIlIlIlIIlll .click (IllIIllIllIllIlll ,[IlIlIIIllIIIllIIl ,IlllIllllIlIlIIll ,IlllIIllllIllIllI ,IlIIIIlIlIIlIlllI ],[IIlIllIlIIIIIIIII ])
+				with IllIlIlIIllllIlIl .Group ():
+					with IllIlIlIIllllIlIl .Accordion (label =IIIllIIllIIIIIIlI ('Step 3: Extracting features')):
+						with IllIlIlIIllllIlIl .Row ():
+							with IllIlIlIIllllIlIl .Column ():IlIlIlIlIIIIlIIIl =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IlIIIlIIlIlIlIIII ),value =IIIlIlllllIllIlII ,interactive =_IlllIIIlllIllIllI );IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI ('GPU Information:'),value =IIlIIlllIlIlIIIll )
+							with IllIlIlIIllllIlIl .Column ():IIIIlIIIIIllIllII =IllIlIlIIllllIlIl .Radio (label =IIIllIIllIIIIIIlI (IlIIlllIllIIlIIII ),choices =[_IIIlIIllIlIlIllII ,IIIllIlIllIllllII ,IlIllIIIIIlllllII ,IIlllllIllllIllII ,IIIlllIlIllllIllI ,_IlIIllllIIIlIlIlI ],value =_IlIIllllIIIlIlIlI ,interactive =_IlllIIIlllIllIllI );IlllIIlIIlIlIIlIl =IllIlIlIIllllIlIl .Slider (minimum =1 ,maximum =512 ,step =1 ,label =IIIllIIllIIIIIIlI (IIlIlIIlIlIlIllIl ),value =64 ,interactive =_IlllIIIlllIllIllI ,visible =_IIIIlIlIIIlIlIlll );IIIIlIIIIIllIllII .change (fn =lambda IIIIIllIlllIIlIlI :{_IIIllIllllIlIllIl :IIIIIllIlllIIlIlI in [IIIlllIlIllllIllI ,IIIIlIllIllllllll ],_IIllIIllllllIllII :_IlllllIlIIlIlIlII },inputs =[IIIIlIIIIIllIllII ],outputs =[IlllIIlIIlIlIIlIl ])
+							IlllIlIIIllIIIIll =IllIlIlIIllllIlIl .Button (IIIllIIllIIIIIIlI ('Feature extraction'),variant =IIlIIIIlIlIIlIlll );IlIlIlIlIIllIllII =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IlllIIIlllllIIIll ),value ='',max_lines =8 ,interactive =_IIIIlIlIIIlIlIlll );IlllIlIIIllIIIIll .click (IllllIllIllIIIllI ,[IlIlIlIlIIIIlIIIl ,IlIIIIlIlIIlIlllI ,IIIIlIIIIIllIllII ,IIllIlIIlIIIIlllI ,IlllIllllIlIlIIll ,IIIllIIIlllIllIII ,IlllIIlIIlIlIIlIl ],[IlIlIlIlIIllIllII ])
+				with IllIlIlIIllllIlIl .Group ():
+					with IllIlIlIIllllIlIl .Row ():
+						with IllIlIlIIllllIlIl .Accordion (label =IIIllIIllIIIIIIlI ('Step 4: Model training started')):
+							with IllIlIlIIllllIlIl .Row ():IIlIlIlllIllIIIII =IllIlIlIIllllIlIl .Slider (minimum =1 ,maximum =100 ,step =1 ,label =IIIllIIllIIIIIIlI ('Save frequency:'),value =10 ,interactive =_IlllIIIlllIllIllI ,visible =_IlllIIIlllIllIllI );IIIlIllllIllIIIIl =IllIlIlIIllllIlIl .Slider (minimum =1 ,maximum =10000 ,step =2 ,label =IIIllIIllIIIIIIlI ('Training epochs:'),value =750 ,interactive =_IlllIIIlllIllIllI );IIllIlIlllllllIIl =IllIlIlIIllllIlIl .Slider (minimum =1 ,maximum =50 ,step =1 ,label =IIIllIIllIIIIIIlI ('Batch size per GPU:'),value =IIlIllIllIllIIIIl ,interactive =_IlllIIIlllIllIllI )
+							with IllIlIlIIllllIlIl .Row ():IIlIIlIlIlIIlIlIl =IllIlIlIIllllIlIl .Checkbox (label =IIIllIIllIIIIIIlI ('Whether to save only the latest .ckpt file to save hard drive space'),value =_IlllIIIlllIllIllI ,interactive =_IlllIIIlllIllIllI );IIlIlllIIIlllIIll =IllIlIlIIllllIlIl .Checkbox (label =IIIllIIllIIIIIIlI ('Cache all training sets to GPU memory. Caching small datasets (less than 10 minutes) can speed up training'),value =_IIIIlIlIIIlIlIlll ,interactive =_IlllIIIlllIllIllI );IllIIllIIllIlllII =IllIlIlIIllllIlIl .Checkbox (label =IIIllIIllIIIIIIlI ("Save a small final model to the 'weights' folder at each save point"),value =_IlllIIIlllIllIllI ,interactive =_IlllIIIlllIllIllI )
+							with IllIlIlIIllllIlIl .Row ():
+								IIlIllIIlIllIlIII =IllIlIlIIllllIlIl .Textbox (lines =4 ,label =IIIllIIllIIIIIIlI ('Load pre-trained base model G path:'),value ='/kaggle/input/ax-rmf/pretrained_v2/f0G40k.pth',interactive =_IlllIIIlllIllIllI );IIIIlIIlIllIlIlIl =IllIlIlIIllllIlIl .Textbox (lines =4 ,label =IIIllIIllIIIIIIlI ('Load pre-trained base model D path:'),value ='/kaggle/input/ax-rmf/pretrained_v2/f0D40k.pth',interactive =_IlllIIIlllIllIllI );IIlIIIllllIlllIIl =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IlIIIlIIlIlIlIIII ),value =IIIlIlllllIllIlII ,interactive =_IlllIIIlllIllIllI );IlllIIllllIllIllI .change (IllllllIIIIlIIIIl ,[IlllIIllllIllIllI ,IIllIlIIlIIIIlllI ,IIIllIIIlllIllIII ],[IIlIllIIlIllIlIII ,IIIIlIIlIllIlIlIl ]);IIIllIIIlllIllIII .change (IlllIIIlIIIllllII ,[IlllIIllllIllIllI ,IIllIlIIlIIIIlllI ,IIIllIIIlllIllIII ],[IIlIllIIlIllIlIII ,IIIIlIIlIllIlIlIl ,IlllIIllllIllIllI ]);IIllIlIIlIIIIlllI .change (fn =IIlllIIIlIlIllIll ,inputs =[IIllIlIIlIIIIlllI ,IlllIIllllIllIllI ,IIIllIIIlllIllIII ],outputs =[IIIIlIIIIIllIllII ,IIlIllIIlIllIlIII ,IIIIlIIlIllIlIlIl ]);IIllIlIIlIIIIlllI .change (fn =lambda IIlIllIlllIlIIIlI :{_IIIllIllllIlIllIl :IIlIllIlllIlIIIlI in [IIIlllIlIllllIllI ,IIIIlIllIllllllll ],_IIllIIllllllIllII :_IlllllIlIIlIlIlII },inputs =[IIIIlIIIIIllIllII ],outputs =[IlllIIlIIlIlIIlIl ]);IIIIIlIlIIIllllIl =IllIlIlIIllllIlIl .Button (IIIllIIllIIIIIIlI ('Stop training'),variant =IIlIIIIlIlIIlIlll ,visible =_IIIIlIlIIIlIlIlll );IIlIllIlllllIIIlI =IllIlIlIIllllIlIl .Button (IIIllIIllIIIIIIlI ('Train model'),variant =IIlIIIIlIlIIlIlll ,visible =_IlllIIIlllIllIllI );IIlIllIlllllIIIlI .click (fn =IIIIllIIIIIlIllll ,inputs =[IllIlIlIIllllIlIl .Number (value =0 ,visible =_IIIIlIlIIIlIlIlll )],outputs =[IIlIllIlllllIIIlI ,IIIIIlIlIIIllllIl ]);IIIIIlIlIIIllllIl .click (fn =IIIIllIIIIIlIllll ,inputs =[IllIlIlIIllllIlIl .Number (value =1 ,visible =_IIIIlIlIIIlIlIlll )],outputs =[IIlIllIlllllIIIlI ,IIIIIlIlIIIllllIl ])
+								with IllIlIlIIllllIlIl .Column ():IIlIlIIlIllIIIllI =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IlllIIIlllllIIIll ),value ='',max_lines =4 );IllllIllIlIIIIIll =IllIlIlIIllllIlIl .Dropdown (label =IIIllIIllIIIIIIlI ('Save type'),choices =[IIIllIIllIIIIIIlI ('Save all'),IIIllIIllIIIIIIlI ('Save D and G'),IIIllIIllIIIIIIlI ('Save voice')],value =IIIllIIllIIIIIIlI ('Choose the method'),interactive =_IlllIIIlllIllIllI );IllIlIIIlIlllIlIl =IllIlIlIIllllIlIl .Button (IIIllIIllIIIIIIlI ('Train feature index'),variant =IIlIIIIlIlIIlIlll );IIIllIIlllIIIIlII =IllIlIlIIllllIlIl .Button (IIIllIIllIIIIIIlI ('Save model'),variant =IIlIIIIlIlIIlIlll )
+								IllIIllIIllIlllII .change (fn =lambda IlIllIlIllIllllII :{_IIIllIllllIlIllIl :IlIllIlIllIllllII ,_IIllIIllllllIllII :_IlllllIlIIlIlIlII },inputs =[IllIIllIIllIlllII ],outputs =[IIlIlIlllIllIIIII ])
+							IIlIllIlllllIIIlI .click (IllIIlllIlllIIIIl ,[IlllIllllIlIlIIll ,IlllIIllllIllIllI ,IIllIlIIlIIIIlllI ,IllIIIllIIIIIlllI ,IIlIlIlllIllIIIII ,IIIlIllllIllIIIIl ,IIllIlIlllllllIIl ,IIlIIlIlIlIIlIlIl ,IIlIllIIlIllIlIII ,IIIIlIIlIllIlIlIl ,IIlIIIllllIlllIIl ,IIlIlllIIIlllIIll ,IllIIllIIllIlllII ,IIIllIIIlllIllIII ],[IIlIlIIlIllIIIllI ,IIIIIlIlIIIllllIl ,IIlIllIlllllIIIlI ]);IllIlIIIlIlllIlIl .click (IIIIllIllllllIllI ,[IlllIllllIlIlIIll ,IIIllIIIlllIllIII ],IIlIlIIlIllIIIllI );IIIllIIlllIIIIlII .click (easy_infer .save_model ,[IlllIllllIlIlIIll ,IllllIllIlIIIIIll ],IIlIlIIlIllIIIllI )
+				with IllIlIlIIllllIlIl .Group ():
+					with IllIlIlIIllllIlIl .Row ():
+						with IllIlIlIIllllIlIl .Accordion (label =IIIllIIllIIIIIIlI ('Step 5: Export lowest points on a graph of the model')):
+							IlIIIIllIlllIIIIl =IllIlIlIIllllIlIl .Textbox (visible =_IIIIlIlIIIlIlIlll );IIIIIIIIllIIIIIll =IllIlIlIIllllIlIl .Textbox (visible =_IIIIlIlIIIlIlIlll );IIlIIIlIIlIIlllll =IllIlIlIIllllIlIl .Textbox (visible =_IIIIlIlIIIlIlIlll ,value =IIllIlIIIIlIlllIl )
+							with IllIlIlIIllllIlIl .Row ():IIIlIllllIllIllIl =IllIlIlIIllllIlIl .Slider (minimum =1 ,maximum =25 ,label =IIIllIIllIIIIIIlI ('How many lowest points to save:'),value =3 ,step =1 ,interactive =_IlllIIIlllIllIllI );IlllllllIlIIllllI =IllIlIlIIllllIlIl .Button (value =IIIllIIllIIIIIIlI ('Export lowest points of a model'),variant =IIlIIIIlIlIIlIlll );IlIlIIIllllIIIIIl =IllIlIlIIllllIlIl .File (file_count =IlIlIllIlIIIIlIII ,label =IIIllIIllIIIIIIlI ('Output models:'),interactive =_IIIIlIlIIIlIlIlll )
+							with IllIlIlIIllllIlIl .Row ():IllIlIlIlIlllllll =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IlllIIIlllllIIIll ),value ='',max_lines =10 );IIIIllIllIlIIIlII =IllIlIlIIllllIlIl .Dataframe (label =IIIllIIllIIIIIIlI ('Stats of selected models:'),datatype ='number',type ='pandas')
+							IlllllllIlIIllllI .click (lambda IIlIIlIllIlIIlIIl :os .path .join (_IIIlIlIlIIIIllllI ,IIlIIlIllIlIIlIIl ,'lowestvals'),inputs =[IlllIllllIlIlIIll ],outputs =[IlIIIIllIlllIIIIl ]);IlllllllIlIIllllI .click (fn =IIlllllllIIIIIlIl .main ,inputs =[IlllIllllIlIlIIll ,IIlIlIlllIllIIIII ,IIIlIllllIllIllIl ],outputs =[IIIIIIIIllIIIIIll ]);IIIIIIIIllIIIIIll .change (fn =IIlllllllIIIIIlIl .selectweights ,inputs =[IlllIllllIlIlIIll ,IIIIIIIIllIIIIIll ,IIlIIIlIIlIIlllll ,IlIIIIllIlllIIIIl ],outputs =[IllIlIlIlIlllllll ,IlIlIIIllllIIIIIl ,IIIIllIllIlIIIlII ])
+			with IllIlIlIIllllIlIl .TabItem (IIIllIIllIIIIIIlI ('UVR5')):
+				with IllIlIlIIllllIlIl .Group ():
+					with IllIlIlIIllllIlIl .Row ():
+						with IllIlIlIIllllIlIl .Column ():IIlIlllIlIlIIIlII =IllIlIlIIllllIlIl .Radio (label =IIIllIIllIIIIIIlI ('Model Architecture:'),choices =[_IlIIIIIllllIlIlII ,_IIIIlIIllIIlllIll ],value =_IlIIIIIllllIlIlII ,interactive =_IlllIIIlllIllIllI );IIIIllllIlllllIlI =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI ('Enter the path of the audio folder to be processed:'),value =os .path .join (IlIIIllllllIllIll ,_IIlIIIIIlIlIIIllI ));IlIIlIIIIIlIlIIlI =IllIlIlIIllllIlIl .File (file_count =IlIlIllIlIIIIlIII ,label =IIIllIIllIIIIIIlI (IIlIllllIllllIIIl ))
+						with IllIlIlIIllllIlIl .Column ():IlIIlIIlIIlllllIl =IllIlIlIIllllIlIl .Dropdown (label =IIIllIIllIIIIIIlI ('Model:'),choices =IllllIIlIIllIIlll );IIlllllIlIIIIIlII =IllIlIlIIllllIlIl .Slider (minimum =0 ,maximum =20 ,step =1 ,label ='Vocal Extraction Aggressive',value =10 ,interactive =_IlllIIIlllIllIllI ,visible =_IIIIlIlIIIlIlIlll );IIlllIIlIIIIlllII =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI ('Specify the output folder for vocals:'),value =IlIlIIlllIIIIIIIl );IlllIIIIlllIlllIl =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI ('Specify the output folder for accompaniment:'),value =IlIlIIlllIIIIIIIl );IllIIIlllllIIIlll =IllIlIlIIllllIlIl .Radio (label =IIIllIIllIIIIIIlI ('Export file format:'),choices =[_IIlIlIlIIllIIIIll ,_IlIIlllIlIllIIlll ,_IIIlIllllIIlIIIIl ,_IlIIllIllllIlIIII ],value =_IlIIlllIlIllIIlll ,interactive =_IlllIIIlllIllIllI )
+						IIlIlllIlIlIIIlII .change (fn =IIlllIIllllllllll ,inputs =IIlIlllIlIlIIIlII ,outputs =IlIIlIIlIIlllllIl );IlllIlIIIllIIIIll =IllIlIlIIllllIlIl .Button (IIIllIIllIIIIIIlI (IlIlIIllllIlIIIII ),variant =IIlIIIIlIlIIlIlll );IlllIlIIIIlIlIlII =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IlllIIIlllllIIIll ));IlllIlIIIllIIIIll .click (IIIIllIllIllllIIl ,[IlIIlIIlIIlllllIl ,IIIIllllIlllllIlI ,IIlllIIlIIIIlllII ,IlIIlIIIIIlIlIIlI ,IlllIIIIlllIlllIl ,IIlllllIlIIIIIlII ,IllIIIlllllIIIlll ,IIlIlllIlIlIIIlII ],[IlllIlIIIIlIlIlII ])
+			with IllIlIlIIllllIlIl .TabItem (IIIllIIllIIIIIIlI ('TTS')):
+				with IllIlIlIIllllIlIl .Group ():
+					with IllIlIlIIllllIlIl .Column ():IIllllIlIlIIlIIII =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI ('Text:'),placeholder =IIIllIIllIIIIIIlI ('Enter the text you want to convert to voice...'),lines =6 )
+				with IllIlIlIIllllIlIl .Group ():
+					with IllIlIlIIllllIlIl .Row ():
+						with IllIlIlIIllllIlIl .Column ():IllIIIlIlIIIllIIl =[_IIlIIllIlIIIIlIll ,_IIIlllIlllIIIIlII ];IIIllllIlIllIIIIl =IllIlIlIIllllIlIl .Dropdown (IllIIIlIlIIIllIIl ,value =_IIlIIllIlIIIIlIll ,label =IIIllIIllIIIIIIlI ('TTS Method:'),visible =_IlllIIIlllIllIllI );IIIIlIIIIlIlIlIlI =IllIlIlIIllllIlIl .Dropdown (IlIIIlllIIIlIIIII ,label =IIIllIIllIIIIIIlI ('TTS Model:'),visible =_IlllIIIlllIllIllI );IIIllllIlIllIIIIl .change (fn =IlIlIlllIlllIIIlI ,inputs =IIIllllIlIllIIIIl ,outputs =IIIIlIIIIlIlIlIlI )
+						with IllIlIlIIllllIlIl .Column ():IlllIlIllIIIIIIIl =IllIlIlIIllllIlIl .Dropdown (label =IIIllIIllIIIIIIlI ('RVC Model:'),choices =sorted (IIlIIIlIIIlIIlIII ),value =IlllIlIlIllllIlII );IlIIllIlllllIllll ,_IlllIIlIIllllllll =IIIlIllIIllIIIlII (IlllIlIllIIIIIIIl .value );IIlllIllIlIIlIllI =IllIlIlIIllllIlIl .Dropdown (label =IIIllIIllIIIIIIlI ('Select the .index file:'),choices =IIlllIlIIIlIIlIll (),value =IlIIllIlllllIllll ,interactive =_IlllIIIlllIllIllI ,allow_custom_value =_IlllIIIlllIllIllI )
+				with IllIlIlIIllllIlIl .Row ():IllIIIIlIlIlIlIlI =IllIlIlIIllllIlIl .Button (IIIllIIllIIIIIIlI (IlIllIlIIIIIlIlII ),variant =IIlIIIIlIlIIlIlll );IllIIIIlIlIlIlIlI .click (fn =IlIllIllIIIIllIII ,inputs =[],outputs =[IlllIlIllIIIIIIIl ,IIlllIllIlIIlIllI ])
+				with IllIlIlIIllllIlIl .Row ():IIIIIIIIlIIlIIlIl =IllIlIlIIllllIlIl .Audio (label =IIIllIIllIIIIIIlI ('Audio TTS:'));IIlIllIIllllIlIII =IllIlIlIIllllIlIl .Audio (label =IIIllIIllIIIIIIlI ('Audio RVC:'))
+				with IllIlIlIIllllIlIl .Row ():IIIlIIIIllIIIIllI =IllIlIlIIllllIlIl .Button (IIIllIIllIIIIIIlI (IlIlIIllllIlIIIII ),variant =IIlIIIIlIlIIlIlll )
+				IIIlIIIIllIIIIllI .click (IIIIllIIIIIIIIIII ,inputs =[IIllllIlIlIIlIIII ,IIIIlIIIIlIlIlIlI ,IlllIlIllIIIIIIIl ,IIlllIllIlIIlIllI ,IIlIIlIlllIllllIl ,IIIIlIIIIIllIllII ,IIlIlIllIIIlllllI ,IlIIllIIlIllllIII ,IlllIllIIllIIIlIl ,IIIllllIlIllIIIIl ],outputs =[IIlIllIIllllIlIII ,IIIIIIIIlIIlIIlIl ])
+			with IllIlIlIIllllIlIl .TabItem (IIIllIIllIIIIIIlI ('Resources')):easy_infer .download_model ();easy_infer .download_backup ();easy_infer .download_dataset (IlIlIIIllIIIllIIl );easy_infer .download_audio ();easy_infer .youtube_separator ()
+			with IllIlIlIIllllIlIl .TabItem (IIIllIIllIIIIIIlI ('Extra')):
+				IllIlIlIIllllIlIl .Markdown (value =IIIllIIllIIIIIIlI ('This section contains some extra utilities that often may be in experimental phases'))
+				with IllIlIlIIllllIlIl .TabItem (IIIllIIllIIIIIIlI ('Merge Audios')):
+					with IllIlIlIIllllIlIl .Group ():
+						IllIlIlIIllllIlIl .Markdown (value ='## '+IIIllIIllIIIIIIlI ('Merge your generated audios with the instrumental'));IllIlIlIIllllIlIl .Markdown (value ='',scale =IllIlIllllIIlIIlI ,visible =_IlllIIIlllIllIllI );IllIlIlIIllllIlIl .Markdown (value ='',scale =IllIlIllllIIlIIlI ,visible =_IlllIIIlllIllIllI )
+						with IllIlIlIIllllIlIl .Row ():
+							with IllIlIlIIllllIlIl .Column ():
+								IllIlIIIlllIIlllI =IllIlIlIIllllIlIl .File (label =IIIllIIllIIIIIIlI (IllllIlIllIIlllIl ));IllIlIlIIllllIlIl .Markdown (value =IIIllIIllIIIIIIlI ('### Instrumental settings:'));IllIlIIIIlllIIlII =IllIlIlIIllllIlIl .Dropdown (label =IIIllIIllIIIIIIlI ('Choose your instrumental:'),choices =sorted (IIllIlllIIllIIllI ),value ='',interactive =_IlllIIIlllIllIllI );IllIIIIIIIIIlllIl =IllIlIlIIllllIlIl .Slider (minimum =0 ,maximum =10 ,label =IIIllIIllIIIIIIlI ('Volume of the instrumental audio:'),value =_IlIlllIlIlIlIlIll ,interactive =_IlllIIIlllIllIllI );IllIlIlIIllllIlIl .Markdown (value =IIIllIIllIIIIIIlI ('### Audio settings:'));IIlllIllIlIIIlIII =IllIlIlIIllllIlIl .Dropdown (label =IIIllIIllIIIIIIlI ('Select the generated audio'),choices =sorted (IIIlIIllllIIIIIII ),value ='',interactive =_IlllIIIlllIllIllI )
+								with IllIlIlIIllllIlIl .Row ():IlIllIlIlIIllIIll =IllIlIlIIllllIlIl .Slider (minimum =0 ,maximum =10 ,label =IIIllIIllIIIIIIlI ('Volume of the generated audio:'),value =_IlIlllIlIlIlIlIll ,interactive =_IlllIIIlllIllIllI )
+								IllIlIlIIllllIlIl .Markdown (value =IIIllIIllIIIIIIlI ('### Add the effects:'));IIlllIIIlllIIIIII =IllIlIlIIllllIlIl .Checkbox (label =IIIllIIllIIIIIIlI ('Reverb'),value =_IIIIlIlIIIlIlIlll ,interactive =_IlllIIIlllIllIllI );IlIIlIIIllIlIIlIl =IllIlIlIIllllIlIl .Checkbox (label =IIIllIIllIIIIIIlI ('Compressor'),value =_IIIIlIlIIIlIlIlll ,interactive =_IlllIIIlllIllIllI );IlIlllIIIlllIlllI =IllIlIlIIllllIlIl .Checkbox (label =IIIllIIllIIIIIIlI ('Noise Gate'),value =_IIIIlIlIIIlIlIlll ,interactive =_IlllIIIlllIllIllI );IIIlIIlIIIIlIIllI =IllIlIlIIllllIlIl .Button (IIIllIIllIIIIIIlI ('Merge'),variant =IIlIIIIlIlIIlIlll ).style (full_width =_IlllIIIlllIllIllI );IIIlIIllIIlllIlII =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IlllIIIlllllIIIll ));IIlIIIIIlIIlIlllI =IllIlIlIIllllIlIl .Audio (label =IIIllIIllIIIIIIlI (IlIlllIlllIllIllI ),type =IlIllIllllIlIlllI );IllIlIIIlllIIlllI .upload (fn =IllIIllIIlIIIlIll ,inputs =[IllIlIIIlllIIlllI ],outputs =[IllIlIIIIlllIIlII ]);IllIlIIIlllIIlllI .upload (fn =easy_infer .change_choices2 ,inputs =[],outputs =[IllIlIIIIlllIIlII ]);IIlIlIlllllllIllI .click (fn =lambda :IllIIllIllIlIIIll (),inputs =[],outputs =[IllIlIIIIlllIIlII ,IIlllIllIlIIIlIII ]);IIIlIIlIIIIlIIllI .click (fn =IlllIIlIIIIlllllI ,inputs =[IllIlIIIIlllIIlII ,IIlllIllIlIIIlIII ,IllIIIIIIIIIlllIl ,IlIllIlIlIIllIIll ,IIlllIIIlllIIIIII ,IlIIlIIIllIlIIlIl ,IlIlllIIIlllIlllI ],outputs =[IIIlIIllIIlllIlII ,IIlIIIIIlIIlIlllI ])
+				with IllIlIlIIllllIlIl .TabItem (IIIllIIllIIIIIIlI ('Processing')):
+					with IllIlIlIIllllIlIl .Group ():
+						with IllIlIlIIllllIlIl .Accordion (label =IIIllIIllIIIIIIlI ('Model fusion, can be used to test timbre fusion')):
+							with IllIlIlIIllllIlIl .Row ():
+								with IllIlIlIIllllIlIl .Column ():IIIIIllIIllIIlIIl =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IIIIIllIIIIIlIlIl ),value ='',max_lines =1 ,interactive =_IlllIIIlllIllIllI ,placeholder =IIIllIIllIIIIIIlI (IIlllIllIIIIIIllI ));IlllIlIllIIllIIII =IllIlIlIIllllIlIl .Slider (minimum =0 ,maximum =1 ,label =IIIllIIllIIIIIIlI ('Weight for Model A:'),value =.5 ,interactive =_IlllIIIlllIllIllI );IIIlIIIIllIIlllIl =IllIlIlIIllllIlIl .Checkbox (label =IIIllIIllIIIIIIlI (IIIIllllIIIlllIlI ),value =_IlllIIIlllIllIllI ,interactive =_IlllIIIlllIllIllI );IIIIIIlIIlIlllllI =IllIlIlIIllllIlIl .Radio (label =IIIllIIllIIIIIIlI (IIIIIllIIllIlIIll ),choices =[_IlIIIIIIlIlIllIIl ,_IIIllllllIllIIIII ],value =_IIIllllllIllIIIII ,interactive =_IlllIIIlllIllIllI );IIlIIIllIIIlIIllI =IllIlIlIIllllIlIl .Radio (label =IIIllIIllIIIIIIlI (IlIIlIIIIllIIllIl ),choices =[_IIIllIIIlIIllIlII ,_IlIlllllIIIIIlIlI ],value =_IIIllIIIlIIllIlII ,interactive =_IlllIIIlllIllIllI )
+								with IllIlIlIIllllIlIl .Column ():IlIIlIIllllIIlIlI =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI ('Path to Model A:'),value ='',interactive =_IlllIIIlllIllIllI ,placeholder =IIIllIIllIIIIIIlI (IIIIlIlIlllIlIIll ));IIllIlIlIlIIIlIll =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI ('Path to Model B:'),value ='',interactive =_IlllIIIlllIllIllI ,placeholder =IIIllIIllIIIIIIlI (IIIIlIlIlllIlIIll ));IIlllllIIlIlIlIll =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IlIIllIlllIlIllIl ),value ='',max_lines =8 ,interactive =_IlllIIIlllIllIllI ,placeholder =IIIllIIllIIIIIIlI (IIIllIIIIIIIlIIll ));IIllllllllllllllI =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IlllIIIlllllIIIll ),value ='',max_lines =8 )
+							IllIIllIIIlIIlIlI =IllIlIlIIllllIlIl .Button (IIIllIIllIIIIIIlI ('Fusion'),variant =IIlIIIIlIlIIlIlll );IllIIllIIIlIIlIlI .click (merge ,[IlIIlIIllllIIlIlI ,IIllIlIlIlIIIlIll ,IlllIlIllIIllIIII ,IIlIIIllIIIlIIllI ,IIIlIIIIllIIlllIl ,IIlllllIIlIlIlIll ,IIIIIllIIllIIlIIl ,IIIIIIlIIlIlllllI ],IIllllllllllllllI )
+					with IllIlIlIIllllIlIl .Group ():
+						with IllIlIlIIllllIlIl .Accordion (label =IIIllIIllIIIIIIlI ('Modify model information')):
+							with IllIlIlIIllllIlIl .Row ():
+								with IllIlIlIIllllIlIl .Column ():IIlllllIIllIlIIlI =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IlIIIIlIIIIlIIIll ),value ='',interactive =_IlllIIIlllIllIllI ,placeholder =IIIllIIllIIIIIIlI (IIIIlIlIlllIlIIll ));IlllllIIIIllIIlll =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI ('Model information to be modified:'),value ='',max_lines =8 ,interactive =_IlllIIIlllIllIllI ,placeholder =IIIllIIllIIIIIIlI (IIIllIIIIIIIlIIll ))
+								with IllIlIlIIllllIlIl .Column ():IllIlIlIllIIIIlll =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI ('Save file name:'),placeholder =IIIllIIllIIIIIIlI (IIlllIllIIIIIIllI ),value ='',max_lines =8 ,interactive =_IlllIIIlllIllIllI );IllIlIIlllIlIIlII =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IlllIIIlllllIIIll ),value ='',max_lines =8 )
+							IIIllIIlllIIIIlII =IllIlIlIIllllIlIl .Button (IIIllIIllIIIIIIlI ('Modify'),variant =IIlIIIIlIlIIlIlll );IIIllIIlllIIIIlII .click (change_info ,[IIlllllIIllIlIIlI ,IlllllIIIIllIIlll ,IllIlIlIllIIIIlll ],IllIlIIlllIlIIlII )
+					with IllIlIlIIllllIlIl .Group ():
+						with IllIlIlIIllllIlIl .Accordion (label =IIIllIIllIIIIIIlI ('View model information')):
+							with IllIlIlIIllllIlIl .Row ():
+								with IllIlIlIIllllIlIl .Column ():IIIllllIlIIlllIll =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IlIIIIlIIIIlIIIll ),value ='',interactive =_IlllIIIlllIllIllI ,placeholder =IIIllIIllIIIIIIlI (IIIIlIlIlllIlIIll ));IIIIllIllllIIIlIl =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IlllIIIlllllIIIll ),value ='',max_lines =8 );IIlIlIIlIlIIllIll =IllIlIlIIllllIlIl .Button (IIIllIIllIIIIIIlI ('View'),variant =IIlIIIIlIlIIlIlll )
+							IIlIlIIlIlIIllIll .click (show_info ,[IIIllllIlIIlllIll ],IIIIllIllllIIIlIl )
+					with IllIlIlIIllllIlIl .Group ():
+						with IllIlIlIIllllIlIl .Accordion (label =IIIllIIllIIIIIIlI ('Model extraction')):
+							with IllIlIlIIllllIlIl .Row ():
+								with IllIlIlIIllllIlIl .Column ():IIllIllIlIIIlllIl =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IIIIIllIIIIIlIlIl ),value ='',interactive =_IlllIIIlllIllIllI ,placeholder =IIIllIIllIIIIIIlI (IIlllIllIIIIIIllI ));IllIlIIlIlIIIllII =IllIlIlIIllllIlIl .Checkbox (label =IIIllIIllIIIIIIlI (IIIIllllIIIlllIlI ),value =_IlllIIIlllIllIllI ,interactive =_IlllIIIlllIllIllI );IllIllIIIlIIIIIII =IllIlIlIIllllIlIl .Radio (label =IIIllIIllIIIIIIlI (IIIIIllIIllIlIIll ),choices =[_IlIIIIIIlIlIllIIl ,_IIIllllllIllIIIII ],value =_IIIllllllIllIIIII ,interactive =_IlllIIIlllIllIllI );IllllllIIlIIlllII =IllIlIlIIllllIlIl .Radio (label =IIIllIIllIIIIIIlI (IlIIlIIIIllIIllIl ),choices =[_IllIIIIIIlIIIIlll ,_IIIllIIIlIIllIlII ,_IlIlllllIIIIIlIlI ],value =_IIIllIIIlIIllIlII ,interactive =_IlllIIIlllIllIllI )
+								with IllIlIlIIllllIlIl .Column ():IIIIIlIlIllIllIll =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IlIIIIlIIIIlIIIll ),placeholder =IIIllIIllIIIIIIlI (IIIIlIlIlllIlIIll ),interactive =_IlllIIIlllIllIllI );IlIlIIIIlllllllIl =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IlIIllIlllIlIllIl ),value ='',max_lines =8 ,interactive =_IlllIIIlllIllIllI ,placeholder =IIIllIIllIIIIIIlI (IIIllIIIIIIIlIIll ));IllIIllIIllIllllI =IllIlIlIIllllIlIl .Textbox (label =IIIllIIllIIIIIIlI (IlllIIIlllllIIIll ),value ='',max_lines =8 )
+							with IllIlIlIIllllIlIl .Row ():IlllllIIlIIIlllII =IllIlIlIIllllIlIl .Button (IIIllIIllIIIIIIlI ('Extract'),variant =IIlIIIIlIlIIlIlll );IIIIIlIlIllIllIll .change (IIIIIIlIIIlIlIIIl ,[IIIIIlIlIllIllIll ],[IllllllIIlIIlllII ,IllIlIIlIlIIIllII ,IllIllIIIlIIIIIII ])
+							IlllllIIlIIIlllII .click (extract_small_model ,[IIIIIlIlIllIllIll ,IIllIllIlIIIlllIl ,IllllllIIlIIlllII ,IllIlIIlIlIIIllII ,IlIlIIIIlllllllIl ,IllIllIIIlIIIIIII ],IllIIllIIllIllllI )
+			with IllIlIlIIllllIlIl .TabItem (IIIllIIllIIIIIIlI ('Settings')):
+				with IllIlIlIIllllIlIl .Row ():IllIlIlIIllllIlIl .Markdown (value =IIIllIIllIIIIIIlI ('Pitch settings'));IIIllIIlIIIIlIIll =IllIlIlIIllllIlIl .Checkbox (label =IIIllIIllIIIIIIlI ('Whether to use note names instead of their hertz value. E.G. [C5, D6] instead of [523.25, 1174.66]Hz'),value =rvc_globals .NotesIrHertz ,interactive =_IlllIIIlllIllIllI )
+			IIIllIIlIIIIlIIll .change (fn =lambda IIIllllIlIIlIlIlI :rvc_globals .__setattr__ ('NotesIrHertz',IIIllllIlIIlIlIlI ),inputs =[IIIllIIlIIIIlIIll ],outputs =[]);IIIllIIlIIIIlIIll .change (fn =IllllIIIIlIlllIll ,inputs =[IIIlIIllIIllIlllI ],outputs =[IIIlIllIIIIIIIIIl ,IIIlIIlIIIllIlIll ,IIlIIlIIllllIlIll ,IIlIlIIIlIlIlIlII ])
+		return IIlllIIllIlIlllll 
+def IllIIlIIIIlIlllll (IllIIIIlIlIIllIll ):
+	IllIllIlIlIIIIlll ='0.0.0.0';IllIlIlllIlllllII =IlIllIlIlIIlIlIll .iscolab or IlIllIlIlIIlIlIll .paperspace ;IlIIIllIllIlIIIlI =511 ;IllllIlllllIlIlIl =1022 
+	if IlIllIlIlIIlIlIll .iscolab or IlIllIlIlIIlIlIll .paperspace :IllIIIIlIlIIllIll .queue (concurrency_count =IlIIIllIllIlIIIlI ,max_size =IllllIlllllIlIlIl ).launch (server_name =IllIllIlIlIIIIlll ,inbrowser =not IlIllIlIlIIlIlIll .noautoopen ,server_port =IlIllIlIlIIlIlIll .listen_port ,quiet =_IlllIIIlllIllIllI ,favicon_path ='./images/icon.png',share =_IIIIlIlIIIlIlIlll )
+	else :IllIIIIlIlIIllIll .queue (concurrency_count =IlIIIllIllIlIIIlI ,max_size =IllllIlllllIlIlIl ).launch (server_name =IllIllIlIlIIIIlll ,inbrowser =not IlIllIlIlIIlIlIll .noautoopen ,server_port =IlIllIlIlIIlIlIll .listen_port ,quiet =_IlllIIIlllIllIllI ,favicon_path ='.\\images\\icon.png',share =IllIlIlllIlllllII )
+if __name__ =='__main__':
+	if os .name =='nt':print (IIIllIIllIIIIIIlI ('Any ConnectionResetErrors post-conversion are irrelevant and purely visual; they can be ignored.\n'))
+	IlIllllIllIIlllIl =IlllIlllIIlllIIII (UTheme =IlIllIlIlIIlIlIll .grtheme );IllIIlIIIIlIlllll (IlIllllIllIIlllIl )
