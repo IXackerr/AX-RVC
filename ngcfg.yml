@@ -1,4 +1,5 @@
 version: 2
+authtoken: {ng_auth}
 tunnels:
   first:
     proto: http
