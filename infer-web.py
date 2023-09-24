@@ -2846,7 +2846,7 @@ def GradioSetup():
                     outputs=[ttsvoice, original_ttsvoice],
                 )
 
-            with gr.TabItem("HuggingFace 🤗"):
+           ''' with gr.TabItem("HuggingFace 🤗"):
                 with gr.Row():
                     hgf_token_gr = gr.Textbox(
                         label="Enter HuggingFace Write Token:",
@@ -2881,9 +2881,7 @@ def GradioSetup():
                         [hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_name_gr, zip_name_gr, what_upload_gr],
                         [uploadinfo1],
                     )
-                    
-
-
+'''
             with gr.TabItem(i18n("Resources")):
                 resources.download_model()
                 resources.download_backup()
