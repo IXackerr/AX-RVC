@@ -59,7 +59,7 @@ os.environ['OPENBLAS_NUM_THREADS']='1'
 os.environ['no_proxy']='localhost, 127.0.0.1, ::1'
 import logging,shutil,threading,lib.globals.globals as rvc_globals,lib.infer.infer_libs.uvr5_pack.mdx as mdx
 from lib.infer.modules.uvr5.mdxprocess import get_model_list,id_to_ptm,prepare_mdx,run_mdx
-import lib.tools.model_fetcher as model_fetcher,math as math,ffmpeg as ffmpeg,traceback,warnings
+import math as math,ffmpeg as ffmpeg,traceback,warnings
 from random import shuffle
 from subprocess import Popen
 from time import sleep
