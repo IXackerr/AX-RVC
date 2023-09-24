@@ -83,7 +83,7 @@ class Pipeline(object):
         self.t_center = self.sr * self.x_center  # 查询切点位置
         self.t_max = self.sr * self.x_max  # 免查询时长阈值
         self.device = config.device
-        self.model_rmvpe = "/kaggle/input/ax-rmf/rmvpe.pt", is_half=self.is_half, device=self.device
+        self.model_rmvpe = RMVPE("/kaggle/input/ax-rmf/rmvpe.pt", is_half=self.is_half, device=self.device)
         self.f0_method_dict = {
             "pm": self.get_pm,
             "harvest": self.get_harvest,
