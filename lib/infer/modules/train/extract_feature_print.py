@@ -50,7 +50,7 @@ def printt(strr):
 
 
 printt(sys.argv)
-model_path = "/kaggle/working/ax-rmf/hubert_base.pt"
+model_path = "/kaggle/input/ax-rmf/hubert_base.pt"
 
 printt(exp_dir)
 wavPath = "%s/1_16k_wavs" % exp_dir
