@@ -1204,7 +1204,9 @@ def change_sr2(sr2, if_f0_3, version19):
     model_paths = {"G": "", "D": ""}
 
     for model_type in model_paths:
-        file_path = f"/kaggle/input/ax-rmf/pretrained{path_str}/{f0_str}{model_type}{sr2}.pth"
+        file_path = (
+            f"/kaggle/input/ax-rmf/pretrained{path_str}/{f0_str}{model_type}{sr2}.pth"
+        )
         if os.access(file_path, os.F_OK):
             model_paths[model_type] = file_path
         else:
@@ -1226,7 +1228,9 @@ def change_version19(sr2, if_f0_3, version19):
     model_paths = {"G": "", "D": ""}
 
     for model_type in model_paths:
-        file_path = f"/kaggle/input/ax-rmf/pretrained{path_str}/{f0_str}{model_type}{sr2}.pth"
+        file_path = (
+            f"/kaggle/input/ax-rmf/pretrained{path_str}/{f0_str}{model_type}{sr2}.pth"
+        )
         if os.access(file_path, os.F_OK):
             model_paths[model_type] = file_path
         else:
@@ -1657,7 +1661,11 @@ def cli_train(com):
     bool_flags = [bool(int(i)) for i in com[2:11]]
     version = com[11]
 
-    pretrained_base = "/kaggle/input/ax-rmf/pretrained/" if version == "v1" else "/kaggle/input/ax-rmf/pretrained_v2/"
+    pretrained_base = (
+        "/kaggle/input/ax-rmf/pretrained/"
+        if version == "v1"
+        else "/kaggle/input/ax-rmf/pretrained_v2/"
+    )
 
     g_pretrained_path = f"{pretrained_base}f0G{sample_rate}.pth"
     d_pretrained_path = f"{pretrained_base}f0D{sample_rate}.pth"
@@ -3183,11 +3191,10 @@ def GradioSetup(UTheme=gr.themes.Soft()):
                                     )
                                     but4 = gr.Button(
                                         i18n("Train feature index"), variant="primary"
-                                    )                                    
+                                    )
                                     but7 = gr.Button(
                                         i18n("Save model"), variant="primary"
                                     )
-
 
                                 if_save_every_weights18.change(
                                     fn=lambda if_save_every_weights: (
