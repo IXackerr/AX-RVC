@@ -2876,7 +2876,7 @@ def GradioSetup():
                     uploadinfo1 = gr.Textbox(
                         label="Output information:", value=""
                     )
-                    but1.click(
+                    uploadbut1.click(
                         preprocess_dataset,
                         [hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_name_gr, zip_name_gr, what_upload_gr],
                         [uploadinfo1],
