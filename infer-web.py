@@ -1771,7 +1771,12 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
             repo_id=f"{hgf_name_gr}/{hgf_repo_gr}",
             repo_type="model",
         )
-        time.sleep(15)
+        time.sleep(5)
+
+        os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}')
+        os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/{model_name_gr}.pth')
+        os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/added*.index')
+
         return "Succesful upload Model to Hugging Face"
 
 
