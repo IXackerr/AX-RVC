@@ -2848,29 +2848,31 @@ def GradioSetup():
 
             with gr.TabItem("HuggingFace 🤗"):
                 with gr.Row():
-                    hgf_token_gr = gr.Textbox(
-                        label="Enter HuggingFace Write Token:",
-                    )
-                    hgf_name_gr = gr.Textbox(
-                        label="Enter HuggingFace Username:",
-                    )
-                    hgf_repo_gr = gr.Textbox(
-                        label="Enter HuggingFace Model-Repo name:",
-                    )
-                    model_name_gr = gr.Textbox(
-                        label="Trained model name:",
-                    )
-                    zip_name_gr = gr.Textbox(
-                        label="Name of Zip file:",
-                    )
-                    what_upload_gr = gr.Radio(
-                        label="Upload files:",
-                        choices=["Model Only", "Model Log Folder"],
-                        value="Model Only",
-                        interactive=True,
-                        visible=True,
-                    )
-
+                    with gr.Column():
+                        hgf_token_gr = gr.Textbox(
+                            label="Enter HuggingFace Write Token:",
+                        )
+                        hgf_name_gr = gr.Textbox(
+                            label="Enter HuggingFace Username:",
+                        )
+                        hgf_repo_gr = gr.Textbox(
+                            label="Enter HuggingFace Model-Repo name:",
+                        )
+                    with gr.Column():
+                        model_name_gr = gr.Textbox(
+                            label="Trained model name:",
+                        )
+                        zip_name_gr = gr.Textbox(
+                            label="Name of Zip file:",
+                        )
+                        what_upload_gr = gr.Radio(
+                            label="Upload files:",
+                            choices=["Model Only", "Model Log Folder"],
+                            value="Model Only",
+                            interactive=True,
+                            visible=True,
+                        )
+                with gr.Row():
                     uploadbut1 = gr.Button("Start upload", variant="primary")
 
                     uploadinfo1 = gr.Textbox(
