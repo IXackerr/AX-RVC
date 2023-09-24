@@ -1760,9 +1760,7 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
         os.system(f'cp /kaggle/working/AX-RVC/logs/weights/{model_name_gr}.pth {hug_file_path}')
         os.system(f'cp /kaggle/working/AX-RVC/logs/{model_name_gr}/added*.index {hug_file_path}')
         time.sleep(5)
-        os.walk(f'{hug_file_path}')
-        os.system(f'zip -r {hug_file_name} {model_name_gr}.pth added*.index')
-        os.walk('/kaggle/working/AX-RVC')
+        os.system(f'zip -r /kaggle/working/AX-RVC/hugupload/{hug_file_name} /kaggle/working/AX-RVC/hugupload/{model_name_gr}.pth /kaggle/working/AX-RVC/hugupload/added*.index')
 
         api = HfApi(
             token=hgf_token_gr,
