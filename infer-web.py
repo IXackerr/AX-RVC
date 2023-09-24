@@ -1759,6 +1759,7 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
     if (what_upload_gr == "Model Only"):
         os.system(f'cp /kaggle/working/AX-RVC/logs/weights/{model_name_gr}.pth {hug_file_path}')
         os.system(f'cp /kaggle/working/AX-RVC/logs/{model_name_gr}/added*.index {hug_file_path}')
+        time.sleep(5)
         os.walk(f'{hug_file_path}')
         os.system(f'zip -r {hug_file_name} {model_name_gr}.pth added*.index')
         os.walk('/kaggle/working/AX-RVC')
@@ -1772,7 +1773,7 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
             repo_id=f"{hgf_name_gr}/{hgf_repo_gr}",
             repo_type="model",
         )
-
+        time.sleep(15)
         return "Succesful upload Model to Hugging Face"
 
 
