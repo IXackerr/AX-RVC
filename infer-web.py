@@ -235,9 +235,9 @@ class ToolButton(gr.Button, gr.components.FormComponent):
 
 
 hubert_model = None
-weight_root = os.getenv("weight_root")
+weight_root = "logs/weights"
 weight_uvr5_root = os.getenv("weight_uvr5_root")
-index_root = os.getenv("index_root")
+index_root = "logs"
 datasets_root = "datasets"
 fshift_root = "lib/infer/infer_libs/formantshiftcfg"
 audio_root = "assets/audios"
@@ -1757,7 +1757,7 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
     hug_file_name = f'{zip_name_gr}.zip'
 
     if (what_upload_gr == "Model Only"):
-        os.system('cp /kaggle/working/AX-RVC/weights/{model_name_gr}.pth {hug_file_path}')
+        os.system('cp /kaggle/working/AX-RVC/logs/weights/{model_name_gr}.pth {hug_file_path}')
         os.system('cp /kaggle/working/AX-RVC/logs/{model_name_gr}/added*.index {hug_file_path}')
         os.system('cd {hug_file_path} && zip -r {hug_file_name} {model_name_gr}.pth added*.index && cd /kaggle/working/AX-RVC')
 
