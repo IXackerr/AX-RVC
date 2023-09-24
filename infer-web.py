@@ -2871,7 +2871,7 @@ def GradioSetup():
                         visible=True,
                     )
 
-                    uploadbut1 = gr.Button("Start upload"), variant="primary")
+                    uploadbut1 = gr.Button(value="Start upload"), variant="primary")
 
                     uploadinfo1 = gr.Textbox(
                         label="Output information:", value=""
