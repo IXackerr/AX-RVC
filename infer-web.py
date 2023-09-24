@@ -2846,6 +2846,44 @@ def GradioSetup():
                     outputs=[ttsvoice, original_ttsvoice],
                 )
 
+            with gr.TabItem("HuggingFace 🤗"):
+                with gr.Row():
+                    hgf_token_gr = gr.Textbox(
+                        label="Enter HuggingFace Write Token:",
+                    )
+                    hgf_name_gr = gr.Textbox(
+                        label="Enter HuggingFace Username:",
+                    )
+                    hgf_repo_gr = gr.Textbox(
+                        label="Enter HuggingFace Model-Repo name:",
+                    )
+                    model_name_gr = gr.Textbox(
+                        label="Trained model name:",
+                    )
+                    zip_name_gr = gr.Textbox(
+                        label="Name of Zip file:",
+                    )
+                    what_upload_gr = gr.Radio(
+                        label="Upload files:",
+                        choices=["Model Only", "Model Log Folder"],
+                        value="Model Only",
+                        interactive=True,
+                        visible=True,
+                    )
+
+                    uploadbut1 = gr.Button("Start upload"), variant="primary")
+
+                    uploadinfo1 = gr.Textbox(
+                        label="Output information:", value=""
+                    )
+                    but1.click(
+                        preprocess_dataset,
+                        [hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_name_gr, zip_name_gr, what_upload_gr],
+                        [uploadinfo1],
+                    )
+                    
+
+
             with gr.TabItem(i18n("Resources")):
                 resources.download_model()
                 resources.download_backup()
