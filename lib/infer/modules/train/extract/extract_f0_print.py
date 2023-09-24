@@ -156,7 +156,7 @@ class FeatureInput(object):
 
                 print("Loading rmvpe model")
                 self.model_rmvpe = RMVPE(
-                    "assets/rmvpe/rmvpe.pt", is_half=False, device="cpu"
+                    "/kaggle/working/ax-rmf/rmvpe.pt", is_half=False, device="cpu"
                 )
         return self.model_rmvpe.infer_from_audio(x, thred=0.03)
         

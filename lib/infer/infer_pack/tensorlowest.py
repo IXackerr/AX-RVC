@@ -91,7 +91,7 @@ def selectweights(model_name, file_dict, weights_dir, lowestval_weight_dir):
     
     weights = [f for f in os.scandir(weights_dir)]
     for key, value in file_dict.items():
-        pattern = fr"^{model_name}_.*_s{value}\.pth$"
+        pattern = fr"^{model_name}_.*_s{value}/.pth$"
         matching_weights = [f.name for f in weights if f.is_file() and RSearch(pattern, f.name)]
         for weight in matching_weights:
             source_path = weights_dir_path + weight

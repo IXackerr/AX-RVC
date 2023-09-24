@@ -86,7 +86,7 @@ class RVC:
 
             if last_rvc is None:
                 models, _, _ = fairseq.checkpoint_utils.load_model_ensemble_and_task(
-                    ["assets/hubert/hubert_base.pt"],
+                    ["/kaggle/input/ax-rmf/hubert/hubert_base.pt"],
                     suffix="",
                 )
                 hubert_model = models[0]
@@ -271,7 +271,7 @@ class RVC:
                 # "rmvpe.pt", is_half=self.is_half if self.device.type!="privateuseone" else False, device=self.device if self.device.type!="privateuseone"else "cpu"####dml时强制对rmvpe用cpu跑
                 #  "rmvpe.pt", is_half=False, device=self.device####dml配置
                 # "rmvpe.pt", is_half=False, device="cpu"####锁定cpu配置
-                "%s/rmvpe.pt" % os.environ["rmvpe_root"],
+                "/kaggle/input/ax-rmf%s/rmvpe.pt" % os.environ["rmvpe_root"],
                 is_half=self.is_half,
                 device=self.device,  ####正常逻辑
             )

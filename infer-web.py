@@ -896,30 +896,30 @@ def extract_f0_feature(
 
 def get_pretrained_models(path_str, f0_str, sr2):
     if_pretrained_generator_exist = os.access(
-        "assets/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2), os.F_OK
+        "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if_pretrained_discriminator_exist = os.access(
-        "assets/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2), os.F_OK
+        "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if not if_pretrained_generator_exist:
         logger.warn(
-            "assets/pretrained%s/%sG%s.pth not exist, will not use pretrained model",
+            "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth not exist, will not use pretrained model",
             path_str,
             f0_str,
             sr2,
         )
     if not if_pretrained_discriminator_exist:
         logger.warn(
-            "assets/pretrained%s/%sD%s.pth not exist, will not use pretrained model",
+            "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth not exist, will not use pretrained model",
             path_str,
             f0_str,
             sr2,
         )
     return (
-        "assets/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2)
+        "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2)
         if if_pretrained_generator_exist
         else "",
-        "assets/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2)
+        "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2)
         if if_pretrained_discriminator_exist
         else "",
     )
@@ -1380,7 +1380,7 @@ def cli_train(com):
     if_save_every_weight = True if (int(com[10]) == 1) else False
     version = com[11]
 
-    pretrained_base = "pretrained/" if version == "v1" else "pretrained_v2/"
+    pretrained_base = "/kaggle/input/ax-rmf/pretrained/" if version == "v1" else "/kaggle/input/ax-rmf/pretrained_v2/"
 
     g_pretrained_path = "%sf0G%s.pth" % (pretrained_base, sample_rate)
     d_pretrained_path = "%sf0D%s.pth" % (pretrained_base, sample_rate)
@@ -1742,10 +1742,8 @@ def save_to_wav2(dropbox):
 def GradioSetup():
     default_weight = names[0] if names else ""
 
-    with gr.Blocks(
-        theme="JohnSmith9982/small_and_pretty", title="Applio-RVC-Fork"
-    ) as app:
-        gr.HTML("<h1> 🍏 Applio-RVC-Fork </h1>")
+    with gr.Blocks(title="🔊 AX-RVC",theme=gr.themes.Base(primary_hue="blue",neutral_hue="zinc")) as app:
+        gr.HTML("<h1> 🍏 AX-RVC </h1>")
         with gr.Tabs():
             with gr.TabItem(i18n("Model Inference")):
                 with gr.Row():
@@ -2374,7 +2372,7 @@ def GradioSetup():
                         )
                         version19 = gr.Radio(
                             label=i18n("Version:"),
-                            choices=["v1", "v2"],
+                            choices=["v2"],
                             value="v2",
                             interactive=True,
                             visible=True,
@@ -2567,13 +2565,13 @@ def GradioSetup():
                             pretrained_G14 = gr.Textbox(
                                 lines=4,
                                 label=i18n("Load pre-trained base model G path:"),
-                                value="assets/pretrained_v2/f0G40k.pth",
+                                value="/kaggle/input/ax-rmf/pretrained_v2/f0G40k.pth",
                                 interactive=True,
                             )
                             pretrained_D15 = gr.Textbox(
                                 lines=4,
                                 label=i18n("Load pre-trained base model D path:"),
-                                value="assets/pretrained_v2/f0D40k.pth",
+                                value="/kaggle/input/ax-rmf/pretrained_v2/f0D40k.pth",
                                 interactive=True,
                             )
                             gpus16 = gr.Textbox(
@@ -2909,7 +2907,7 @@ def GradioRun(app):
             server_port=config.listen_port,
             quiet=True,
             favicon_path="./assets/images/icon.png",
-            share=share_gradio_link,
+            share=False,
         )
     else:
         app.queue(concurrency_count=concurrency_count, max_size=max_size).launch(
@@ -2918,7 +2916,7 @@ def GradioRun(app):
             server_port=config.listen_port,
             quiet=True,
             favicon_path="./assets/images/icon.png",
-            share=share_gradio_link,
+            share=False,
         )
 
 

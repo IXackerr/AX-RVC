@@ -1,8 +1,6 @@
-# 🍏 Applio-RVC-Fork (V2)
-Applio is a user-friendly fork of Mangio-RVC-Fork/RVC, designed to provide an intuitive interface, especially for newcomers.
+# 🍏 AX-RVC-Fork (V2)
+AX-RVC v2 is a user-friendly fork of Mangio-RVC-Fork/RVC, designed to provide an intuitive interface, especially for newcomers.
 <br>
-
-[![Discord](https://img.shields.io/badge/SUPPORT_DISCORD-37a779?style=for-the-badge)](https://discord.gg/IAHispano)
 
 ## 📚 Table of Contents
   1. [Improvements of Applio Over RVC](#-improvements-of-applio-over-rvc)

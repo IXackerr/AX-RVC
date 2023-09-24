@@ -91,6 +91,6 @@ def main(path, root):
 
 
 if __name__ == "__main__":
-    query_path = r"assets\weights\mi v3.pth"
-    reference_root = r"assets\weights"
+    query_path = r"assets/weights/mi v3.pth"
+    reference_root = r"assets/weights"
     main(query_path, reference_root)

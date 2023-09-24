@@ -336,7 +336,7 @@ class GUI:
                     layout=[
                         [
                             sg.Input(
-                                default_text="hubert_base.pt",
+                                default_text="/kaggle/input/ax-rmf/hubert_base.pt",
                                 key="hubert_path",
                                 disabled=True,
                             ),
