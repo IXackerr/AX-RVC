@@ -73,6 +73,12 @@ import time
 import csv
 from shlex import quote as SQuote
 
+from huggingface_hub import HfApi
+from huggingface_hub import login
+import requests
+import os
+
+
 RQuote = lambda val: SQuote(str(val))
 
 tmp = os.path.join(now_dir, "temp")
@@ -1740,6 +1746,34 @@ def save_to_wav2(dropbox):
 
 from assets.themes.black import Applio
 
+def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_name_gr, zip_name_gr, what_upload_gr):
+    login(
+        token=hgf_token_gr,
+        add_to_git_credential=True,
+        new_session = True,
+    )
+
+    hug_file_path = "/kaggle/working/AX-RVC/hugupload"
+    hug_file_name = f'{zip_name_gr}.zip'
+
+    if (what_upload_gr == "Model Only"):
+        os.system('cp /kaggle/working/AX-RVC/weights/{model_name_gr}.pth {hug_file_path}')
+        os.system('cp /kaggle/working/AX-RVC/logs/{model_name_gr}/added*.index {hug_file_path}')
+        os.system('cd {hug_file_path} && zip -r {hug_file_name} {model_name_gr}.pth added*.index && cd /kaggle/working/AX-RVC')
+
+        api = HfApi(
+            token=hgf_token_gr,
+        )
+        api.upload_file(
+            path_or_fileobj=f"{hug_file_path}/{hug_file_name}",
+            path_in_repo=hug_file_name,
+            repo_id=f"{hgf_name_gr}/{hgf_repo_gr}",
+            repo_type="model",
+        )
+
+        return "Succesful upload Model to Hugging Face"
+
+
 # Crear una instancia de Applio
 mi_applio = Applio()
 def GradioSetup():
@@ -2879,7 +2913,7 @@ def GradioSetup():
                         label="Output information:", value=""
                     )
                     uploadbut1.click(
-                        preprocess_dataset,
+                        start_upload_to_huggingface,
                         [hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_name_gr, zip_name_gr, what_upload_gr],
                         [uploadinfo1],
                     )
