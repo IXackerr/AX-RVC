@@ -260,14 +260,14 @@ sup_audioext = {
 
 names = [
     os.path.join(root, file)
-    for root, _, files in os.walk(weight_root)
+    for root, _, files in os.walk("logs/weights")
     for file in files
     if file.endswith((".pth", ".onnx"))
 ]
 
 indexes_list = [
     os.path.join(root, name)
-    for root, _, files in os.walk(index_root, topdown=False)
+    for root, _, files in os.walk("logs", topdown=False)
     for name in files
     if name.endswith(".index") and "trained" not in name
 ]
@@ -561,13 +561,13 @@ def uvr(
 def change_choices():
     names = [
         os.path.join(root, file)
-        for root, _, files in os.walk("/kaggle/working/AX-RVC/logs/weights")
+        for root, _, files in os.walk("logs/weights")
         for file in files
         if file.endswith((".pth", ".onnx"))
     ]
     indexes_list = [
         os.path.join(root, name)
-        for root, _, files in os.walk(index_root, topdown=False)
+        for root, _, files in os.walk("logs", topdown=False)
         for name in files
         if name.endswith(".index") and "trained" not in name
     ]
@@ -588,13 +588,13 @@ def change_choices():
 def change_choices2():
     names = [
         os.path.join(root, file)
-        for root, _, files in os.walk(weight_root)
+        for root, _, files in os.walk("logs/weights")
         for file in files
         if file.endswith((".pth", ".onnx"))
     ]
     indexes_list = [
         os.path.join(root, name)
-        for root, _, files in os.walk(index_root, topdown=False)
+        for root, _, files in os.walk("logs", topdown=False)
         for name in files
         if name.endswith(".index") and "trained" not in name
     ]
@@ -1624,9 +1624,9 @@ def match_index(sid0: str) -> tuple:
     else:
         base_model_name = sid0name
 
-    sid_directory = os.path.join(index_root, base_model_name)
+    sid_directory = os.path.join("logs", base_model_name)
     directories_to_search = [sid_directory] if os.path.exists(sid_directory) else []
-    directories_to_search.append(index_root)
+    directories_to_search.append("logs")
 
     matching_index_files = []
 
