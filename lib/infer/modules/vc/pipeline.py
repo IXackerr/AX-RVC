@@ -252,6 +252,11 @@ class Pipeline(object):
                 device=self.device,
             )
         f0 = self.model_rmvpe.infer_from_audio(x, thred=0.03)
+
+        if "privateuseone" in str(self.device):  # clean ortruntime memory
+                del self.model_rmvpe.model
+                del self.model_rmvpe
+                logger.info("Cleaning ortruntime memory")
             
         return f0
     
@@ -266,6 +271,7 @@ class Pipeline(object):
             autotuned_f0.append(random.choice(closest_notes))
         return np.array(autotuned_f0, np.float64)
 
+
     # Fork Feature: Acquire median hybrid f0 estimation calculation
     def get_f0_hybrid_computation(
         self,
@@ -277,31 +283,34 @@ class Pipeline(object):
         p_len,
         filter_radius,
         crepe_hop_length,
-        time_step
+        time_step,
     ):
         # Get various f0 methods from input to use in the computation stack
-        params = {'x': x, 'p_len': p_len, 'f0_min': f0_min, 
-          'f0_max': f0_max, 'time_step': time_step, 'filter_radius': filter_radius, 
-          'crepe_hop_length': crepe_hop_length, 'model': "full"
-        }
         methods_str = re.search('hybrid\[(.+)\]', methods_str)
         if methods_str:  # Ensure a match was found
             methods = [method.strip() for method in methods_str.group(1).split('+')]
         f0_computation_stack = []
 
-        print(f"Calculating f0 pitch estimations for methods: {str(methods)}")
+        print("Calculating f0 pitch estimations for methods: %s" % str(methods))
         x = x.astype(np.float32)
         x /= np.quantile(np.abs(x), 0.999)
         # Get f0 calculations for all methods specified
-
         for method in methods:
-            if method not in self.f0_method_dict:
-                print(f"Method {method} not found.")
-                continue
-            f0 = self.f0_method_dict[method](**params)
-            if method == 'harvest' and filter_radius > 2:
-                f0 = signal.medfilt(f0, 3)
-                f0 = f0[1:]  # Get rid of first frame.
+            f0 = None
+            if method == "crepe-tiny":
+                f0 = self.get_f0_official_crepe_computation(x, f0_min, f0_max, "tiny")
+                f0 = f0[1:]  # Get rid of extra first frame
+            elif method == "mangio-crepe":
+                f0 = self.get_f0_crepe_computation(
+                    x, f0_min, f0_max, p_len, crepe_hop_length
+                )
+            elif method == "mangio-crepe-tiny":
+                f0 = self.get_f0_crepe_computation(
+                    x, f0_min, f0_max, p_len, crepe_hop_length, "tiny"
+                )
+            # elif method == "pyin": Not Working just yet
+            #    f0 = self.get_f0_pyin_computation(x, f0_min, f0_max)
+            # Push method to the stack
             f0_computation_stack.append(f0)
 
         for fc in f0_computation_stack:
@@ -331,12 +340,94 @@ class Pipeline(object):
         f0_max = 1100
         f0_mel_min = 1127 * np.log(1 + f0_min / 700)
         f0_mel_max = 1127 * np.log(1 + f0_max / 700)
-        params = {'x': x, 'p_len': p_len, 'f0_up_key': f0_up_key, 'f0_min': f0_min, 
-          'f0_max': f0_max, 'time_step': time_step, 'filter_radius': filter_radius, 
-          'crepe_hop_length': crepe_hop_length, 'model': "full"
-        }
 
-        if "hybrid" in f0_method:
+        if f0_method == "pm":
+            f0 = (
+                parselmouth.Sound(x, self.sr)
+                .to_pitch_ac(
+                    time_step=time_step / 1000,
+                    voicing_threshold=0.6,
+                    pitch_floor=f0_min,
+                    pitch_ceiling=f0_max,
+                )
+                .selected_array["frequency"]
+            )
+            pad_size = (p_len - len(f0) + 1) // 2
+            if pad_size > 0 or p_len - len(f0) - pad_size > 0:
+                f0 = np.pad(
+                    f0, [[pad_size, p_len - len(f0) - pad_size]], mode="constant"
+                )
+        elif f0_method == "harvest":
+            input_audio_path2wav[input_audio_path] = x.astype(np.double)
+            f0 = cache_harvest_f0(input_audio_path, self.sr, f0_max, f0_min, 10)
+            if filter_radius > 2:
+                f0 = signal.medfilt(f0, 3)
+        elif f0_method == "dio":  # Potentially Buggy?
+            f0, t = pyworld.dio(
+                x.astype(np.double),
+                fs=self.sr,
+                f0_ceil=f0_max,
+                f0_floor=f0_min,
+                frame_period=10,
+            )
+            f0 = pyworld.stonemask(x.astype(np.double), f0, t, self.sr)
+            f0 = signal.medfilt(f0, 3)
+        elif f0_method == "crepe":
+            model = "full"
+            # Pick a batch size that doesn't cause memory errors on your gpu
+            batch_size = 512
+            # Compute pitch using first gpu
+            audio = torch.tensor(np.copy(x))[None].float()
+            f0, pd = torchcrepe.predict(
+                audio,
+                self.sr,
+                self.window,
+                f0_min,
+                f0_max,
+                model,
+                batch_size=batch_size,
+                device=self.device,
+                return_periodicity=True,
+            )
+            pd = torchcrepe.filter.median(pd, 3)
+            f0 = torchcrepe.filter.mean(f0, 3)
+            f0[pd < 0.1] = 0
+            f0 = f0[0].cpu().numpy()
+        elif f0_method == "crepe-tiny":
+            f0 = self.get_f0_official_crepe_computation(x, f0_min, f0_max, "tiny")
+        elif f0_method == "mangio-crepe":
+            f0 = self.get_f0_crepe_computation(
+                x, f0_min, f0_max, p_len, crepe_hop_length
+            )
+        elif f0_method == "mangio-crepe-tiny":
+            f0 = self.get_f0_crepe_computation(
+                x, f0_min, f0_max, p_len, crepe_hop_length, "tiny"
+            )
+        elif f0_method == "rmvpe":
+            if not hasattr(self, "model_rmvpe"):
+                from lib.infer.infer_libs.rmvpe import RMVPE
+
+                logger.info(
+                    "Loading rmvpe model,%s" % "%s/rmvpe.pt" % os.environ["rmvpe_root"]
+                )
+                self.model_rmvpe = RMVPE(
+                    "%s/rmvpe.pt" % os.environ["rmvpe_root"],
+                    is_half=self.is_half,
+                    device=self.device,
+                )
+            f0 = self.model_rmvpe.infer_from_audio(x, thred=0.03)
+
+            if "privateuseone" in str(self.device):  # clean ortruntime memory
+                del self.model_rmvpe.model
+                del self.model_rmvpe
+                logger.info("Cleaning ortruntime memory")
+        elif f0_method == "rmvpe+":
+            params = {'x': x, 'p_len': p_len, 'f0_up_key': f0_up_key, 'f0_min': f0_min, 
+                      'f0_max': f0_max, 'time_step': time_step, 'filter_radius': filter_radius, 
+                      'crepe_hop_length': crepe_hop_length, 'model': "full"
+                      }
+            f0 = self.get_pitch_dependant_rmvpe(**params)
+        elif "hybrid" in f0_method:
             # Perform hybrid median pitch estimation
             input_audio_path2wav[input_audio_path] = x.astype(np.double)
             f0 = self.get_f0_hybrid_computation(
@@ -350,13 +441,6 @@ class Pipeline(object):
                 crepe_hop_length,
                 time_step,
             )
-        else:
-            f0 = self.f0_method_dict[f0_method](**params)
-
-        if "privateuseone" in str(self.device):  # clean ortruntime memory
-            del self.model_rmvpe.model
-            del self.model_rmvpe
-            logger.info("Cleaning ortruntime memory")
 
         if f0_autotune:
             f0 = self.autotune_f0(f0)
