@@ -334,7 +334,7 @@ def update_dataset_list(name):
 def get_indexes():
     indexes_list = [
         os.path.join(dirpath, filename)
-        for dirpath, _, filenames in os.walk(index_root)
+        for dirpath, _, filenames in os.walk("/kaggle/working/AX-RVC/logs")
         for filename in filenames
         if filename.endswith(".index") and "trained" not in filename
     ]
@@ -561,7 +561,7 @@ def uvr(
 def change_choices():
     names = [
         os.path.join(root, file)
-        for root, _, files in os.walk(weight_root)
+        for root, _, files in os.walk("/kaggle/working/AX-RVC/logs/weights")
         for file in files
         if file.endswith((".pth", ".onnx"))
     ]
@@ -1757,9 +1757,11 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
     hug_file_name = f'{zip_name_gr}.zip'
 
     if (what_upload_gr == "Model Only"):
-        os.system('cp /kaggle/working/AX-RVC/logs/weights/{model_name_gr}.pth {hug_file_path}')
-        os.system('cp /kaggle/working/AX-RVC/logs/{model_name_gr}/added*.index {hug_file_path}')
-        os.system('cd {hug_file_path} && zip -r {hug_file_name} {model_name_gr}.pth added*.index && cd /kaggle/working/AX-RVC')
+        os.system(f'cp /kaggle/working/AX-RVC/logs/weights/{model_name_gr}.pth {hug_file_path}')
+        os.system(f'cp /kaggle/working/AX-RVC/logs/{model_name_gr}/added*.index {hug_file_path}')
+        os.walk(f'{hug_file_path}')
+        os.system(f'zip -r {hug_file_name} {model_name_gr}.pth added*.index')
+        os.walk('/kaggle/working/AX-RVC')
 
         api = HfApi(
             token=hgf_token_gr,
