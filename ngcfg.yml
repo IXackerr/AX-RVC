@@ -2,6 +2,6 @@ tunnels:
   tensorboard:
     proto: http
     addr: 6006
-  second:	  ax:
+  ax:
     proto: http
     addr: 3745
