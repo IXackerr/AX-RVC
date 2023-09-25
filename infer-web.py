@@ -578,12 +578,10 @@ def change_choices():
         if name.endswith(tuple(sup_audioext)) and root == audio_root
     ]
 
-    print(sorted(names))
-    
     return (
         gr.Dropdown.update(choices=sorted(names)),
-        {"choices": sorted(indexes_list), "__type__": "update"},
-        {"choices": sorted(audio_paths), "__type__": "update"},
+        gr.Dropdown.update(choices=sorted(indexes_list)),
+        gr.Dropdown.update(choices=sorted(audio_paths)),
     )
 
 
@@ -602,8 +600,8 @@ def change_choices2():
     ]
 
     return (
-        {"choices": sorted(names), "__type__": "update"},
-        {"choices": sorted(indexes_list), "__type__": "update"},
+        gr.Dropdown.update(choices=sorted(names)),
+        gr.Dropdown.update(choices=sorted(indexes_list)),
     )
 
 
@@ -709,7 +707,7 @@ def update_fshift_presets(preset, qfrency, tmbre):
         qfrency, tmbre = preset_apply(preset, qfrency, tmbre)
 
     return (
-        {"choices": get_fshift_presets(), "__type__": "update"},
+        gr.Dropdown.update(choices=get_fshift_presets()),
         {"value": qfrency, "__type__": "update"},
         {"value": tmbre, "__type__": "update"},
     )
@@ -1786,8 +1784,8 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
 mi_applio = Applio()
 def GradioSetup():
     default_weight = names[0] if names else ""
-
-    with gr.Blocks(title="🔊 AX-RVC",theme=gr.themes.Base(primary_hue="blue",neutral_hue="zinc")) as app:
+    #theme=gr.themes.Base(primary_hue="blue",neutral_hue="zinc")
+    with gr.Blocks(title="🔊 AX-RVC", theme=mi_applio) as app:
         gr.HTML("<h1> 🍏 AX-RVC </h1>")
         with gr.Tabs():
             with gr.TabItem(i18n("Model Inference")):
