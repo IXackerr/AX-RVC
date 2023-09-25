@@ -1792,7 +1792,7 @@ def GradioSetup():
                 with gr.Row():
                     sid0 = gr.Dropdown(
                         label=i18n("Inferencing voice:"),
-                        choices=str(sorted(names)),
+                        choices=sorted(names),
                         value=default_weight,
                     )
                     refresh_button = gr.Button(i18n("Refresh"), variant="primary")
