@@ -1784,9 +1784,9 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
 mi_applio = Applio()
 def GradioSetup():
     default_weight = names[0] if names else ""
-    #theme=gr.themes.Base(primary_hue="blue",neutral_hue="zinc")
+    #theme=gr.themes.Base(primary_hue="sky",neutral_hue="zinc")
     #theme=mi_applio
-    with gr.Blocks(title="🔊 AX-RVC", theme=gr.themes.Base(primary_hue="blue",neutral_hue="zinc")) as app:
+    with gr.Blocks(title="🔊 AX-RVC", theme=gr.themes.Base(primary_hue="sky",neutral_hue="zinc")) as app:
         gr.HTML("<h1> 🍏 AX-RVC </h1>")
         with gr.Tabs():
             with gr.TabItem(i18n("Model Inference")):
