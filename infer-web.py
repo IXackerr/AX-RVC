@@ -1794,7 +1794,7 @@ def GradioSetup():
                 with gr.Row():
                     sid0 = gr.Dropdown(
                         label=i18n("Inferencing voice:"),
-                        choices=sorted(names),
+                        choices=['/kaggle/working/AX-RVC/logs/weights/gavuriru-howaito.pth', '/kaggle/working/AX-RVC/logs/weights/senko_v1.pth', '/kaggle/working/AX-RVC/logs/weights/temochka.pth'],
                         value=default_weight,
                     )
                     refresh_button = gr.Button(i18n("Refresh"), variant="primary")
