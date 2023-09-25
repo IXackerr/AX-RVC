@@ -581,7 +581,7 @@ def change_choices():
     print(sorted(names))
     
     return (
-        {"choices": sorted(names), "__type__": "update"},
+        gr.Dropdown.update(choices=sorted(names)),
         {"choices": sorted(indexes_list), "__type__": "update"},
         {"choices": sorted(audio_paths), "__type__": "update"},
     )
@@ -1794,7 +1794,7 @@ def GradioSetup():
                 with gr.Row():
                     sid0 = gr.Dropdown(
                         label=i18n("Inferencing voice:"),
-                        choices=['/kaggle/working/AX-RVC/logs/weights/gavuriru-howaito.pth', '/kaggle/working/AX-RVC/logs/weights/senko_v1.pth', '/kaggle/working/AX-RVC/logs/weights/temochka.pth'],
+                        choices=sorted(names),
                         value=default_weight,
                     )
                     refresh_button = gr.Button(i18n("Refresh"), variant="primary")

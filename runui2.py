@@ -40,9 +40,9 @@ _P='w+'
 _O='formanting'
 _N='lib/csvdb/formanting.csv'
 _M=' '
-_L=None
-_K='rmvpe'
-_J='choices'
+_L='choices'
+_K=None
+_J='rmvpe'
 _I='r'
 _H='v1'
 _G='value'
@@ -141,7 +141,7 @@ class ToolButton(gr.Button,gr.components.FormComponent):
 	'Small button with single emoji as text, fits inside gradio forms'
 	def __init__(self,**kwargs):super().__init__(variant='tool',**kwargs)
 	def get_block_name(self):return'button'
-hubert_model=_L
+hubert_model=_K
 weight_root='/kaggle/working/AX-RVC/logs/weights'
 weight_uvr5_root=os.getenv(_u)
 index_root='/kaggle/working/AX-RVC/logs'
@@ -164,8 +164,8 @@ def get_dataset():
 	else:return''
 def update_model_choices(select_value):
 	model_ids=get_model_list();model_ids_list=list(model_ids)
-	if select_value==_a:return{_J:uvr5_names,_C:_D}
-	elif select_value==_j:return{_J:model_ids_list,_C:_D}
+	if select_value==_a:return{_L:uvr5_names,_C:_D}
+	elif select_value==_j:return{_L:model_ids_list,_C:_D}
 def update_dataset_list(name):
 	new_datasets=[]
 	for foldername in os.listdir(os.path.join(now_dir,datasets_root)):
@@ -210,8 +210,8 @@ def uvr(model_name,inp_root,save_root_vocal,paths,save_root_ins,agg,format0,arch
 			infos.append(i18n(B));yield _F.join(infos);inp_root,save_root_vocal,save_root_ins=[x.strip(_M).strip(A).strip(_F).strip(A).strip(_M)for x in[inp_root,save_root_vocal,save_root_ins]]
 			if inp_root!='':paths=[os.path.join(inp_root,name)for(root,_,files)in os.walk(inp_root,topdown=_B)for name in files if name.endswith(tuple(sup_audioext))and root==inp_root]
 			else:paths=[path.name for path in paths]
-			print(paths);invert=_A;denoise=_A;use_custom_parameter=_A;dim_f=3072;dim_t=256;n_fft=7680;use_custom_compensation=_A;compensation=1.025;suffix='Vocals_custom';suffix_invert='Instrumental_custom';print_settings=_A;onnx=id_to_ptm(model_name);compensation=compensation if use_custom_compensation or use_custom_parameter else _L;mdx_model=prepare_mdx(onnx,use_custom_parameter,dim_f,dim_t,n_fft,compensation=compensation)
-			for path in paths:suffix_naming=suffix if use_custom_parameter else _L;diff_suffix_naming=suffix_invert if use_custom_parameter else _L;run_mdx(onnx,mdx_model,path,format0,diff=invert,suffix=suffix_naming,diff_suffix=diff_suffix_naming,denoise=denoise)
+			print(paths);invert=_A;denoise=_A;use_custom_parameter=_A;dim_f=3072;dim_t=256;n_fft=7680;use_custom_compensation=_A;compensation=1.025;suffix='Vocals_custom';suffix_invert='Instrumental_custom';print_settings=_A;onnx=id_to_ptm(model_name);compensation=compensation if use_custom_compensation or use_custom_parameter else _K;mdx_model=prepare_mdx(onnx,use_custom_parameter,dim_f,dim_t,n_fft,compensation=compensation)
+			for path in paths:suffix_naming=suffix if use_custom_parameter else _K;diff_suffix_naming=suffix_invert if use_custom_parameter else _K;run_mdx(onnx,mdx_model,path,format0,diff=invert,suffix=suffix_naming,diff_suffix=diff_suffix_naming,denoise=denoise)
 			if print_settings:
 				print();print('[MDX-Net_Colab settings used]');print(f"Model used: {onnx}");print(f"Model MD5: {mdx.MDX.get_hash(onnx)}");print(f"Model parameters:");print(f"    -dim_f: {mdx_model.dim_f}");print(f"    -dim_t: {mdx_model.dim_t}");print(f"    -n_fft: {mdx_model.n_fft}");print(f"    -compensation: {mdx_model.compensation}");print();print('[Input file]');print('filename(s): ')
 				for filename in paths:print(f"    -{filename}");infos.append(f"{os.path.basename(filename)}->Success");yield _F.join(infos)
@@ -221,21 +221,21 @@ def uvr(model_name,inp_root,save_root_vocal,paths,save_root_ins,agg,format0,arch
 			except:traceback.print_exc()
 			print('clean_empty_cache')
 			if torch.cuda.is_available():torch.cuda.empty_cache()
-def change_choices():names=[os.path.join(root,file)for(root,_,files)in os.walk(weight_root)for file in files if file.endswith((_U,_i))];indexes_list=[os.path.join(root,name)for(root,_,files)in os.walk(index_root,topdown=_B)for name in files if name.endswith(_V)and _W not in name];audio_paths=[os.path.join(root,name)for(root,_,files)in os.walk(audio_root,topdown=_B)for name in files if name.endswith(tuple(sup_audioext))and root==audio_root];print(sorted(names));return{_J:sorted(names),_C:_D},{_J:sorted(indexes_list),_C:_D},{_J:sorted(audio_paths),_C:_D}
-def change_choices2():names=[os.path.join(root,file)for(root,_,files)in os.walk(weight_root)for file in files if file.endswith((_U,_i))];indexes_list=[os.path.join(root,name)for(root,_,files)in os.walk(index_root,topdown=_B)for name in files if name.endswith(_V)and _W not in name];return{_J:sorted(names),_C:_D},{_J:sorted(indexes_list),_C:_D}
+def change_choices():names=[os.path.join(root,file)for(root,_,files)in os.walk(weight_root)for file in files if file.endswith((_U,_i))];indexes_list=[os.path.join(root,name)for(root,_,files)in os.walk(index_root,topdown=_B)for name in files if name.endswith(_V)and _W not in name];audio_paths=[os.path.join(root,name)for(root,_,files)in os.walk(audio_root,topdown=_B)for name in files if name.endswith(tuple(sup_audioext))and root==audio_root];print(sorted(names));return gr.Dropdown.update(choices=sorted(names)),{_L:sorted(indexes_list),_C:_D},{_L:sorted(audio_paths),_C:_D}
+def change_choices2():names=[os.path.join(root,file)for(root,_,files)in os.walk(weight_root)for file in files if file.endswith((_U,_i))];indexes_list=[os.path.join(root,name)for(root,_,files)in os.walk(index_root,topdown=_B)for name in files if name.endswith(_V)and _W not in name];return{_L:sorted(names),_C:_D},{_L:sorted(indexes_list),_C:_D}
 def clean():return{_G:'',_C:_D}
 def export_onnx():from lib.infer.modules.onnx.export import export_onnx as eo;eo()
 sr_dict={_b:32000,_T:40000,_c:48000}
 def if_done(done,p):
 	while 1:
-		if p.poll()is _L:sleep(.5)
+		if p.poll()is _K:sleep(.5)
 		else:break
 	done[0]=_A
 def if_done_multi(done,ps):
 	while 1:
 		flag=1
 		for p in ps:
-			if p.poll()is _L:flag=0;sleep(.5);break
+			if p.poll()is _K:flag=0;sleep(.5);break
 		if flag==1:break
 	done[0]=_A
 def formant_enabled(cbox,qfrency,tmbre,frmntapply,formantpreset,formant_refresh_button):
@@ -247,7 +247,7 @@ def update_fshift_presets(preset,qfrency,tmbre):
 		with open(preset,_I)as p:content=p.readlines();qfrency,tmbre=content[0].strip(),content[1]
 		formant_apply(qfrency,tmbre)
 	else:qfrency,tmbre=preset_apply(preset,qfrency,tmbre)
-	return{_J:get_fshift_presets(),_C:_D},{_G:qfrency,_C:_D},{_G:tmbre,_C:_D}
+	return{_L:get_fshift_presets(),_C:_D},{_G:qfrency,_C:_D},{_G:tmbre,_C:_D}
 def preprocess_dataset(trainset_dir,exp_dir,sr,n_p,dataset_path):
 	A='%s/logs/%s/preprocess.log'
 	if not dataset_path.strip()=='':trainset_dir=dataset_path
@@ -291,7 +291,7 @@ def change_sr2(sr2,if_f0_3,version19):path_str=''if version19==_H else _l;f0_str
 def change_version19(sr2,if_f0_3,version19):
 	path_str=''if version19==_H else _l
 	if sr2==_b and version19==_H:sr2=_T
-	to_return_sr2={_J:[_T,_c],_C:_D,_G:sr2}if version19==_H else{_J:[_T,_c,_b],_C:_D,_G:sr2};f0_str='f0'if if_f0_3 else'';return*get_pretrained_models(path_str,f0_str,sr2),to_return_sr2
+	to_return_sr2={_L:[_T,_c],_C:_D,_G:sr2}if version19==_H else{_L:[_T,_c,_b],_C:_D,_G:sr2};f0_str='f0'if if_f0_3 else'';return*get_pretrained_models(path_str,f0_str,sr2),to_return_sr2
 def change_f0(if_f0_3,sr2,version19):path_str=''if version19==_H else _l;return{_E:if_f0_3,_C:_D},*get_pretrained_models(path_str,'f0',sr2)
 global log_interval
 def set_log_interval(exp_dir,batch_size12):
@@ -357,7 +357,7 @@ def cli_split_command(com):exp='(?:(?<=\\s)|^)"(.*?)"(?=\\s|$)|(\\S+)';split_arr
 def execute_generator_function(genObject):
 	for _ in genObject:0
 def cli_infer(com):
-	A='audio-outputs';com=cli_split_command(com);model_name=com[0];source_audio_path=com[1];output_file_name=com[2];feature_index_path=com[3];f0_file=_L;speaker_id=int(com[4]);transposition=float(com[5]);f0_method=com[6];crepe_hop_length=int(com[7]);harvest_median_filter=int(com[8]);resample=int(com[9]);mix=float(com[10]);feature_ratio=float(com[11]);protection_amnt=float(com[12]);protect1=.5
+	A='audio-outputs';com=cli_split_command(com);model_name=com[0];source_audio_path=com[1];output_file_name=com[2];feature_index_path=com[3];f0_file=_K;speaker_id=int(com[4]);transposition=float(com[5]);f0_method=com[6];crepe_hop_length=int(com[7]);harvest_median_filter=int(com[8]);resample=int(com[9]);mix=float(com[10]);feature_ratio=float(com[11]);protection_amnt=float(com[12]);protect1=.5
 	if com[14]=='False'or com[14]=='false':DoFormant=_B;Quefrency=.0;Timbre=.0;CSVutil(_N,_P,_O,DoFormant,Quefrency,Timbre)
 	else:DoFormant=_A;Quefrency=float(com[15]);Timbre=float(com[16]);CSVutil(_N,_P,_O,DoFormant,Quefrency,Timbre)
 	print('Applio-RVC-Fork Infer-CLI: Starting the inference...');vc_data=vc.get_vc(model_name,protection_amnt,protect1);print(vc_data);print('Applio-RVC-Fork Infer-CLI: Performing inference...');conversion_data=vc.vc_single(speaker_id,source_audio_path,transposition,f0_file,f0_method,feature_index_path,feature_index_path,feature_ratio,harvest_median_filter,resample,mix,protection_amnt,crepe_hop_length)
@@ -407,7 +407,7 @@ def cli_navigation_loop():
 		except:print(traceback.format_exc())
 if config.is_cli:print('\n\nApplio-RVC-Fork CLI\n');print('Welcome to the CLI version of RVC. Please read the documentation on README.MD to understand how to use this app.\n');cli_navigation_loop()
 def switch_pitch_controls(f0method0):
-	is_visible=f0method0!=_K
+	is_visible=f0method0!=_J
 	if rvc_globals.NotesOrHertz:return{_E:_B,_C:_D},{_E:is_visible,_C:_D},{_E:_B,_C:_D},{_E:is_visible,_C:_D}
 	else:return{_E:is_visible,_C:_D},{_E:_B,_C:_D},{_E:is_visible,_C:_D},{_E:_B,_C:_D}
 def match_index(sid0):
@@ -434,10 +434,10 @@ def stoptraining(mim):
 weights_dir='weights/'
 def note_to_hz(note_name):SEMITONES={'C':-9,'C#':-8,'D':-7,'D#':-6,'E':-5,'F':-4,'F#':-3,'G':-2,'G#':-1,'A':0,'A#':1,'B':2};pitch_class,octave=note_name[:-1],int(note_name[-1]);semitone=SEMITONES[pitch_class];note_number=12*(octave-4)+semitone;frequency=44e1*(2.**(1./12))**note_number;return frequency
 def save_to_wav(record_button):
-	if record_button is _L:0
+	if record_button is _K:0
 	else:path_to_file=record_button;new_name=datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')+'.wav';target_path=os.path.join(_R,_S,os.path.basename(new_name));shutil.move(path_to_file,target_path);return target_path
 def save_to_wav2_edited(dropbox):
-	if dropbox is _L:0
+	if dropbox is _K:0
 	else:
 		file_path=dropbox.name;target_path=os.path.join(_R,_S,os.path.basename(file_path))
 		if os.path.exists(target_path):os.remove(target_path);print(_A1)
@@ -457,7 +457,7 @@ def GradioSetup():
 		gr.HTML('<h1> 🍏 AX-RVC </h1>')
 		with gr.Tabs():
 			with gr.TabItem(i18n('Model Inference')):
-				with gr.Row():sid0=gr.Dropdown(label=i18n('Inferencing voice:'),choices=['/kaggle/working/AX-RVC/logs/weights/gavuriru-howaito.pth','/kaggle/working/AX-RVC/logs/weights/senko_v1.pth','/kaggle/working/AX-RVC/logs/weights/temochka.pth'],value=default_weight);refresh_button=gr.Button(i18n(M),variant=A);clean_button=gr.Button(i18n('Unload voice to save GPU memory'),variant=A);clean_button.click(fn=lambda:{_G:'',_C:_D},inputs=[],outputs=[sid0])
+				with gr.Row():sid0=gr.Dropdown(label=i18n('Inferencing voice:'),choices=sorted(names),value=default_weight);refresh_button=gr.Button(i18n(M),variant=A);clean_button=gr.Button(i18n('Unload voice to save GPU memory'),variant=A);clean_button.click(fn=lambda:{_G:'',_C:_D},inputs=[],outputs=[sid0])
 				with gr.TabItem(i18n('Single')):
 					with gr.Row():spk_item=gr.Slider(minimum=0,maximum=2333,step=1,label=i18n('Select Speaker/Singer ID:'),value=0,visible=_B,interactive=_A)
 					with gr.Row():
@@ -470,7 +470,7 @@ def GradioSetup():
 					advanced_settings_checkbox=gr.Checkbox(value=_B,label=i18n(E),interactive=_A)
 					with gr.Column(visible=_B)as advanced_settings:
 						with gr.Row(label=i18n(E),open=_B):
-							with gr.Column():f0method0=gr.Radio(label=i18n(G),choices=[H,I,J,K,P,C,D,_K,Q],value=Q,interactive=_A);f0_autotune=gr.Checkbox(label=R,interactive=_A);crepe_hop_length=gr.Slider(minimum=1,maximum=512,step=1,label=i18n(L),value=120,interactive=_A,visible=_B);filter_radius0=gr.Slider(minimum=0,maximum=7,label=i18n(S),value=3,step=1,interactive=_A);minpitch_slider=gr.Slider(label=i18n(T),info=i18n('Specify minimal pitch for inference [HZ]'),step=.1,minimum=1,scale=0,value=50,maximum=16000,interactive=_A,visible=not rvc_globals.NotesOrHertz and f0method0.value!=_K);minpitch_txtbox=gr.Textbox(label=i18n(T),info=i18n('Specify minimal pitch for inference [NOTE][OCTAVE]'),placeholder='C5',visible=rvc_globals.NotesOrHertz and f0method0.value!=_K,interactive=_A);maxpitch_slider=gr.Slider(label=i18n(U),info=i18n('Specify max pitch for inference [HZ]'),step=.1,minimum=1,scale=0,value=1100,maximum=16000,interactive=_A,visible=not rvc_globals.NotesOrHertz and f0method0.value!=_K);maxpitch_txtbox=gr.Textbox(label=i18n(U),info=i18n('Specify max pitch for inference [NOTE][OCTAVE]'),placeholder='C6',visible=rvc_globals.NotesOrHertz and f0method0.value!=_K,interactive=_A);file_index1=gr.Textbox(label=i18n(V),value='',interactive=_A);f0_file=gr.File(label=i18n('F0 curve file (optional). One pitch per line. Replaces the default F0 and pitch modulation:'))
+							with gr.Column():f0method0=gr.Radio(label=i18n(G),choices=[H,I,J,K,P,C,D,_J,Q],value=Q,interactive=_A);f0_autotune=gr.Checkbox(label=R,interactive=_A);crepe_hop_length=gr.Slider(minimum=1,maximum=512,step=1,label=i18n(L),value=120,interactive=_A,visible=_B);filter_radius0=gr.Slider(minimum=0,maximum=7,label=i18n(S),value=3,step=1,interactive=_A);minpitch_slider=gr.Slider(label=i18n(T),info=i18n('Specify minimal pitch for inference [HZ]'),step=.1,minimum=1,scale=0,value=50,maximum=16000,interactive=_A,visible=not rvc_globals.NotesOrHertz and f0method0.value!=_J);minpitch_txtbox=gr.Textbox(label=i18n(T),info=i18n('Specify minimal pitch for inference [NOTE][OCTAVE]'),placeholder='C5',visible=rvc_globals.NotesOrHertz and f0method0.value!=_J,interactive=_A);maxpitch_slider=gr.Slider(label=i18n(U),info=i18n('Specify max pitch for inference [HZ]'),step=.1,minimum=1,scale=0,value=1100,maximum=16000,interactive=_A,visible=not rvc_globals.NotesOrHertz and f0method0.value!=_J);maxpitch_txtbox=gr.Textbox(label=i18n(U),info=i18n('Specify max pitch for inference [NOTE][OCTAVE]'),placeholder='C6',visible=rvc_globals.NotesOrHertz and f0method0.value!=_J,interactive=_A);file_index1=gr.Textbox(label=i18n(V),value='',interactive=_A);f0_file=gr.File(label=i18n('F0 curve file (optional). One pitch per line. Replaces the default F0 and pitch modulation:'))
 							f0method0.change(fn=lambda radio:{_E:radio in[C,D],_C:_D},inputs=[f0method0],outputs=[crepe_hop_length]);f0method0.change(fn=switch_pitch_controls,inputs=[f0method0],outputs=[minpitch_slider,minpitch_txtbox,maxpitch_slider,maxpitch_txtbox])
 							with gr.Column():resample_sr0=gr.Slider(minimum=0,maximum=48000,label=i18n(W),value=0,step=1,interactive=_A);rms_mix_rate0=gr.Slider(minimum=0,maximum=1,label=i18n(X),value=.25,interactive=_A);protect0=gr.Slider(minimum=0,maximum=.5,label=i18n(Y),value=.33,step=.01,interactive=_A);index_rate1=gr.Slider(minimum=0,maximum=1,label=i18n(Z),value=.75,interactive=_A);formanting=gr.Checkbox(value=bool(DoFormant),label=i18n('Formant shift inference audio'),info=i18n('Used for male to female and vice-versa conversions'),interactive=_A,visible=_A);formant_preset=gr.Dropdown(value='',choices=get_fshift_presets(),label=i18n('Browse presets for formanting'),info=i18n('Presets are located in formantshiftcfg/ folder'),visible=bool(DoFormant));formant_refresh_button=gr.Button(value='🔄',visible=bool(DoFormant),variant=A);qfrency=gr.Slider(value=Quefrency,info=i18n(a),label=i18n('Quefrency for formant shifting'),minimum=.0,maximum=16.,step=.1,visible=bool(DoFormant),interactive=_A);tmbre=gr.Slider(value=Timbre,info=i18n(a),label=i18n('Timbre for formant shifting'),minimum=.0,maximum=16.,step=.1,visible=bool(DoFormant),interactive=_A);frmntbut=gr.Button('Apply',variant=A,visible=bool(DoFormant))
 							formant_preset.change(fn=preset_apply,inputs=[formant_preset,qfrency,tmbre],outputs=[qfrency,tmbre]);formanting.change(fn=formant_enabled,inputs=[formanting,qfrency,tmbre,frmntbut,formant_preset,formant_refresh_button],outputs=[formanting,qfrency,tmbre,frmntbut,formant_preset,formant_refresh_button]);frmntbut.click(fn=formant_apply,inputs=[qfrency,tmbre],outputs=[qfrency,tmbre]);formant_refresh_button.click(fn=update_fshift_presets,inputs=[formant_preset,qfrency,tmbre],outputs=[formant_preset,qfrency,tmbre])
@@ -489,7 +489,7 @@ def GradioSetup():
 							advanced_settings_batch_checkbox=gr.Checkbox(value=_B,label=i18n(E),interactive=_A)
 							with gr.Row(visible=_B)as advanced_settings_batch:
 								with gr.Row(label=i18n(E),open=_B):
-									with gr.Column():file_index3=gr.Textbox(label=i18n(V),value='',interactive=_A);f0method1=gr.Radio(label=i18n(G),choices=[H,I,J,K,P,C,D,_K],value=_K,interactive=_A);format1=gr.Radio(label=i18n(d),choices=[_Y,_Z,_g,_h],value=_Y,interactive=_A)
+									with gr.Column():file_index3=gr.Textbox(label=i18n(V),value='',interactive=_A);f0method1=gr.Radio(label=i18n(G),choices=[H,I,J,K,P,C,D,_J],value=_J,interactive=_A);format1=gr.Radio(label=i18n(d),choices=[_Y,_Z,_g,_h],value=_Y,interactive=_A)
 								with gr.Column():resample_sr1=gr.Slider(minimum=0,maximum=48000,label=i18n(W),value=0,step=1,interactive=_A);rms_mix_rate1=gr.Slider(minimum=0,maximum=1,label=i18n(X),value=1,interactive=_A);protect1=gr.Slider(minimum=0,maximum=.5,label=i18n(Y),value=.33,step=.01,interactive=_A);filter_radius1=gr.Slider(minimum=0,maximum=7,label=i18n(S),value=3,step=1,interactive=_A);index_rate2=gr.Slider(minimum=0,maximum=1,label=i18n(Z),value=.75,interactive=_A);f0_autotune=gr.Checkbox(label=R,interactive=_A);crepe_hop_length=gr.Slider(minimum=1,maximum=512,step=1,label=i18n(L),value=120,interactive=_A,visible=_B)
 							but1=gr.Button(i18n(F),variant=A);vc_output3=gr.Textbox(label=i18n(B));but1.click(vc.vc_multi,[spk_item,dir_input,opt_input,inputs,vc_transform1,f0method1,file_index3,file_index4,index_rate2,filter_radius1,resample_sr1,rms_mix_rate1,protect1,format1,crepe_hop_length,minpitch_slider,minpitch_txtbox,maxpitch_slider,maxpitch_txtbox,f0_autotune],[vc_output3])
 					sid0.change(fn=vc.get_vc,inputs=[sid0,protect0,protect1],outputs=[spk_item,protect0,protect1])
@@ -507,7 +507,7 @@ def GradioSetup():
 				with gr.Accordion(label=i18n('Step 3: Extracting features')):
 					with gr.Row():
 						with gr.Column():gpus6=gr.Textbox(label=i18n(e),value=gpus,interactive=_A);gpu_info9=gr.Textbox(label=i18n('GPU Information:'),value=gpu_info,visible=F0GPUVisible)
-						with gr.Column():f0method8=gr.Radio(label=i18n(G),choices=[H,I,J,K,C,_K,_y],value=_K,interactive=_A);extraction_crepe_hop_length=gr.Slider(minimum=1,maximum=512,step=1,label=i18n(L),value=64,interactive=_A,visible=_B);f0method8.change(fn=lambda radio:{_E:radio in[C,D],_C:_D},inputs=[f0method8],outputs=[extraction_crepe_hop_length])
+						with gr.Column():f0method8=gr.Radio(label=i18n(G),choices=[H,I,J,K,C,_J,_y],value=_J,interactive=_A);extraction_crepe_hop_length=gr.Slider(minimum=1,maximum=512,step=1,label=i18n(L),value=64,interactive=_A,visible=_B);f0method8.change(fn=lambda radio:{_E:radio in[C,D],_C:_D},inputs=[f0method8],outputs=[extraction_crepe_hop_length])
 						but2=gr.Button(i18n('Feature extraction'),variant=A);info2=gr.Textbox(label=i18n(B),value='',max_lines=8,interactive=_B);but2.click(extract_f0_feature,[gpus6,np7,f0method8,if_f0_3,exp_dir1,version19,extraction_crepe_hop_length],[info2])
 				with gr.Row():
 					with gr.Accordion(label=i18n('Step 4: Model training started')):
