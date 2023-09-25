@@ -559,7 +559,6 @@ def uvr(
 
 
 def change_choices():
-    new_choices = ["Option 1", "Option 2", "Option 3"]
     names = [
         os.path.join(root, file)
         for root, _, files in os.walk(weight_root)
@@ -579,8 +578,10 @@ def change_choices():
         if name.endswith(tuple(sup_audioext)) and root == audio_root
     ]
 
+    print(sorted(names))
+    
     return (
-        {"choices": sorted(new_choices), "__type__": "update"},
+        {"choices": sorted(names), "__type__": "update"},
         {"choices": sorted(indexes_list), "__type__": "update"},
         {"choices": sorted(audio_paths), "__type__": "update"},
     )
