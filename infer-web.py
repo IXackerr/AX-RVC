@@ -235,9 +235,9 @@ class ToolButton(gr.Button, gr.components.FormComponent):
 
 
 hubert_model = None
-weight_root = "logs/weights"
+weight_root = "/kaggle/working/AX-RVC/logs/weights"
 weight_uvr5_root = os.getenv("weight_uvr5_root")
-index_root = "logs"
+index_root = "/kaggle/working/AX-RVC/logs"
 datasets_root = "datasets"
 fshift_root = "lib/infer/infer_libs/formantshiftcfg"
 audio_root = "assets/audios"
@@ -260,14 +260,14 @@ sup_audioext = {
 
 names = [
     os.path.join(root, file)
-    for root, _, files in os.walk("logs/weights")
+    for root, _, files in os.walk(weight_root)
     for file in files
     if file.endswith((".pth", ".onnx"))
 ]
 
 indexes_list = [
     os.path.join(root, name)
-    for root, _, files in os.walk("logs", topdown=False)
+    for root, _, files in os.walk(index_root, topdown=False)
     for name in files
     if name.endswith(".index") and "trained" not in name
 ]
@@ -334,7 +334,7 @@ def update_dataset_list(name):
 def get_indexes():
     indexes_list = [
         os.path.join(dirpath, filename)
-        for dirpath, _, filenames in os.walk("/kaggle/working/AX-RVC/logs")
+        for dirpath, _, filenames in os.walk(index_root)
         for filename in filenames
         if filename.endswith(".index") and "trained" not in filename
     ]
@@ -561,13 +561,13 @@ def uvr(
 def change_choices():
     names = [
         os.path.join(root, file)
-        for root, _, files in os.walk("logs/weights")
+        for root, _, files in os.walk(weight_root)
         for file in files
         if file.endswith((".pth", ".onnx"))
     ]
     indexes_list = [
         os.path.join(root, name)
-        for root, _, files in os.walk("logs", topdown=False)
+        for root, _, files in os.walk(index_root, topdown=False)
         for name in files
         if name.endswith(".index") and "trained" not in name
     ]
@@ -588,13 +588,13 @@ def change_choices():
 def change_choices2():
     names = [
         os.path.join(root, file)
-        for root, _, files in os.walk("logs/weights")
+        for root, _, files in os.walk(weight_root)
         for file in files
         if file.endswith((".pth", ".onnx"))
     ]
     indexes_list = [
         os.path.join(root, name)
-        for root, _, files in os.walk("logs", topdown=False)
+        for root, _, files in os.walk(index_root, topdown=False)
         for name in files
         if name.endswith(".index") and "trained" not in name
     ]
