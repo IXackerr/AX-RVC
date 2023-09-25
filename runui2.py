@@ -221,7 +221,7 @@ def uvr(model_name,inp_root,save_root_vocal,paths,save_root_ins,agg,format0,arch
 			except:traceback.print_exc()
 			print('clean_empty_cache')
 			if torch.cuda.is_available():torch.cuda.empty_cache()
-def change_choices():names=[os.path.join(root,file)for(root,_,files)in os.walk(weight_root)for file in files if file.endswith((_U,_i))];indexes_list=[os.path.join(root,name)for(root,_,files)in os.walk(index_root,topdown=_B)for name in files if name.endswith(_V)and _W not in name];audio_paths=[os.path.join(audio_root,file)for file in os.listdir(os.path.join(audio_root))];return{_J:sorted(names),_C:_D},{_J:sorted(indexes_list),_C:_D},{_J:sorted(audio_paths),_C:_D}
+def change_choices():names=[os.path.join(root,file)for(root,_,files)in os.walk(weight_root)for file in files if file.endswith((_U,_i))];indexes_list=[os.path.join(root,name)for(root,_,files)in os.walk(index_root,topdown=_B)for name in files if name.endswith(_V)and _W not in name];audio_paths=[os.path.join(root,name)for(root,_,files)in os.walk(audio_root,topdown=_B)for name in files if name.endswith(tuple(sup_audioext))and root==audio_root];return{_J:sorted(names),_C:_D},{_J:sorted(indexes_list),_C:_D},{_J:sorted(audio_paths),_C:_D}
 def change_choices2():names=[os.path.join(root,file)for(root,_,files)in os.walk(weight_root)for file in files if file.endswith((_U,_i))];indexes_list=[os.path.join(root,name)for(root,_,files)in os.walk(index_root,topdown=_B)for name in files if name.endswith(_V)and _W not in name];return{_J:sorted(names),_C:_D},{_J:sorted(indexes_list),_C:_D}
 def clean():return{_G:'',_C:_D}
 def export_onnx():from lib.infer.modules.onnx.export import export_onnx as eo;eo()
@@ -457,7 +457,7 @@ def GradioSetup():
 		gr.HTML('<h1> 🍏 AX-RVC </h1>')
 		with gr.Tabs():
 			with gr.TabItem(i18n('Model Inference')):
-				with gr.Row():sid0=gr.Dropdown(label=i18n('Inferencing voice:'),choices=names,value=default_weight);refresh_button=gr.Button(i18n(M),variant=A);clean_button=gr.Button(i18n('Unload voice to save GPU memory'),variant=A);clean_button.click(fn=lambda:{_G:'',_C:_D},inputs=[],outputs=[sid0])
+				with gr.Row():sid0=gr.Dropdown(label=i18n('Inferencing voice:'),choices=str(sorted(names)),value=default_weight);refresh_button=gr.Button(i18n(M),variant=A);clean_button=gr.Button(i18n('Unload voice to save GPU memory'),variant=A);clean_button.click(fn=lambda:{_G:'',_C:_D},inputs=[],outputs=[sid0])
 				with gr.TabItem(i18n('Single')):
 					with gr.Row():spk_item=gr.Slider(minimum=0,maximum=2333,step=1,label=i18n('Select Speaker/Singer ID:'),value=0,visible=_B,interactive=_A)
 					with gr.Row():

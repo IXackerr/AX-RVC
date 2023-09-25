@@ -572,8 +572,10 @@ def change_choices():
         if name.endswith(".index") and "trained" not in name
     ]
     audio_paths = [
-        os.path.join(audio_root, file)
-        for file in os.listdir(os.path.join(audio_root))
+        os.path.join(root, name)
+        for root, _, files in os.walk(audio_root, topdown=False)
+        for name in files
+        if name.endswith(tuple(sup_audioext)) and root == audio_root
     ]
 
     return (
@@ -1790,7 +1792,7 @@ def GradioSetup():
                 with gr.Row():
                     sid0 = gr.Dropdown(
                         label=i18n("Inferencing voice:"),
-                        choices=names,
+                        choices=str(sorted(names)),
                         value=default_weight,
                     )
                     refresh_button = gr.Button(i18n("Refresh"), variant="primary")
