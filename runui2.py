@@ -457,7 +457,7 @@ def GradioSetup():
 		gr.HTML('<h1> 🍏 AX-RVC </h1>')
 		with gr.Tabs():
 			with gr.TabItem(i18n('Model Inference')):
-				with gr.Row():sid0=gr.Dropdown(label=i18n('Inferencing voice:'),choices=sorted(names),value=default_weight);refresh_button=gr.Button(i18n(M),variant=A);clean_button=gr.Button(i18n('Unload voice to save GPU memory'),variant=A);clean_button.click(fn=lambda:{_G:'',_C:_D},inputs=[],outputs=[sid0])
+				with gr.Row():sid0=gr.Dropdown(label=i18n('Inferencing voice:'),choices=['/kaggle','/kagglle2'],value=default_weight);refresh_button=gr.Button(i18n(M),variant=A);clean_button=gr.Button(i18n('Unload voice to save GPU memory'),variant=A);clean_button.click(fn=lambda:{_G:'',_C:_D},inputs=[],outputs=[sid0])
 				with gr.TabItem(i18n('Single')):
 					with gr.Row():spk_item=gr.Slider(minimum=0,maximum=2333,step=1,label=i18n('Select Speaker/Singer ID:'),value=0,visible=_B,interactive=_A)
 					with gr.Row():
