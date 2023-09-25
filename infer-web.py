@@ -578,10 +578,6 @@ def change_choices():
         if name.endswith(tuple(sup_audioext)) and root == audio_root
     ]
 
-    print(names)
-    print(indexes_list)
-    print(audio_paths)
-    
     return (
         {"choices": sorted(names), "__type__": "update"},
         {"choices": sorted(indexes_list), "__type__": "update"},
@@ -1796,7 +1792,7 @@ def GradioSetup():
                 with gr.Row():
                     sid0 = gr.Dropdown(
                         label=i18n("Inferencing voice:"),
-                        choices=sorted(names),
+                        choices=names,
                         value=default_weight,
                     )
                     refresh_button = gr.Button(i18n("Refresh"), variant="primary")
