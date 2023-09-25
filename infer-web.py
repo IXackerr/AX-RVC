@@ -559,6 +559,7 @@ def uvr(
 
 
 def change_choices():
+    new_choices = ["/Option 1", "/Option 2", "/Option 3"]
     names = [
         os.path.join(root, file)
         for root, _, files in os.walk(weight_root)
@@ -579,7 +580,7 @@ def change_choices():
     ]
 
     return (
-        {"choices": sorted(names), "__type__": "update"},
+        {"choices": sorted(new_choices), "__type__": "update"},
         {"choices": sorted(indexes_list), "__type__": "update"},
         {"choices": sorted(audio_paths), "__type__": "update"},
     )
@@ -1792,7 +1793,7 @@ def GradioSetup():
                 with gr.Row():
                     sid0 = gr.Dropdown(
                         label=i18n("Inferencing voice:"),
-                        choices=["/kaggle", "/kagglle2"],
+                        choices=sorted(names),
                         value=default_weight,
                     )
                     refresh_button = gr.Button(i18n("Refresh"), variant="primary")
