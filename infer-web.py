@@ -578,6 +578,10 @@ def change_choices():
         if name.endswith(tuple(sup_audioext)) and root == audio_root
     ]
 
+    print(names)
+    print(indexes_list)
+    print(audio_paths)
+    
     return (
         {"choices": sorted(names), "__type__": "update"},
         {"choices": sorted(indexes_list), "__type__": "update"},
