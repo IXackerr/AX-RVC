@@ -572,10 +572,8 @@ def change_choices():
         if name.endswith(".index") and "trained" not in name
     ]
     audio_paths = [
-        os.path.join(root, name)
-        for root, _, files in os.walk(audio_root, topdown=False)
-        for name in files
-        if name.endswith(tuple(sup_audioext)) and root == audio_root
+        os.path.join(audio_root, file)
+        for file in os.listdir(os.path.join(audio_root))
     ]
 
     return (
