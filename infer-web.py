@@ -559,7 +559,7 @@ def uvr(
 
 
 def change_choices():
-    new_choices = ["/Option 1", "/Option 2", "/Option 3"]
+    new_choices = ["Option 1", "Option 2", "Option 3"]
     names = [
         os.path.join(root, file)
         for root, _, files in os.walk(weight_root)
