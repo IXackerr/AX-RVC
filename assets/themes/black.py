@@ -14,7 +14,7 @@ class Applio(Base):
         *,
         primary_hue: colors.Color | str = colors.sky,
         secondary_hue: colors.Color | str = colors.cyan,
-        neutral_hue: colors.Color | str = colors.neutral,
+        neutral_hue: colors.Color | str = colors.zinc,
         spacing_size: sizes.Size | str = sizes.spacing_md,
         radius_size: sizes.Size | str = sizes.radius_md,
         text_size: sizes.Size | str = sizes.text_lg,
