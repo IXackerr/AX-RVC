@@ -1785,7 +1785,8 @@ mi_applio = Applio()
 def GradioSetup():
     default_weight = names[0] if names else ""
     #theme=gr.themes.Base(primary_hue="blue",neutral_hue="zinc")
-    with gr.Blocks(title="🔊 AX-RVC", theme=mi_applio) as app:
+    #theme=mi_applio
+    with gr.Blocks(title="🔊 AX-RVC", theme=gr.themes.Base(primary_hue="sky",neutral_hue="zinc")) as app:
         gr.HTML("<h1> 🍏 AX-RVC </h1>")
         with gr.Tabs():
             with gr.TabItem(i18n("Model Inference")):

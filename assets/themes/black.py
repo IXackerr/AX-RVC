@@ -18,22 +18,6 @@ class Applio(Base):
         spacing_size: sizes.Size | str = sizes.spacing_md,
         radius_size: sizes.Size | str = sizes.radius_md,
         text_size: sizes.Size | str = sizes.text_lg,
-        font: fonts.Font
-        | str
-        | Iterable[fonts.Font | str] = (
-            'Inter V',
-            fonts.GoogleFont('Inter'),
-            'ui-sans-serif',
-            'system-ui',
-        ),
-        font_mono: fonts.Font
-        | str
-        | Iterable[fonts.Font | str] = (
-            'ui-monospace',
-            fonts.GoogleFont("Roboto Mono"),
-            'Consolas',
-            'monospace',
-        ),
     ):
         super().__init__(
             primary_hue=primary_hue,
@@ -42,8 +26,6 @@ class Applio(Base):
             spacing_size=spacing_size,
             radius_size=radius_size,
             text_size=text_size,
-            font=font,
-            font_mono=font_mono,
         )
         self.name= "Applio",
         self.secondary_100= "#dbeafe",
@@ -92,8 +74,8 @@ class Applio(Base):
             block_radius= "*radius_md",
             block_shadow= "none",
             block_shadow_dark= "none",
-            block_title_background_fill= "rgba(46,85,65,255)",
-            block_title_background_fill_dark= "rgba(46,85,65,255)",
+            block_title_background_fill= "rgb(24 94 131 255)",
+            block_title_background_fill_dark= "rgb(24 94 13 255)",
             block_title_border_color= "none",
             block_title_border_color_dark= "none",
             block_title_border_width= "0px",
