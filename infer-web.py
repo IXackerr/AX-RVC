@@ -2979,12 +2979,9 @@ def GradioSetup():
                             hgf_name_gr_d = gr.Textbox(
                                 label="Enter HuggingFace Username:",
                             )
+                        with gr.Column():
                             hgf_repo_gr_d = gr.Textbox(
                                 label="Enter HuggingFace Model-Repo name:",
-                            )
-                        with gr.Column():
-                            model_name_gr_d = gr.Textbox(
-                                label="Trained model name:",
                             )
                             zip_name_gr_d = gr.Textbox(
                                 label="Name of Zip file:",
@@ -2997,7 +2994,7 @@ def GradioSetup():
                         )
                         downloadlogsbut1.click(
                             start_upload_to_huggingface,
-                            [hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_name_gr, zip_name_gr, what_upload_gr],
+                            [hgf_token_gr, hgf_name_gr, hgf_repo_gr, zip_name_gr],
                             [uploadinfo1],
                         )
 
