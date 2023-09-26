@@ -2993,9 +2993,9 @@ def GradioSetup():
                             label="Output information:", value=""
                         )
                         downloadlogsbut1.click(
-                            start_upload_to_huggingface,
-                            [hgf_token_gr, hgf_name_gr, hgf_repo_gr, zip_name_gr],
-                            [uploadinfo1],
+                            start_download_from_huggingface,
+                            [hgf_token_gr_d, hgf_name_gr_d, hgf_repo_gr_d, zip_name_gr_d],
+                            [downloadlogsinfo1],
                         )
 
             with gr.TabItem(i18n("Resources")):
