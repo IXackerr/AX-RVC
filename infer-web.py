@@ -75,6 +75,8 @@ from shlex import quote as SQuote
 
 from huggingface_hub import HfApi
 from huggingface_hub import login
+from huggingface_hub import hf_hub_download
+import zipfile
 import requests
 import os
 
@@ -1759,8 +1761,10 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
     if (what_upload_gr == "Model Only"):
         os.system(f'cp /kaggle/working/AX-RVC/logs/weights/{model_name_gr}.pth {hug_file_path}')
         os.system(f'cp /kaggle/working/AX-RVC/logs/{model_name_gr}/added*.index {hug_file_path}')
-        time.sleep(5)
-        os.system(f'zip -r /kaggle/working/AX-RVC/hugupload/{hug_file_name} /kaggle/working/AX-RVC/hugupload/{model_name_gr}.pth /kaggle/working/AX-RVC/hugupload/added*.index')
+        time.sleep(2)
+        os.chdir(hug_file_path)
+        os.system(f'zip -r /kaggle/working/AX-RVC/hugupload/{hug_file_name} {model_name_gr}.pth added*.index')
+        os.chdir("/kaggle/working/AX-RVC/")
 
         api = HfApi(
             token=hgf_token_gr,
@@ -1771,7 +1775,6 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
             repo_id=f"{hgf_name_gr}/{hgf_repo_gr}",
             repo_type="model",
         )
-        time.sleep(5)
 
         os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}')
         os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/{model_name_gr}.pth')
@@ -1781,8 +1784,10 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
     if (what_upload_gr == "Model Log Folder"):
         hug_file_name = f'{zip_name_gr}_logs.zip'
         os.system(f'cp -r /kaggle/working/AX-RVC/logs/{model_name_gr} {hug_file_path}')
-        time.sleep(5)
-        os.system(f'zip -r /kaggle/working/AX-RVC/hugupload/{hug_file_name} /kaggle/working/AX-RVC/hugupload/{model_name_gr}')
+        time.sleep(2)
+        os.chdir(hug_file_path)
+        os.system(f'zip -r /kaggle/working/AX-RVC/hugupload/{hug_file_name} {model_name_gr}')
+        os.chdir("/kaggle/working/AX-RVC/")
 
         api = HfApi(
             token=hgf_token_gr,
@@ -1793,12 +1798,32 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
             repo_id=f"{hgf_name_gr}/{hgf_repo_gr}",
             repo_type="model",
         )
-        time.sleep(5)
+        time.sleep(2)
 
         os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}')
         os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/{model_name_gr}')
 
         return "Succesful upload Logs to Hugging Face"
+
+def start_download_from_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_name_gr, zip_name_gr):
+
+    hug_file_path = "/kaggle/working/AX-RVC/hugupload"
+    hug_file_name = f'{zip_name_gr}.zip'
+    hug_repo_id = f"{hgf_name_gr}/{hgf_repo_gr}"
+    destination_folder = "/kaggle/working/AX-RVC/logs"
+
+    os.chdir(hug_file_path)
+    hf_hub_download(repo_id=hug_repo_id, filename=hug_file_name, access_token=hgf_token_gr)
+
+    with zipfile.ZipFile(f"{hug_file_path}/hug_file_name", 'r') as zip_ref:
+        zip_ref.extractall(destination_folder)
+
+    os.chdir("/kaggle/working/AX-RVC/")
+    
+
+    os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}')
+
+    return "Succesful download Logs from Hugging Face"
 
 # Crear una instancia de Applio
 mi_applio = Applio()

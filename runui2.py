@@ -1,12 +1,15 @@
-_A2='Model Log Folder'
-_A1='Replacing old dropdown file...'
-_A0='%s/3_feature768'
-_z='%s/3_feature256'
-_y='rmvpe_gpu'
-_x='sample_rate'
-_w='assets/audios/audio-others'
-_v='assets/audios'
-_u='weight_uvr5_root'
+_A5='Model Log Folder'
+_A4='/kaggle/working/AX-RVC/hugupload'
+_A3='Replacing old dropdown file...'
+_A2='%s/3_feature768'
+_A1='%s/3_feature256'
+_A0='rmvpe_gpu'
+_z='sample_rate'
+_y='assets/audios/audio-others'
+_x='assets/audios'
+_w='/kaggle/working/AX-RVC/logs'
+_v='weight_uvr5_root'
+_u='/kaggle/working/AX-RVC/'
 _t='Model Only'
 _s='EXTRACT-MODEL'
 _r='TRAIN-FEATURE'
@@ -44,9 +47,9 @@ _M='lib/csvdb/formanting.csv'
 _L=' '
 _K=None
 _J='rmvpe'
-_I='r'
-_H='v1'
-_G='value'
+_I='v1'
+_H='value'
+_G='r'
 _F='\n'
 _E='visible'
 _D='update'
@@ -90,7 +93,8 @@ import time,csv
 from shlex import quote as SQuote
 from huggingface_hub import HfApi
 from huggingface_hub import login
-import requests,os
+from huggingface_hub import hf_hub_download
+import zipfile,requests,os
 RQuote=lambda val:SQuote(str(val))
 tmp=os.path.join(now_dir,'temp')
 shutil.rmtree(tmp,ignore_errors=_A)
@@ -102,7 +106,7 @@ def remove_text_between_parentheses(lines,start_line,end_line):
 		if start_line<=line_number<=end_line:modified_line=re.sub(pattern,'\\1',line);processed_lines.append(modified_line)
 		else:processed_lines.append(line)
 	return _F.join(processed_lines)
-with open('README.md',_I,encoding='utf8')as f:inforeadme=f.read()
+with open('README.md',_G,encoding='utf8')as f:inforeadme=f.read()
 inforeadme=remove_text_between_parentheses(inforeadme.split(_F),6,15)
 inforeadme=remove_invalid_chars(inforeadme)
 inforeadme=remove_text_between_parentheses(inforeadme.split(_F),191,207)
@@ -116,7 +120,7 @@ logging.getLogger('numba').setLevel(logging.WARNING)
 logger=logging.getLogger(__name__)
 if not os.path.isdir('lib/csvdb/'):os.makedirs('lib/csvdb');frmnt,stp=open(_M,'w'),open(_e,'w');frmnt.close();stp.close()
 global DoFormant,Quefrency,Timbre
-try:DoFormant,Quefrency,Timbre=CSVutil(_M,_I,_N);DoFormant=(lambda DoFormant:_A if DoFormant.lower()=='true'else _B if DoFormant.lower()=='false'else DoFormant)(DoFormant)
+try:DoFormant,Quefrency,Timbre=CSVutil(_M,_G,_N);DoFormant=(lambda DoFormant:_A if DoFormant.lower()=='true'else _B if DoFormant.lower()=='false'else DoFormant)(DoFormant)
 except(ValueError,TypeError,IndexError):DoFormant,Quefrency,Timbre=_B,1.,1.;CSVutil(_M,_O,_N,DoFormant,Quefrency,Timbre)
 load_dotenv()
 config=Config()
@@ -144,12 +148,12 @@ class ToolButton(gr.Button,gr.components.FormComponent):
 	def get_block_name(self):return'button'
 hubert_model=_K
 weight_root='/kaggle/working/AX-RVC/logs/weights'
-weight_uvr5_root=os.getenv(_u)
-index_root='/kaggle/working/AX-RVC/logs'
+weight_uvr5_root=os.getenv(_v)
+index_root=_w
 datasets_root=_f
 fshift_root='lib/infer/infer_libs/formantshiftcfg'
-audio_root=_v
-audio_others_root=_w
+audio_root=_x
+audio_others_root=_y
 sup_audioext={_X,_g,_Y,'ogg','opus',_h,'mp4','aac','alac','wma','aiff','webm','ac3'}
 names=[os.path.join(root,file)for(root,_,files)in os.walk(weight_root)for file in files if file.endswith((_T,_i))]
 indexes_list=[os.path.join(root,name)for(root,_,files)in os.walk(index_root,topdown=_B)for name in files if name.endswith(_U)and _V not in name]
@@ -180,14 +184,14 @@ def uvr(model_name,inp_root,save_root_vocal,paths,save_root_ins,agg,format0,arch
 		try:
 			infos.append(i18n(B));inp_root=inp_root.strip(_L).strip(A).strip(_F).strip(A).strip(_L);save_root_vocal=save_root_vocal.strip(_L).strip(A).strip(_F).strip(A).strip(_L);save_root_ins=save_root_ins.strip(_L).strip(A).strip(_F).strip(A).strip(_L)
 			if model_name==C:pre_fun=MDXNetDereverb(15,config.device)
-			else:func=AudioPre if'DeEcho'not in model_name else AudioPreDeEcho;pre_fun=func(agg=int(agg),model_path=os.path.join(os.getenv(_u),model_name+_T),device=config.device,is_half=config.is_half)
+			else:func=AudioPre if'DeEcho'not in model_name else AudioPreDeEcho;pre_fun=func(agg=int(agg),model_path=os.path.join(os.getenv(_v),model_name+_T),device=config.device,is_half=config.is_half)
 			if inp_root!='':paths=[os.path.join(inp_root,name)for(root,_,files)in os.walk(inp_root,topdown=_B)for name in files if name.endswith(tuple(sup_audioext))and root==inp_root]
 			else:paths=[path.name for path in paths]
 			for path in paths:
 				inp_path=os.path.join(inp_root,path);need_reformat=1;done=0
 				try:
 					info=ffmpeg.probe(inp_path,cmd='ffprobe')
-					if info[D][0]['channels']==2 and info[D][0][_x]=='44100':need_reformat=0;pre_fun._path_audio_(inp_path,save_root_ins,save_root_vocal,format0);done=1
+					if info[D][0]['channels']==2 and info[D][0][_z]=='44100':need_reformat=0;pre_fun._path_audio_(inp_path,save_root_ins,save_root_vocal,format0);done=1
 				except:need_reformat=1;traceback.print_exc()
 				if need_reformat==1:tmp_path='%s/%s.reformatted.wav'%(os.path.join(os.environ['tmp']),os.path.basename(inp_path));os.system('ffmpeg -i %s -vn -acodec pcm_s16le -ac 2 -ar 44100 %s -y'%(inp_path,tmp_path));inp_path=tmp_path
 				try:
@@ -224,7 +228,7 @@ def uvr(model_name,inp_root,save_root_vocal,paths,save_root_ins,agg,format0,arch
 			if torch.cuda.is_available():torch.cuda.empty_cache()
 def change_choices():names=[os.path.join(root,file)for(root,_,files)in os.walk(weight_root)for file in files if file.endswith((_T,_i))];indexes_list=[os.path.join(root,name)for(root,_,files)in os.walk(index_root,topdown=_B)for name in files if name.endswith(_U)and _V not in name];audio_paths=[os.path.join(root,name)for(root,_,files)in os.walk(audio_root,topdown=_B)for name in files if name.endswith(tuple(sup_audioext))and root==audio_root];return gr.Dropdown.update(choices=sorted(names)),gr.Dropdown.update(choices=sorted(indexes_list)),gr.Dropdown.update(choices=sorted(audio_paths))
 def change_choices2():names=[os.path.join(root,file)for(root,_,files)in os.walk(weight_root)for file in files if file.endswith((_T,_i))];indexes_list=[os.path.join(root,name)for(root,_,files)in os.walk(index_root,topdown=_B)for name in files if name.endswith(_U)and _V not in name];return gr.Dropdown.update(choices=sorted(names)),gr.Dropdown.update(choices=sorted(indexes_list))
-def clean():return{_G:'',_C:_D}
+def clean():return{_H:'',_C:_D}
 def export_onnx():from lib.infer.modules.onnx.export import export_onnx as eo;eo()
 sr_dict={_b:32000,_S:40000,_c:48000}
 def if_done(done,p):
@@ -240,60 +244,60 @@ def if_done_multi(done,ps):
 		if flag==1:break
 	done[0]=_A
 def formant_enabled(cbox,qfrency,tmbre,frmntapply,formantpreset,formant_refresh_button):
-	if cbox:DoFormant=_A;CSVutil(_M,_O,_N,DoFormant,qfrency,tmbre);return{_G:_A,_C:_D},{_E:_A,_C:_D},{_E:_A,_C:_D},{_E:_A,_C:_D},{_E:_A,_C:_D},{_E:_A,_C:_D}
-	else:DoFormant=_B;CSVutil(_M,_O,_N,DoFormant,qfrency,tmbre);return{_G:_B,_C:_D},{_E:_B,_C:_D},{_E:_B,_C:_D},{_E:_B,_C:_D},{_E:_B,_C:_D},{_E:_B,_C:_D},{_E:_B,_C:_D}
-def formant_apply(qfrency,tmbre):Quefrency=qfrency;Timbre=tmbre;DoFormant=_A;CSVutil(_M,_O,_N,DoFormant,qfrency,tmbre);return{_G:Quefrency,_C:_D},{_G:Timbre,_C:_D}
+	if cbox:DoFormant=_A;CSVutil(_M,_O,_N,DoFormant,qfrency,tmbre);return{_H:_A,_C:_D},{_E:_A,_C:_D},{_E:_A,_C:_D},{_E:_A,_C:_D},{_E:_A,_C:_D},{_E:_A,_C:_D}
+	else:DoFormant=_B;CSVutil(_M,_O,_N,DoFormant,qfrency,tmbre);return{_H:_B,_C:_D},{_E:_B,_C:_D},{_E:_B,_C:_D},{_E:_B,_C:_D},{_E:_B,_C:_D},{_E:_B,_C:_D},{_E:_B,_C:_D}
+def formant_apply(qfrency,tmbre):Quefrency=qfrency;Timbre=tmbre;DoFormant=_A;CSVutil(_M,_O,_N,DoFormant,qfrency,tmbre);return{_H:Quefrency,_C:_D},{_H:Timbre,_C:_D}
 def update_fshift_presets(preset,qfrency,tmbre):
 	if preset:
-		with open(preset,_I)as p:content=p.readlines();qfrency,tmbre=content[0].strip(),content[1]
+		with open(preset,_G)as p:content=p.readlines();qfrency,tmbre=content[0].strip(),content[1]
 		formant_apply(qfrency,tmbre)
 	else:qfrency,tmbre=preset_apply(preset,qfrency,tmbre)
-	return gr.Dropdown.update(choices=get_fshift_presets()),{_G:qfrency,_C:_D},{_G:tmbre,_C:_D}
+	return gr.Dropdown.update(choices=get_fshift_presets()),{_H:qfrency,_C:_D},{_H:tmbre,_C:_D}
 def preprocess_dataset(trainset_dir,exp_dir,sr,n_p,dataset_path):
 	A='%s/logs/%s/preprocess.log'
 	if not dataset_path.strip()=='':trainset_dir=dataset_path
 	sr=sr_dict[sr];os.makedirs(_k%(now_dir,exp_dir),exist_ok=_A);f=open(A%(now_dir,exp_dir),'w');f.close();per=3. if config.is_half else 3.7;cmd='"%s" lib/infer/modules/train/preprocess.py "%s" %s %s "%s/logs/%s" %s %.1f'%(config.python_cmd,trainset_dir,sr,n_p,now_dir,exp_dir,config.noparallel,per);logger.info(cmd);p=Popen(cmd,shell=_A);done=[_B];threading.Thread(target=if_done,args=(done,p)).start()
 	while 1:
-		with open(A%(now_dir,exp_dir),_I)as f:yield f.read()
+		with open(A%(now_dir,exp_dir),_G)as f:yield f.read()
 		sleep(1)
 		if done[0]:break
-	with open(A%(now_dir,exp_dir),_I)as f:log=f.read()
+	with open(A%(now_dir,exp_dir),_G)as f:log=f.read()
 	logger.info(log);yield log
 def extract_f0_feature(gpus,n_p,f0method,if_f0,exp_dir,version19,echl):
 	A='%s/logs/%s/extract_f0_feature.log';gpus_rmvpe=gpus;gpus=gpus.split('-');os.makedirs(_k%(now_dir,exp_dir),exist_ok=_A);f=open(A%(now_dir,exp_dir),'w');f.close()
 	if if_f0:
-		if f0method!=_y:cmd='"%s" lib/infer/modules/train/extract/extract_f0_print.py "%s/logs/%s" %s %s %s'%(config.python_cmd,now_dir,exp_dir,n_p,f0method,RQuote(echl));logger.info(cmd);p=Popen(cmd,shell=_A,cwd=now_dir);done=[_B];threading.Thread(target=if_done,args=(done,p)).start()
+		if f0method!=_A0:cmd='"%s" lib/infer/modules/train/extract/extract_f0_print.py "%s/logs/%s" %s %s %s'%(config.python_cmd,now_dir,exp_dir,n_p,f0method,RQuote(echl));logger.info(cmd);p=Popen(cmd,shell=_A,cwd=now_dir);done=[_B];threading.Thread(target=if_done,args=(done,p)).start()
 		elif gpus_rmvpe!='-':
 			gpus_rmvpe=gpus_rmvpe.split('-');leng=len(gpus_rmvpe);ps=[]
 			for(idx,n_g)in enumerate(gpus_rmvpe):cmd='"%s" lib/infer/modules/train/extract/extract_f0_rmvpe.py %s %s %s "%s/logs/%s" %s '%(config.python_cmd,leng,idx,n_g,now_dir,exp_dir,config.is_half);logger.info(cmd);p=Popen(cmd,shell=_A,cwd=now_dir);ps.append(p)
 			done=[_B];threading.Thread(target=if_done_multi,args=(done,ps)).start()
 		else:cmd=config.python_cmd+' lib/infer/modules/train/extract/extract_f0_rmvpe_dml.py "%s/logs/%s" '%(now_dir,exp_dir);logger.info(cmd);p=Popen(cmd,shell=_A,cwd=now_dir);p.wait();done=[_A]
 		while 1:
-			with open(A%(now_dir,exp_dir),_I)as f:yield f.read()
+			with open(A%(now_dir,exp_dir),_G)as f:yield f.read()
 			sleep(1)
 			if done[0]:break
-		with open(A%(now_dir,exp_dir),_I)as f:log=f.read()
+		with open(A%(now_dir,exp_dir),_G)as f:log=f.read()
 		logger.info(log);yield log
 	'\n    n_part=int(sys.argv[1])\n    i_part=int(sys.argv[2])\n    i_gpu=sys.argv[3]\n    exp_dir=sys.argv[4]\n    os.environ["CUDA_VISIBLE_DEVICES"]=str(i_gpu)\n    ';leng=len(gpus);ps=[]
 	for(idx,n_g)in enumerate(gpus):cmd='"%s" lib/infer/modules/train/extract_feature_print.py %s %s %s %s "%s/logs/%s" %s'%(config.python_cmd,config.device,leng,idx,n_g,now_dir,exp_dir,version19);logger.info(cmd);p=Popen(cmd,shell=_A,cwd=now_dir);ps.append(p)
 	done=[_B];threading.Thread(target=if_done_multi,args=(done,ps)).start()
 	while 1:
-		with open(A%(now_dir,exp_dir),_I)as f:yield f.read()
+		with open(A%(now_dir,exp_dir),_G)as f:yield f.read()
 		sleep(1)
 		if done[0]:break
-	with open(A%(now_dir,exp_dir),_I)as f:log=f.read()
+	with open(A%(now_dir,exp_dir),_G)as f:log=f.read()
 	logger.info(log);yield log
 def get_pretrained_models(path_str,f0_str,sr2):
 	B='/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth';A='/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth';if_pretrained_generator_exist=os.access(A%(path_str,f0_str,sr2),os.F_OK);if_pretrained_discriminator_exist=os.access(B%(path_str,f0_str,sr2),os.F_OK)
 	if not if_pretrained_generator_exist:logger.warn('/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth not exist, will not use pretrained model',path_str,f0_str,sr2)
 	if not if_pretrained_discriminator_exist:logger.warn('/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth not exist, will not use pretrained model',path_str,f0_str,sr2)
 	return A%(path_str,f0_str,sr2)if if_pretrained_generator_exist else'',B%(path_str,f0_str,sr2)if if_pretrained_discriminator_exist else''
-def change_sr2(sr2,if_f0_3,version19):path_str=''if version19==_H else _l;f0_str='f0'if if_f0_3 else'';return get_pretrained_models(path_str,f0_str,sr2)
+def change_sr2(sr2,if_f0_3,version19):path_str=''if version19==_I else _l;f0_str='f0'if if_f0_3 else'';return get_pretrained_models(path_str,f0_str,sr2)
 def change_version19(sr2,if_f0_3,version19):
-	path_str=''if version19==_H else _l
-	if sr2==_b and version19==_H:sr2=_S
-	to_return_sr2={_a:[_S,_c],_C:_D,_G:sr2}if version19==_H else{_a:[_S,_c,_b],_C:_D,_G:sr2};f0_str='f0'if if_f0_3 else'';return*get_pretrained_models(path_str,f0_str,sr2),to_return_sr2
-def change_f0(if_f0_3,sr2,version19):path_str=''if version19==_H else _l;return{_E:if_f0_3,_C:_D},*get_pretrained_models(path_str,'f0',sr2)
+	path_str=''if version19==_I else _l
+	if sr2==_b and version19==_I:sr2=_S
+	to_return_sr2={_a:[_S,_c],_C:_D,_H:sr2}if version19==_I else{_a:[_S,_c,_b],_C:_D,_H:sr2};f0_str='f0'if if_f0_3 else'';return*get_pretrained_models(path_str,f0_str,sr2),to_return_sr2
+def change_f0(if_f0_3,sr2,version19):path_str=''if version19==_I else _l;return{_E:if_f0_3,_C:_D},*get_pretrained_models(path_str,'f0',sr2)
 global log_interval
 def set_log_interval(exp_dir,batch_size12):
 	log_interval=1;folder_path=os.path.join(exp_dir,'1_16k_wavs')
@@ -305,14 +309,14 @@ def set_log_interval(exp_dir,batch_size12):
 	return log_interval
 global PID,PROCESS
 def click_train(exp_dir1,sr2,if_f0_3,spk_id5,save_epoch10,total_epoch11,batch_size12,if_save_latest13,pretrained_G14,pretrained_D15,gpus16,if_cache_gpu17,if_save_every_weights18,version19):
-	D='-pd %s';C='-pg %s';B='\\\\';A='\\';CSVutil(_e,_O,_N,_B);exp_dir=_k%(now_dir,exp_dir1);os.makedirs(exp_dir,exist_ok=_A);gt_wavs_dir='%s/0_gt_wavs'%exp_dir;feature_dir=_z%exp_dir if version19==_H else _A0%exp_dir
+	D='-pd %s';C='-pg %s';B='\\\\';A='\\';CSVutil(_e,_O,_N,_B);exp_dir=_k%(now_dir,exp_dir1);os.makedirs(exp_dir,exist_ok=_A);gt_wavs_dir='%s/0_gt_wavs'%exp_dir;feature_dir=_A1%exp_dir if version19==_I else _A2%exp_dir
 	if if_f0_3:f0_dir='%s/2a_f0'%exp_dir;f0nsf_dir='%s/2b-f0nsf'%exp_dir;names=set([name.split(_P)[0]for name in os.listdir(gt_wavs_dir)])&set([name.split(_P)[0]for name in os.listdir(feature_dir)])&set([name.split(_P)[0]for name in os.listdir(f0_dir)])&set([name.split(_P)[0]for name in os.listdir(f0nsf_dir)])
 	else:names=set([name.split(_P)[0]for name in os.listdir(gt_wavs_dir)])&set([name.split(_P)[0]for name in os.listdir(feature_dir)])
 	opt=[]
 	for name in names:
 		if if_f0_3:opt.append('%s/%s.wav|%s/%s.npy|%s/%s.wav.npy|%s/%s.wav.npy|%s'%(gt_wavs_dir.replace(A,B),name,feature_dir.replace(A,B),name,f0_dir.replace(A,B),name,f0nsf_dir.replace(A,B),name,spk_id5))
 		else:opt.append('%s/%s.wav|%s/%s.npy|%s'%(gt_wavs_dir.replace(A,B),name,feature_dir.replace(A,B),name,spk_id5))
-	fea_dim=256 if version19==_H else 768
+	fea_dim=256 if version19==_I else 768
 	if if_f0_3:
 		for _ in range(2):opt.append('%s/logs/mute/0_gt_wavs/mute%s.wav|%s/logs/mute/3_feature%s/mute.npy|%s/logs/mute/2a_f0/mute.wav.npy|%s/logs/mute/2b-f0nsf/mute.wav.npy|%s'%(now_dir,sr2,now_dir,fea_dim,now_dir,now_dir,spk_id5))
 	else:
@@ -322,7 +326,7 @@ def click_train(exp_dir1,sr2,if_f0_3,spk_id5,save_epoch10,total_epoch11,batch_si
 	logger.debug('Write filelist done');logger.info('Use gpus: %s',str(gpus16))
 	if pretrained_G14=='':logger.info('No pretrained Generator')
 	if pretrained_D15=='':logger.info('No pretrained Discriminator')
-	if version19==_H or sr2==_S:config_path='v1/%s.json'%sr2
+	if version19==_I or sr2==_S:config_path='v1/%s.json'%sr2
 	else:config_path='v2/%s.json'%sr2
 	config_save_path=os.path.join(exp_dir,'config.json')
 	if not pathlib.Path(config_save_path).exists():
@@ -331,7 +335,7 @@ def click_train(exp_dir1,sr2,if_f0_3,spk_id5,save_epoch10,total_epoch11,batch_si
 	else:cmd='"%s" lib/infer/modules/train/train.py -e "%s" -sr %s -f0 %s -bs %s -te %s -se %s %s %s -l %s -c %s -sw %s -v %s'%(config.python_cmd,exp_dir1,sr2,1 if if_f0_3 else 0,batch_size12,total_epoch11,save_epoch10,C%pretrained_G14 if pretrained_G14!=''else'',D%pretrained_D15 if pretrained_D15!=''else'',1 if if_save_latest13==_A else 0,1 if if_cache_gpu17==_A else 0,1 if if_save_every_weights18==_A else 0,version19)
 	logger.info(cmd);global p;p=Popen(cmd,shell=_A,cwd=now_dir);global PID;PID=p.pid;p.wait();return i18n('Training is done, check train.log'),{_E:_B,_C:_D},{_E:_A,_C:_D}
 def train_index(exp_dir1,version19):
-	exp_dir=os.path.join(now_dir,_W,exp_dir1);os.makedirs(exp_dir,exist_ok=_A);feature_dir=_z%exp_dir if version19==_H else _A0%exp_dir
+	exp_dir=os.path.join(now_dir,_W,exp_dir1);os.makedirs(exp_dir,exist_ok=_A);feature_dir=_A1%exp_dir if version19==_I else _A2%exp_dir
 	if not os.path.exists(feature_dir):return'Please do the feature extraction first'
 	listdir_res=list(os.listdir(feature_dir))
 	if len(listdir_res)==0:return'Please perform the feature extraction first'
@@ -342,14 +346,14 @@ def train_index(exp_dir1,version19):
 		infos.append('Trying doing kmeans %s shape to 10k centers.'%big_npy.shape[0]);yield _F.join(infos)
 		try:big_npy=MiniBatchKMeans(n_clusters=10000,verbose=_A,batch_size=256*config.n_cpu,compute_labels=_B,init='random').fit(big_npy).cluster_centers_
 		except:info=traceback.format_exc();logger.info(info);infos.append(info);yield _F.join(infos)
-	np.save('%s/total_fea.npy'%exp_dir,big_npy);n_ivf=min(int(16*np.sqrt(big_npy.shape[0])),big_npy.shape[0]//39);infos.append('%s,%s'%(big_npy.shape,n_ivf));yield _F.join(infos);index=faiss.index_factory(256 if version19==_H else 768,'IVF%s,Flat'%n_ivf);infos.append('training');yield _F.join(infos);index_ivf=faiss.extract_index_ivf(index);index_ivf.nprobe=1;index.train(big_npy);faiss.write_index(index,'%s/trained_IVF%s_Flat_nprobe_%s_%s_%s.index'%(exp_dir,n_ivf,index_ivf.nprobe,exp_dir1,version19));infos.append('adding');yield _F.join(infos);batch_size_add=8192
+	np.save('%s/total_fea.npy'%exp_dir,big_npy);n_ivf=min(int(16*np.sqrt(big_npy.shape[0])),big_npy.shape[0]//39);infos.append('%s,%s'%(big_npy.shape,n_ivf));yield _F.join(infos);index=faiss.index_factory(256 if version19==_I else 768,'IVF%s,Flat'%n_ivf);infos.append('training');yield _F.join(infos);index_ivf=faiss.extract_index_ivf(index);index_ivf.nprobe=1;index.train(big_npy);faiss.write_index(index,'%s/trained_IVF%s_Flat_nprobe_%s_%s_%s.index'%(exp_dir,n_ivf,index_ivf.nprobe,exp_dir1,version19));infos.append('adding');yield _F.join(infos);batch_size_add=8192
 	for i in range(0,big_npy.shape[0],batch_size_add):index.add(big_npy[i:i+batch_size_add])
 	faiss.write_index(index,'%s/added_IVF%s_Flat_nprobe_%s_%s_%s.index'%(exp_dir,n_ivf,index_ivf.nprobe,exp_dir1,version19));infos.append('Successful Index Construction，added_IVF%s_Flat_nprobe_%s_%s_%s.index'%(n_ivf,index_ivf.nprobe,exp_dir1,version19));yield _F.join(infos)
 def change_info_(ckpt_path):
 	B='version';A='train.log'
 	if not os.path.exists(ckpt_path.replace(os.path.basename(ckpt_path),A)):return{_C:_D},{_C:_D},{_C:_D}
 	try:
-		with open(ckpt_path.replace(os.path.basename(ckpt_path),A),_I)as f:info=eval(f.read().strip(_F).split(_F)[0].split('\t')[-1]);sr,f0=info[_x],info['if_f0'];version=_d if B in info and info[B]==_d else _H;return sr,str(f0),version
+		with open(ckpt_path.replace(os.path.basename(ckpt_path),A),_G)as f:info=eval(f.read().strip(_F).split(_F)[0].split('\t')[-1]);sr,f0=info[_z],info['if_f0'];version=_d if B in info and info[B]==_d else _I;return sr,str(f0),version
 	except:traceback.print_exc();return{_C:_D},{_C:_D},{_C:_D}
 F0GPUVisible=config.dml==_B
 import re as regex,scipy.io.wavfile as wavfile
@@ -366,7 +370,7 @@ def cli_infer(com):
 	else:print("Applio-RVC-Fork Infer-CLI: Inference failed. Here's the traceback: ");print(conversion_data[0])
 def cli_pre_process(com):com=cli_split_command(com);model_name=com[0];trainset_directory=com[1];sample_rate=com[2];num_processes=int(com[3]);print('Applio-RVC-Fork Pre-process: Starting...');generator=preprocess_dataset(trainset_directory,model_name,sample_rate,num_processes);execute_generator_function(generator);print('Applio-RVC-Fork Pre-process: Finished')
 def cli_extract_feature(com):com=cli_split_command(com);model_name=com[0];gpus=com[1];num_processes=int(com[2]);has_pitch_guidance=_A if int(com[3])==1 else _B;f0_method=com[4];crepe_hop_length=int(com[5]);version=com[6];print('Applio-RVC-CLI: Extract Feature Has Pitch: '+str(has_pitch_guidance));print('Applio-RVC-CLI: Extract Feature Version: '+str(version));print('Applio-RVC-Fork Feature Extraction: Starting...');generator=extract_f0_feature(gpus,num_processes,f0_method,has_pitch_guidance,model_name,version,crepe_hop_length);execute_generator_function(generator);print('Applio-RVC-Fork Feature Extraction: Finished')
-def cli_train(com):com=cli_split_command(com);model_name=com[0];sample_rate=com[1];has_pitch_guidance=_A if int(com[2])==1 else _B;speaker_id=int(com[3]);save_epoch_iteration=int(com[4]);total_epoch=int(com[5]);batch_size=int(com[6]);gpu_card_slot_numbers=com[7];if_save_latest=_A if int(com[8])==1 else _B;if_cache_gpu=_A if int(com[9])==1 else _B;if_save_every_weight=_A if int(com[10])==1 else _B;version=com[11];pretrained_base='/kaggle/input/ax-rmf/pretrained/'if version==_H else'/kaggle/input/ax-rmf/pretrained_v2/';g_pretrained_path='%sf0G%s.pth'%(pretrained_base,sample_rate);d_pretrained_path='%sf0D%s.pth'%(pretrained_base,sample_rate);print('Applio-RVC-Fork Train-CLI: Training...');click_train(model_name,sample_rate,has_pitch_guidance,speaker_id,save_epoch_iteration,total_epoch,batch_size,if_save_latest,g_pretrained_path,d_pretrained_path,gpu_card_slot_numbers,if_cache_gpu,if_save_every_weight,version)
+def cli_train(com):com=cli_split_command(com);model_name=com[0];sample_rate=com[1];has_pitch_guidance=_A if int(com[2])==1 else _B;speaker_id=int(com[3]);save_epoch_iteration=int(com[4]);total_epoch=int(com[5]);batch_size=int(com[6]);gpu_card_slot_numbers=com[7];if_save_latest=_A if int(com[8])==1 else _B;if_cache_gpu=_A if int(com[9])==1 else _B;if_save_every_weight=_A if int(com[10])==1 else _B;version=com[11];pretrained_base='/kaggle/input/ax-rmf/pretrained/'if version==_I else'/kaggle/input/ax-rmf/pretrained_v2/';g_pretrained_path='%sf0G%s.pth'%(pretrained_base,sample_rate);d_pretrained_path='%sf0D%s.pth'%(pretrained_base,sample_rate);print('Applio-RVC-Fork Train-CLI: Training...');click_train(model_name,sample_rate,has_pitch_guidance,speaker_id,save_epoch_iteration,total_epoch,batch_size,if_save_latest,g_pretrained_path,d_pretrained_path,gpu_card_slot_numbers,if_cache_gpu,if_save_every_weight,version)
 def cli_train_feature(com):com=cli_split_command(com);model_name=com[0];version=com[1];print('Applio-RVC-Fork Train Feature Index-CLI: Training... Please wait');generator=train_index(model_name,version);execute_generator_function(generator);print('Applio-RVC-Fork Train Feature Index-CLI: Done!')
 def cli_extract_model(com):
 	com=cli_split_command(com);model_path=com[0];save_name=com[1];sample_rate=com[2];has_pitch_guidance=com[3];info=com[4];version=com[5];extract_small_model_process=extract_small_model(model_path,save_name,sample_rate,has_pitch_guidance,info,version)
@@ -374,9 +378,9 @@ def cli_extract_model(com):
 	else:print(str(extract_small_model_process));print('Applio-RVC-Fork Extract Small Model: Failed!')
 def preset_apply(preset,qfer,tmbr):
 	if str(preset)!='':
-		with open(str(preset),_I)as p:content=p.readlines();qfer,tmbr=content[0].split(_F)[0],content[1];formant_apply(qfer,tmbr)
+		with open(str(preset),_G)as p:content=p.readlines();qfer,tmbr=content[0].split(_F)[0],content[1];formant_apply(qfer,tmbr)
 	else:0
-	return{_G:qfer,_C:_D},{_G:tmbr,_C:_D}
+	return{_H:qfer,_C:_D},{_H:tmbr,_C:_D}
 def print_page_details():
 	if cli_current_page==_m:print('\n    go home            : Takes you back to home with a navigation list.\n    go infer           : Takes you to inference command execution.\n    go pre-process     : Takes you to training step.1) pre-process command execution.\n    go extract-feature : Takes you to training step.2) extract-feature command execution.\n    go train           : Takes you to training step.3) being or continue training command execution.\n    go train-feature   : Takes you to the train feature index command execution.\n    go extract-model   : Takes you to the extract small model command execution.')
 	elif cli_current_page==_n:print("\n    arg 1) model name with .pth in ./weights: mi-test.pth\n    arg 2) source audio path: myFolder\\MySource.wav\n    arg 3) output file name to be placed in './audio-outputs': MyTest.wav\n    arg 4) feature index file path: logs/mi-test/added_IVF3042_Flat_nprobe_1.index\n    arg 5) speaker id: 0\n    arg 6) transposition: 0\n    arg 7) f0 method: harvest (pm, harvest, crepe, crepe-tiny, hybrid[x,x,x,x], mangio-crepe, mangio-crepe-tiny, rmvpe)\n    arg 8) crepe hop length: 160\n    arg 9) harvest median filter radius: 3 (0-7)\n    arg 10) post resample rate: 0\n    arg 11) mix volume envelope: 1\n    arg 12) feature index ratio: 0.78 (0-1)\n    arg 13) Voiceless Consonant Protection (Less Artifact): 0.33 (Smaller number = more protection. 0.50 means Dont Use.)\n    arg 14) Whether to formant shift the inference audio before conversion: False (if set to false, you can ignore setting the quefrency and timbre values for formanting)\n    arg 15)* Quefrency for formanting: 8.0 (no need to set if arg14 is False/false)\n    arg 16)* Timbre for formanting: 1.2 (no need to set if arg14 is False/false) \n\nExample: mi-test.pth saudio/Sidney.wav myTest.wav logs/mi-test/added_index.index 0 -2 harvest 160 3 0 1 0.95 0.33 0.45 True 8.0 1.2")
@@ -441,17 +445,21 @@ def save_to_wav2_edited(dropbox):
 	if dropbox is _K:0
 	else:
 		file_path=dropbox.name;target_path=os.path.join(_Q,_R,os.path.basename(file_path))
-		if os.path.exists(target_path):os.remove(target_path);print(_A1)
+		if os.path.exists(target_path):os.remove(target_path);print(_A3)
 		shutil.move(file_path,target_path)
 def save_to_wav2(dropbox):
 	file_path=dropbox.name;target_path=os.path.join(_Q,_R,os.path.basename(file_path))
-	if os.path.exists(target_path):os.remove(target_path);print(_A1)
+	if os.path.exists(target_path):os.remove(target_path);print(_A3)
 	shutil.move(file_path,target_path);return target_path
 from assets.themes.black import Applio
 def start_upload_to_huggingface(hgf_token_gr,hgf_name_gr,hgf_repo_gr,model_name_gr,zip_name_gr,what_upload_gr):
-	A='model';login(token=hgf_token_gr,add_to_git_credential=_A,new_session=_A);hug_file_path='/kaggle/working/AX-RVC/hugupload';hug_file_name=f"{zip_name_gr}.zip"
-	if what_upload_gr==_t:os.system(f"cp /kaggle/working/AX-RVC/logs/weights/{model_name_gr}.pth {hug_file_path}");os.system(f"cp /kaggle/working/AX-RVC/logs/{model_name_gr}/added*.index {hug_file_path}");time.sleep(5);os.system(f"zip -r /kaggle/working/AX-RVC/hugupload/{hug_file_name} /kaggle/working/AX-RVC/hugupload/{model_name_gr}.pth /kaggle/working/AX-RVC/hugupload/added*.index");api=HfApi(token=hgf_token_gr);api.upload_file(path_or_fileobj=f"{hug_file_path}/{hug_file_name}",path_in_repo=hug_file_name,repo_id=f"{hgf_name_gr}/{hgf_repo_gr}",repo_type=A);time.sleep(5);os.system(f"rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}");os.system(f"rm -rf /kaggle/working/AX-RVC/hugupload/{model_name_gr}.pth");os.system(f"rm -rf /kaggle/working/AX-RVC/hugupload/added*.index");return'Succesful upload Model to Hugging Face'
-	if what_upload_gr==_A2:hug_file_name=f"{zip_name_gr}_logs.zip";os.system(f"cp -r /kaggle/working/AX-RVC/logs/{model_name_gr} {hug_file_path}");time.sleep(5);os.system(f"zip -r /kaggle/working/AX-RVC/hugupload/{hug_file_name} /kaggle/working/AX-RVC/hugupload/{model_name_gr}");api=HfApi(token=hgf_token_gr);api.upload_file(path_or_fileobj=f"{hug_file_path}/{hug_file_name}",path_in_repo=hug_file_name,repo_id=f"{hgf_name_gr}/{hgf_repo_gr}",repo_type=A);time.sleep(5);os.system(f"rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}");os.system(f"rm -rf /kaggle/working/AX-RVC/hugupload/{model_name_gr}");return'Succesful upload Logs to Hugging Face'
+	A='model';login(token=hgf_token_gr,add_to_git_credential=_A,new_session=_A);hug_file_path=_A4;hug_file_name=f"{zip_name_gr}.zip"
+	if what_upload_gr==_t:os.system(f"cp /kaggle/working/AX-RVC/logs/weights/{model_name_gr}.pth {hug_file_path}");os.system(f"cp /kaggle/working/AX-RVC/logs/{model_name_gr}/added*.index {hug_file_path}");time.sleep(2);os.chdir(hug_file_path);os.system(f"zip -r /kaggle/working/AX-RVC/hugupload/{hug_file_name} {model_name_gr}.pth added*.index");os.chdir(_u);api=HfApi(token=hgf_token_gr);api.upload_file(path_or_fileobj=f"{hug_file_path}/{hug_file_name}",path_in_repo=hug_file_name,repo_id=f"{hgf_name_gr}/{hgf_repo_gr}",repo_type=A);os.system(f"rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}");os.system(f"rm -rf /kaggle/working/AX-RVC/hugupload/{model_name_gr}.pth");os.system(f"rm -rf /kaggle/working/AX-RVC/hugupload/added*.index");return'Succesful upload Model to Hugging Face'
+	if what_upload_gr==_A5:hug_file_name=f"{zip_name_gr}_logs.zip";os.system(f"cp -r /kaggle/working/AX-RVC/logs/{model_name_gr} {hug_file_path}");time.sleep(2);os.chdir(hug_file_path);os.system(f"zip -r /kaggle/working/AX-RVC/hugupload/{hug_file_name} {model_name_gr}");os.chdir(_u);api=HfApi(token=hgf_token_gr);api.upload_file(path_or_fileobj=f"{hug_file_path}/{hug_file_name}",path_in_repo=hug_file_name,repo_id=f"{hgf_name_gr}/{hgf_repo_gr}",repo_type=A);time.sleep(2);os.system(f"rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}");os.system(f"rm -rf /kaggle/working/AX-RVC/hugupload/{model_name_gr}");return'Succesful upload Logs to Hugging Face'
+def start_download_from_huggingface(hgf_token_gr,hgf_name_gr,hgf_repo_gr,model_name_gr,zip_name_gr):
+	hug_file_path=_A4;hug_file_name=f"{zip_name_gr}.zip";hug_repo_id=f"{hgf_name_gr}/{hgf_repo_gr}";destination_folder=_w;os.chdir(hug_file_path);hf_hub_download(repo_id=hug_repo_id,filename=hug_file_name,access_token=hgf_token_gr)
+	with zipfile.ZipFile(f"{hug_file_path}/hug_file_name",_G)as zip_ref:zip_ref.extractall(destination_folder)
+	os.chdir(_u);os.system(f"rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}");return'Succesful download Logs from Hugging Face'
 mi_applio=Applio()
 def GradioSetup():
 	k='Name of Zip file:';j='Trained model name:';i='Enter HuggingFace Model-Repo name:';h='Enter HuggingFace Username:';g='Enter HuggingFace Write Token:';f='Edge-tts';e="Provide the GPU index(es) separated by '-', like 0-1-2 for using GPUs 0, 1, and 2:";d='Export file format:';c='You can also input audio files in batches. Choose one of the two options. Priority is given to reading from the folder.';b='multiple';a='Default value is 1.0';Z='Search feature ratio:';Y='Protect voiceless consonants and breath sounds to prevent artifacts such as tearing in electronic music. Set to 0.5 to disable. Decrease the value to increase protection, but it may reduce indexing accuracy:';X='Use the volume envelope of the input to replace or mix with the volume envelope of the output. The closer the ratio is to 1, the more the output envelope is used:';W='Resample the output audio in post-processing to the final sample rate. Set to 0 for no resampling:';V='Feature search database file path:';U='Max pitch:';T='Min pitch:';S='If >=3: apply median filtering to the harvested pitch results. The value represents the filter radius and can reduce breathiness.';R='Enable autotune';Q='rmvpe+';P='crepe-tiny';O='Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12):';N='Auto-detect index path and select from the dropdown:';M='Refresh';L='Mangio-Crepe Hop Length (Only applies to mangio-crepe): Hop length refers to the time it takes for the speaker to jump to a dramatic pitch. Lower hop lengths take more time to infer but are more pitch accurate.';K='crepe';J='dio';I='harvest';H='pm';G='Select the pitch extraction algorithm:';F='Convert';E='Advanced Settings';D='mangio-crepe-tiny';C='mangio-crepe';B='Output information:';A='primary';default_weight=names[0]if names else''
@@ -459,7 +467,7 @@ def GradioSetup():
 		gr.HTML('<h1> 🍏 AX-RVC </h1>')
 		with gr.Tabs():
 			with gr.TabItem(i18n('Model Inference')):
-				with gr.Row():sid0=gr.Dropdown(label=i18n('Inferencing voice:'),choices=sorted(names),value=default_weight);refresh_button=gr.Button(i18n(M),variant=A);clean_button=gr.Button(i18n('Unload voice to save GPU memory'),variant=A);clean_button.click(fn=lambda:{_G:'',_C:_D},inputs=[],outputs=[sid0])
+				with gr.Row():sid0=gr.Dropdown(label=i18n('Inferencing voice:'),choices=sorted(names),value=default_weight);refresh_button=gr.Button(i18n(M),variant=A);clean_button=gr.Button(i18n('Unload voice to save GPU memory'),variant=A);clean_button.click(fn=lambda:{_H:'',_C:_D},inputs=[],outputs=[sid0])
 				with gr.TabItem(i18n('Single')):
 					with gr.Row():spk_item=gr.Slider(minimum=0,maximum=2333,step=1,label=i18n('Select Speaker/Singer ID:'),value=0,visible=_B,interactive=_A)
 					with gr.Row():
@@ -509,7 +517,7 @@ def GradioSetup():
 				with gr.Accordion(label=i18n('Step 3: Extracting features')):
 					with gr.Row():
 						with gr.Column():gpus6=gr.Textbox(label=i18n(e),value=gpus,interactive=_A);gpu_info9=gr.Textbox(label=i18n('GPU Information:'),value=gpu_info,visible=F0GPUVisible)
-						with gr.Column():f0method8=gr.Radio(label=i18n(G),choices=[H,I,J,K,C,_J,_y],value=_J,interactive=_A);extraction_crepe_hop_length=gr.Slider(minimum=1,maximum=512,step=1,label=i18n(L),value=64,interactive=_A,visible=_B);f0method8.change(fn=lambda radio:{_E:radio in[C,D],_C:_D},inputs=[f0method8],outputs=[extraction_crepe_hop_length])
+						with gr.Column():f0method8=gr.Radio(label=i18n(G),choices=[H,I,J,K,C,_J,_A0],value=_J,interactive=_A);extraction_crepe_hop_length=gr.Slider(minimum=1,maximum=512,step=1,label=i18n(L),value=64,interactive=_A,visible=_B);f0method8.change(fn=lambda radio:{_E:radio in[C,D],_C:_D},inputs=[f0method8],outputs=[extraction_crepe_hop_length])
 						but2=gr.Button(i18n('Feature extraction'),variant=A);info2=gr.Textbox(label=i18n(B),value='',max_lines=8,interactive=_B);but2.click(extract_f0_feature,[gpus6,np7,f0method8,if_f0_3,exp_dir1,version19,extraction_crepe_hop_length],[info2])
 				with gr.Row():
 					with gr.Accordion(label=i18n('Step 4: Model training started')):
@@ -523,7 +531,7 @@ def GradioSetup():
 			with gr.TabItem(i18n('UVR5')):
 				with gr.Row():
 					with gr.Column():model_select=gr.Radio(label=i18n('Model Architecture:'),choices=[_Z,_j],value=_Z,interactive=_A);dir_wav_input=gr.Textbox(label=i18n('Enter the path of the audio folder to be processed:'),value=os.path.join(now_dir,_Q,_R));wav_inputs=gr.File(file_count=b,label=i18n(c))
-					with gr.Column():model_choose=gr.Dropdown(label=i18n('Model:'),choices=uvr5_names);agg=gr.Slider(minimum=0,maximum=20,step=1,label='Vocal Extraction Aggressive',value=10,interactive=_A,visible=_B);opt_vocal_root=gr.Textbox(label=i18n('Specify the output folder for vocals:'),value=_v);opt_ins_root=gr.Textbox(label=i18n('Specify the output folder for accompaniment:'),value=_w);format0=gr.Radio(label=i18n(d),choices=[_X,_Y,_g,_h],value=_Y,interactive=_A)
+					with gr.Column():model_choose=gr.Dropdown(label=i18n('Model:'),choices=uvr5_names);agg=gr.Slider(minimum=0,maximum=20,step=1,label='Vocal Extraction Aggressive',value=10,interactive=_A,visible=_B);opt_vocal_root=gr.Textbox(label=i18n('Specify the output folder for vocals:'),value=_x);opt_ins_root=gr.Textbox(label=i18n('Specify the output folder for accompaniment:'),value=_y);format0=gr.Radio(label=i18n(d),choices=[_X,_Y,_g,_h],value=_Y,interactive=_A)
 					model_select.change(fn=update_model_choices,inputs=model_select,outputs=model_choose);but2=gr.Button(i18n(F),variant=A);vc_output4=gr.Textbox(label=i18n(B));but2.click(uvr,[model_choose,dir_wav_input,opt_vocal_root,wav_inputs,opt_ins_root,agg,format0,model_select],[vc_output4])
 			with gr.TabItem(i18n('TTS')):
 				with gr.Column():text_test=gr.Textbox(label=i18n('Text:'),placeholder=i18n('Enter the text you want to convert to voice...'),lines=6)
@@ -538,7 +546,7 @@ def GradioSetup():
 				with gr.Accordion(label=i18n('Upload Model and Logs')):
 					with gr.Row():
 						with gr.Column():hgf_token_gr=gr.Textbox(label=g);hgf_name_gr=gr.Textbox(label=h);hgf_repo_gr=gr.Textbox(label=i)
-						with gr.Column():model_name_gr=gr.Textbox(label=j);zip_name_gr=gr.Textbox(label=k);what_upload_gr=gr.Radio(label='Upload files:',choices=[_t,_A2],value=_t,interactive=_A,visible=_A)
+						with gr.Column():model_name_gr=gr.Textbox(label=j);zip_name_gr=gr.Textbox(label=k);what_upload_gr=gr.Radio(label='Upload files:',choices=[_t,_A5],value=_t,interactive=_A,visible=_A)
 					with gr.Row():uploadbut1=gr.Button('Start upload',variant=A);uploadinfo1=gr.Textbox(label=B,value='');uploadbut1.click(start_upload_to_huggingface,[hgf_token_gr,hgf_name_gr,hgf_repo_gr,model_name_gr,zip_name_gr,what_upload_gr],[uploadinfo1])
 				with gr.Accordion(label=i18n('Download Logs files for training')):
 					with gr.Row():
