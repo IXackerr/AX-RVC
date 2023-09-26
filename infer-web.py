@@ -1814,12 +1814,12 @@ def start_download_from_huggingface(hgf_token_gr_d, hgf_name_gr_d, hgf_repo_gr_d
 
     os.chdir(hug_file_path)
     hf_hub_download(repo_id=hug_repo_id, filename=hug_file_name, token=hgf_token_gr_d)
-
+    time.sleep(2)
     with zipfile.ZipFile(f"{hug_file_path}/hug_file_name", 'r') as zip_ref:
         zip_ref.extractall(destination_folder)
 
     os.chdir("/kaggle/working/AX-RVC/")
-    
+    time.sleep(2)
 
     os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}')
 
