@@ -1808,12 +1808,12 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
 def start_download_from_huggingface(hgf_token_gr_d, hgf_name_gr_d, hgf_repo_gr_d, zip_name_gr_d):
 
     hug_file_path = "/kaggle/working/AX-RVC/hugupload"
-    hug_file_name = f'{zip_name_gr}.zip'
-    hug_repo_id = f"{hgf_name_gr}/{hgf_repo_gr}"
+    hug_file_name = f'{zip_name_gr_d}.zip'
+    hug_repo_id = f"{hgf_name_gr_d}/{hgf_repo_gr_d}"
     destination_folder = "/kaggle/working/AX-RVC/logs"
 
     os.chdir(hug_file_path)
-    hf_hub_download(repo_id=hug_repo_id, filename=hug_file_name, access_token=hgf_token_gr)
+    hf_hub_download(repo_id=hug_repo_id, filename=hug_file_name, access_token=hgf_token_gr_d)
 
     with zipfile.ZipFile(f"{hug_file_path}/hug_file_name", 'r') as zip_ref:
         zip_ref.extractall(destination_folder)
