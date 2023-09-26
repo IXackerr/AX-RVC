@@ -1778,7 +1778,27 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
         os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/added*.index')
 
         return "Succesful upload Model to Hugging Face"
+    if (what_upload_gr == "Model Log Folder"):
+        hug_file_name = f'{zip_name_gr}_logs.zip'
+        os.system(f'cp /kaggle/working/AX-RVC/logs/{model_name_gr} {hug_file_path}')
+        time.sleep(5)
+        os.system(f'zip -r /kaggle/working/AX-RVC/hugupload/{hug_file_name} /kaggle/working/AX-RVC/hugupload/{model_name_gr}')
 
+        api = HfApi(
+            token=hgf_token_gr,
+        )
+        api.upload_file(
+            path_or_fileobj=f"{hug_file_path}/{hug_file_name}",
+            path_in_repo=hug_file_name,
+            repo_id=f"{hgf_name_gr}/{hgf_repo_gr}",
+            repo_type="model",
+        )
+        time.sleep(5)
+
+        os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}')
+        os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/{model_name_gr}')
+
+        return "Succesful upload Logs to Hugging Face"
 
 # Crear una instancia de Applio
 mi_applio = Applio()
