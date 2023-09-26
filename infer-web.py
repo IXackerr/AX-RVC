@@ -1805,7 +1805,7 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
 
         return "Succesful upload Logs to Hugging Face"
 
-def start_download_from_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_name_gr, zip_name_gr):
+def start_download_from_huggingface(hgf_token_gr_d, hgf_name_gr_d, hgf_repo_gr_d, zip_name_gr_d):
 
     hug_file_path = "/kaggle/working/AX-RVC/hugupload"
     hug_file_name = f'{zip_name_gr}.zip'

@@ -456,7 +456,7 @@ def start_upload_to_huggingface(hgf_token_gr,hgf_name_gr,hgf_repo_gr,model_name_
 	A='model';login(token=hgf_token_gr,add_to_git_credential=_A,new_session=_A);hug_file_path=_A4;hug_file_name=f"{zip_name_gr}.zip"
 	if what_upload_gr==_t:os.system(f"cp /kaggle/working/AX-RVC/logs/weights/{model_name_gr}.pth {hug_file_path}");os.system(f"cp /kaggle/working/AX-RVC/logs/{model_name_gr}/added*.index {hug_file_path}");time.sleep(2);os.chdir(hug_file_path);os.system(f"zip -r /kaggle/working/AX-RVC/hugupload/{hug_file_name} {model_name_gr}.pth added*.index");os.chdir(_u);api=HfApi(token=hgf_token_gr);api.upload_file(path_or_fileobj=f"{hug_file_path}/{hug_file_name}",path_in_repo=hug_file_name,repo_id=f"{hgf_name_gr}/{hgf_repo_gr}",repo_type=A);os.system(f"rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}");os.system(f"rm -rf /kaggle/working/AX-RVC/hugupload/{model_name_gr}.pth");os.system(f"rm -rf /kaggle/working/AX-RVC/hugupload/added*.index");return'Succesful upload Model to Hugging Face'
 	if what_upload_gr==_A5:hug_file_name=f"{zip_name_gr}_logs.zip";os.system(f"cp -r /kaggle/working/AX-RVC/logs/{model_name_gr} {hug_file_path}");time.sleep(2);os.chdir(hug_file_path);os.system(f"zip -r /kaggle/working/AX-RVC/hugupload/{hug_file_name} {model_name_gr}");os.chdir(_u);api=HfApi(token=hgf_token_gr);api.upload_file(path_or_fileobj=f"{hug_file_path}/{hug_file_name}",path_in_repo=hug_file_name,repo_id=f"{hgf_name_gr}/{hgf_repo_gr}",repo_type=A);time.sleep(2);os.system(f"rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}");os.system(f"rm -rf /kaggle/working/AX-RVC/hugupload/{model_name_gr}");return'Succesful upload Logs to Hugging Face'
-def start_download_from_huggingface(hgf_token_gr,hgf_name_gr,hgf_repo_gr,model_name_gr,zip_name_gr):
+def start_download_from_huggingface(hgf_token_gr_d,hgf_name_gr_d,hgf_repo_gr_d,zip_name_gr_d):
 	hug_file_path=_A4;hug_file_name=f"{zip_name_gr}.zip";hug_repo_id=f"{hgf_name_gr}/{hgf_repo_gr}";destination_folder=_w;os.chdir(hug_file_path);hf_hub_download(repo_id=hug_repo_id,filename=hug_file_name,access_token=hgf_token_gr)
 	with zipfile.ZipFile(f"{hug_file_path}/hug_file_name",_G)as zip_ref:zip_ref.extractall(destination_folder)
 	os.chdir(_u);os.system(f"rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}");return'Succesful download Logs from Hugging Face'
@@ -552,7 +552,7 @@ def GradioSetup():
 					with gr.Row():
 						with gr.Column():hgf_token_gr_d=gr.Textbox(label=g);hgf_name_gr_d=gr.Textbox(label=h)
 						with gr.Column():hgf_repo_gr_d=gr.Textbox(label=i);zip_name_gr_d=gr.Textbox(label=j)
-					with gr.Row():downloadlogsbut1=gr.Button('Start download',variant=A);downloadlogsinfo1=gr.Textbox(label=B,value='');downloadlogsbut1.click(start_upload_to_huggingface,[hgf_token_gr,hgf_name_gr,hgf_repo_gr,zip_name_gr],[uploadinfo1])
+					with gr.Row():downloadlogsbut1=gr.Button('Start download',variant=A);downloadlogsinfo1=gr.Textbox(label=B,value='');downloadlogsbut1.click(start_download_from_huggingface,[hgf_token_gr_d,hgf_name_gr_d,hgf_repo_gr_d,zip_name_gr_d],[downloadlogsinfo1])
 			with gr.TabItem(i18n('Resources')):resources.download_model();resources.download_backup();resources.download_dataset(trainset_dir4);resources.download_audio();resources.youtube_separator()
 			with gr.TabItem(i18n('Extra')):
 				gr.Markdown(value=i18n('This section contains some extra utilities that often may be in experimental phases'))
