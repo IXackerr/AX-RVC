@@ -1813,7 +1813,7 @@ def start_download_from_huggingface(hgf_token_gr_d, hgf_name_gr_d, hgf_repo_gr_d
     destination_folder = "/kaggle/working/AX-RVC/logs"
 
     os.chdir(hug_file_path)
-    hf_hub_download(repo_id=hug_repo_id, filename=hug_file_name, access_token=hgf_token_gr_d)
+    hf_hub_download(repo_id=hug_repo_id, filename=hug_file_name, token=hgf_token_gr_d)
 
     with zipfile.ZipFile(f"{hug_file_path}/hug_file_name", 'r') as zip_ref:
         zip_ref.extractall(destination_folder)
