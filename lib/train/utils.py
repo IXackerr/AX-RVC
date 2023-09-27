@@ -464,7 +464,12 @@ def get_logger(model_dir, filename="train.log"):
     h = logging.FileHandler(os.path.join(model_dir, filename))
     h.setLevel(logging.DEBUG)
     h.setFormatter(formatter)
+    
+    stream_handler = logging.StreamHandler()
+    stream_handler.setLevel(logging.INFO)
+
     logger.addHandler(h)
+    logger.addHandler(stream_handler)
     return logger
 
 
