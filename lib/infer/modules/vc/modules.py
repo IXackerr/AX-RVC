@@ -19,9 +19,11 @@ from lib.infer.infer_libs.infer_pack.models import (
 )
 from lib.infer.modules.vc.pipeline import Pipeline
 from lib.infer.modules.vc.utils import *
+import tabs.merge as merge
 import time
 import scipy.io.wavfile as wavfile
-
+import glob
+from shutil import move
 sup_audioext = {
     "wav",
     "mp3",
@@ -77,7 +79,7 @@ class VC:
             "__type__": "update",
         }
 
-        if not sid:
+        if sid == "" or sid == []:
             if self.hubert_model is not None:  # 考虑到轮询, 需要加个判断看是否 sid 是由有模型切换到无模型的
                 logger.info("Clean model cache")
                 del (
@@ -174,6 +176,292 @@ class VC:
     
 
     def vc_single(
+        self,
+        sid,
+        input_audio_path1,
+        f0_up_key,
+        f0_file,
+        f0_method,
+        file_index,
+        file_index2,
+        index_rate,
+        filter_radius,
+        resample_sr,
+        rms_mix_rate,
+        protect,
+        format1,
+        split_audio,
+        crepe_hop_length,
+        f0_min,
+        note_min,
+        f0_max,
+        note_max,
+        f0_autotune,
+    ):
+        global total_time
+        total_time = 0
+        start_time = time.time()
+        if not input_audio_path1:
+            return "You need to upload an audio", None
+        
+        if (not os.path.exists(input_audio_path1)) and (not os.path.exists(os.path.join(now_dir, input_audio_path1))):
+            return "Audio was not properly selected or doesn't exist", None
+        if split_audio:
+            resultm, new_dir_path = merge.process_audio(input_audio_path1)
+            print(resultm)
+            print("------")
+            print(new_dir_path)
+            if resultm == "Finish":
+
+                file_index = (
+                (
+                    file_index.strip(" ")
+                    .strip('"')
+                    .strip("\n")
+                    .strip('"')
+                    .strip(" ")
+                    .replace("trained", "added")
+                )
+                if file_index != ""
+                else file_index2
+                )  # 防止小白写错，自动帮他替换掉
+
+                # Use the code from vc_multi to process the segmented audio
+                if rvc_globals.NotesOrHertz and f0_method != 'rmvpe':
+                    f0_min = note_to_hz(note_min) if note_min else 50
+                    f0_max = note_to_hz(note_max) if note_max else 1100
+                    print(f"Converted Min pitch: freq - {f0_min}\n"
+                          f"Converted Max pitch: freq - {f0_max}")
+                else:
+                    f0_min = f0_min or 50
+                    f0_max = f0_max or 1100
+                
+                try:
+                    dir_path = (
+                        new_dir_path.strip(" ").strip('"').strip("\n").strip('"').strip(" ")
+                    )  # Prevent leading/trailing whitespace and quotes
+                    try:
+                        if dir_path != "":
+                            paths = [
+                                os.path.join(root, name)
+                                for root, _, files in os.walk(dir_path, topdown=False)
+                                for name in files
+                                if name.endswith(tuple(sup_audioext)) and root == dir_path
+                            ]
+                    except:
+                        traceback.print_exc()
+                    print(paths)
+                    for path in paths:
+                        info, opt = self.vc_single_dont_save(
+                            sid,
+                            path,
+                            path,
+                            f0_up_key,
+                            None,
+                            f0_method,
+                            file_index,
+                            file_index2,
+                            # file_big_npy,
+                            index_rate,
+                            filter_radius,
+                            resample_sr,
+                            rms_mix_rate,
+                            protect,
+                            crepe_hop_length, 
+                            f0_min, 
+                            note_min, 
+                            f0_max, 
+                            note_max,
+                            f0_autotune,
+                        )
+                        if "Success" in info:
+                            try:
+                                tgt_sr, audio_opt = opt
+                                output_filename = os.path.splitext(os.path.basename(path))[0]
+                                if format1 in ["wav", "flac"]:
+                                    sf.write(
+                                        "%s/%s.%s"
+                                        % (new_dir_path, output_filename, format1),
+                                        audio_opt,
+                                        tgt_sr,
+                                    )
+                                else:
+                                    path = "%s/%s.%s" % (new_dir_path, output_filename, format1)
+                                    with BytesIO() as wavf:
+                                        sf.write(
+                                            wavf,
+                                            audio_opt,
+                                            tgt_sr,
+                                            format="wav"
+                                        )
+                                        wavf.seek(0, 0)
+                                        with open(path, "wb") as outf:
+                                            wav2(wavf, outf, format1)
+                            except:
+                                print(traceback.format_exc())
+                except:
+                    print(traceback.format_exc())
+
+                time.sleep(0.5)
+                print("Finished processing segmented audio, now merging audio...")
+
+                # Une el audio segmentado
+                merge_timestamps_file = os.path.join(os.path.dirname(new_dir_path), f"{os.path.basename(input_audio_path1).split('.')[0]}_timestamps.txt")
+                merge.merge_audio(merge_timestamps_file)
+
+                # Calculate the elapsed time
+                end_time = time.time()
+                total_time = end_time - start_time
+
+                merged_audio_path = os.path.join(os.path.dirname(new_dir_path), "audio-outputs", f"{os.path.basename(input_audio_path1).split('.')[0]}_merged.wav")
+                index_info = (
+                    "Index:\n%s." % file_index
+                    if os.path.exists(file_index)
+                    else "Index not used."
+                )
+
+                return (
+                "Success.\n%s\nTime:\infer: %s."
+                % (index_info, total_time),
+                merged_audio_path,
+                )
+    
+        print(f"\nStarting inference for '{os.path.basename(input_audio_path1)}'")
+        print("-------------------")
+        f0_up_key = int(f0_up_key)
+        if rvc_globals.NotesOrHertz and f0_method != 'rmvpe':
+            f0_min = note_to_hz(note_min) if note_min else 50
+            f0_max = note_to_hz(note_max) if note_max else 1100
+            print(f"Converted Min pitch: freq - {f0_min}\n"
+                  f"Converted Max pitch: freq - {f0_max}")
+        else:
+            f0_min = f0_min or 50
+            f0_max = f0_max or 1100
+        try:
+            print(f"Attempting to load {input_audio_path1}....")
+            audio = load_audio(file=input_audio_path1,
+                               sr=16000,
+                               DoFormant=rvc_globals.DoFormant,
+                               Quefrency=rvc_globals.Quefrency,
+                               Timbre=rvc_globals.Timbre)
+            
+            audio_max = np.abs(audio).max() / 0.95
+            if audio_max > 1:
+                audio /= audio_max
+            times = [0, 0, 0]
+
+            if self.hubert_model is None:
+                self.hubert_model = load_hubert(self.config)
+
+            try:
+                self.if_f0 = self.cpt.get("f0", 1)
+            except NameError:
+                message = "Model was not properly selected"
+                print(message)
+                return message, None
+            
+            file_index = (
+                (
+                    file_index.strip(" ")
+                    .strip('"')
+                    .strip("\n")
+                    .strip('"')
+                    .strip(" ")
+                    .replace("trained", "added")
+                )
+                if file_index != ""
+                else file_index2
+            )  # 防止小白写错，自动帮他替换掉
+
+            try:
+                audio_opt = self.pipeline.pipeline(
+                    self.hubert_model,
+                    self.net_g,
+                    sid,
+                    audio,
+                    input_audio_path1,
+                    times,
+                    f0_up_key,
+                    f0_method,
+                    file_index,
+                    index_rate,
+                    self.if_f0,
+                    filter_radius,
+                    self.tgt_sr,
+                    resample_sr,
+                    rms_mix_rate,
+                    self.version,
+                    protect,
+                    crepe_hop_length,
+                    f0_autotune,
+                    f0_file=f0_file,
+                    f0_min=f0_min,
+                    f0_max=f0_max
+                    )
+            except AssertionError:
+                message = "Mismatching index version detected (v1 with v2, or v2 with v1)."
+                print(message)
+                return message, None
+            except NameError:
+                message = "RVC libraries are still loading. Please try again in a few seconds."
+                print(message)
+                return message, None
+
+            if self.tgt_sr != resample_sr >= 16000:
+                tgt_sr = resample_sr
+            else:
+                tgt_sr = self.tgt_sr
+            index_info = (
+                "Index:\n%s." % file_index
+                if os.path.exists(file_index)
+                else "Index not used."
+            )
+            end_time = time.time()
+            total_time = end_time - start_time
+            opt_root = "assets/audios/audio-outputs"
+            os.makedirs(opt_root, exist_ok=True)
+            opt_filename = "generated_audio_{}"
+            output_count = 1
+            while True:
+                current_output_path = os.path.join(opt_root, opt_filename.format(output_count))
+                if not os.path.exists(current_output_path):
+                    break
+                output_count += 1
+            try:
+                if format1 in ["wav", "flac"]:
+                    sf.write(
+                        "%s.%s"
+                        % (current_output_path, format1),
+                        audio_opt,
+                        self.tgt_sr,
+                    )
+                    print(f"💾 Generated audio saved to: {current_output_path}")
+                else:
+                    path = "%s.%s" % (current_output_path, format1)
+                    with BytesIO() as wavf:
+                        sf.write(
+                            wavf,
+                            audio_opt,
+                            self.tgt_sr,
+                            format="wav"
+                        )
+                        wavf.seek(0, 0)
+                        with open(path, "wb") as outf:
+                                wav2(wavf, outf, format1)
+                    print(f"💾 Generated audio saved to: {current_output_path}")
+            except:
+                info = traceback.format_exc()
+            return (
+                "Success.\n%s\nTime:\nnpy: %.2fs, f0: %.2fs, infer: %.2fs."
+                % (index_info, *times),
+                (tgt_sr, audio_opt),
+            )
+        except:
+            info = traceback.format_exc()
+            logger.warn(info)
+            return info, (None, None)
+
+    def vc_single_dont_save(
         self,
         sid,
         input_audio_path1,
@@ -295,20 +583,6 @@ class VC:
             )
             end_time = time.time()
             total_time = end_time - start_time
-
-            output_folder = "assets/audios/audio-outputs"
-            os.makedirs(output_folder, exist_ok=True)  
-            output_filename = "generated_audio_{}.wav"
-            output_count = 1
-            while True:
-                current_output_path = os.path.join(output_folder, output_filename.format(output_count))
-                if not os.path.exists(current_output_path):
-                    break
-                output_count += 1
-            
-            wavfile.write(current_output_path, self.tgt_sr, audio_opt)
-            print(f"Generated audio saved to: {current_output_path}")
-            
             return (
                 "Success.\n%s\nTime:\nnpy: %.2fs, f0: %.2fs, infer: %.2fs."
                 % (index_info, *times),
@@ -319,140 +593,9 @@ class VC:
             logger.warn(info)
             return info, (None, None)
 
-    def vc_single_dont_save(
-        self,
-        sid,
-        input_audio_path0,
-        input_audio_path1,
-        f0_up_key,
-        f0_file,
-        f0_method,
-        file_index,
-        file_index2,
-        index_rate,
-        filter_radius,
-        resample_sr,
-        rms_mix_rate,
-        protect,
-        crepe_hop_length,
-        f0_min,
-        note_min,
-        f0_max,
-        note_max,
-        f0_autotune,
-    ):
-        global total_time
-        total_time = 0
-        start_time = time.time()
-        if not input_audio_path0 and not input_audio_path1:
-            return "You need to upload an audio", None
-        
-        if (not os.path.exists(input_audio_path0)) and (not os.path.exists(os.path.join(now_dir, input_audio_path0))):
-            return "Audio was not properly selected or doesn't exist", None
-        
-        input_audio_path1 = input_audio_path1 or input_audio_path0
-        print(f"\nStarting inference for '{os.path.basename(input_audio_path1)}'")
-        print("-------------------")
-        f0_up_key = int(f0_up_key)
-        if rvc_globals.NotesOrHertz and f0_method != 'rmvpe':
-            f0_min = note_to_hz(note_min) if note_min else 50
-            f0_max = note_to_hz(note_max) if note_max else 1100
-            print(f"Converted Min pitch: freq - {f0_min}\n"
-                  f"Converted Max pitch: freq - {f0_max}")
-        else:
-            f0_min = f0_min or 50
-            f0_max = f0_max or 1100
-        try:
-            input_audio_path1 = input_audio_path1 or input_audio_path0
-            print(f"Attempting to load {input_audio_path1}....")
-            audio = load_audio(file=input_audio_path1,
-                               sr=16000,
-                               DoFormant=rvc_globals.DoFormant,
-                               Quefrency=rvc_globals.Quefrency,
-                               Timbre=rvc_globals.Timbre)
-            
-            audio_max = np.abs(audio).max() / 0.95
-            if audio_max > 1:
-                audio /= audio_max
-            times = [0, 0, 0]
 
-            if self.hubert_model is None:
-                self.hubert_model = load_hubert(self.config)
 
-            try:
-                self.if_f0 = self.cpt.get("f0", 1)
-            except NameError:
-                message = "Model was not properly selected"
-                print(message)
-                return message, None
-            
-            file_index = (
-                (
-                    file_index.strip(" ")
-                    .strip('"')
-                    .strip("\n")
-                    .strip('"')
-                    .strip(" ")
-                    .replace("trained", "added")
-                )
-                if file_index != ""
-                else file_index2
-            )  # 防止小白写错，自动帮他替换掉
 
-            try:
-                audio_opt = self.pipeline.pipeline(
-                    self.hubert_model,
-                    self.net_g,
-                    sid,
-                    audio,
-                    input_audio_path1,
-                    times,
-                    f0_up_key,
-                    f0_method,
-                    file_index,
-                    index_rate,
-                    self.if_f0,
-                    filter_radius,
-                    self.tgt_sr,
-                    resample_sr,
-                    rms_mix_rate,
-                    self.version,
-                    protect,
-                    crepe_hop_length,
-                    f0_autotune,
-                    f0_file=f0_file,
-                    f0_min=f0_min,
-                    f0_max=f0_max
-                    )
-            except AssertionError:
-                message = "Mismatching index version detected (v1 with v2, or v2 with v1)."
-                print(message)
-                return message, None
-            except NameError:
-                message = "RVC libraries are still loading. Please try again in a few seconds."
-                print(message)
-                return message, None
-
-            if self.tgt_sr != resample_sr >= 16000:
-                tgt_sr = resample_sr
-            else:
-                tgt_sr = self.tgt_sr
-            index_info = (
-                "Index:\n%s." % file_index
-                if os.path.exists(file_index)
-                else "Index not used."
-            )
-            end_time = time.time()
-            total_time = end_time - start_time
-            return (
-                "Success.\n%s\nTime:\nnpy: %.2fs, f0: %.2fs, infer: %.2fs."
-                % (index_info, *times),
-                (tgt_sr, audio_opt),
-            )
-        except:
-            info = traceback.format_exc()
-            logger.warn(info)
-            return info, (None, None)
 
 
     def vc_multi(
@@ -508,7 +651,7 @@ class VC:
             infos = []
             print(paths)
             for path in paths:
-                info, opt = self.vc_single(
+                info, opt = self.vc_single_dont_save(
                     sid,
                     path,
                     f0_up_key,

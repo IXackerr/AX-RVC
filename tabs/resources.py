@@ -2,7 +2,6 @@ import subprocess
 import os
 import sys
 
-sys.path.append("..")
 import errno
 import shutil
 import yt_dlp
@@ -23,7 +22,9 @@ import requests
 import wget
 import ffmpeg
 import hashlib
-now_dir = os.getcwd()
+current_script_path = os.path.abspath(__file__)
+script_parent_directory = os.path.dirname(current_script_path)
+now_dir = os.path.dirname(script_parent_directory)
 sys.path.append(now_dir)
 import re
 from lib.infer.modules.vc.pipeline import Pipeline
@@ -95,11 +96,13 @@ def calculate_md5(file_path):
         for chunk in iter(lambda: f.read(4096), b""):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
-
+import unicodedata
 
 def format_title(title):
-    formatted_title = re.sub(r"[^\w\s-]", "", title)
-    formatted_title = formatted_title.replace(" ", "_")
+    formatted_title = unicodedata.normalize('NFKD', title).encode('ascii', 'ignore').decode('utf-8')
+    formatted_title = re.sub(r'[\u2500-\u257F]+', '', title)
+    formatted_title = re.sub(r'[^\w\s-]', '', title)
+    formatted_title = re.sub(r'\s+', '_', formatted_title)
     return formatted_title
 
 
@@ -140,7 +143,7 @@ def find_folder_parent(search_dir, folder_name):
             return os.path.abspath(dirpath)
     return None
 
-file_path = find_folder_parent(".", "assets")
+file_path = find_folder_parent(now_dir, "assets")
 tmp = os.path.join(file_path, "temp")
 shutil.rmtree(tmp, ignore_errors=True)
 os.environ["temp"] = tmp
@@ -157,11 +160,11 @@ def get_mediafire_download_link(url):
         return None
 
 def download_from_url(url):
-    file_path = find_folder_parent(".", "assets")
+    file_path = find_folder_parent(now_dir, "assets")
     print(file_path)
     zips_path = os.path.join(file_path, "assets", "zips")
-    if not os.path.exists(zips_path):
-        os.makedirs(zips_path)
+    print(zips_path)
+    os.makedirs(zips_path, exist_ok=True)
     if url != "":
         print(i18n("Downloading the file: ") + f"{url}")
         if "drive.google.com" in url:
@@ -265,8 +268,7 @@ def download_from_url(url):
                         .split("filename=")[-1]
                         .strip('";')
                     )
-                    if not os.path.exists(zips_path):
-                        os.makedirs(zips_path)
+                    os.makedirs(zips_path, exist_ok=True)
                     with open(os.path.join(zips_path, file_name), "wb") as newfile:
                         newfile.write(response.content)
                         os.chdir(file_path)
@@ -283,6 +285,38 @@ def download_from_url(url):
             if download_link:
                 os.chdir(zips_path)
                 wget.download(download_link)
+            else:
+                return None
+        elif "www.weights.gg" in url:
+            #Pls weights creator dont fix this because yes. c:
+            url_parts = url.split("/")
+            weights_gg_index = url_parts.index("www.weights.gg")
+            if weights_gg_index != -1 and weights_gg_index < len(url_parts) - 1:
+                model_part = "/".join(url_parts[weights_gg_index + 1:])
+                if "models" in model_part:
+                    model_part = model_part.split("models/")[-1]
+                    print(model_part)
+                    if model_part:
+                        download_url = f"https://www.weights.gg/es/models/{model_part}"
+                        response = requests.get(download_url)
+                        if response.status_code == 200:
+                            soup = BeautifulSoup(response.text, "html.parser")
+                            button_link = soup.find("a", class_="bg-black text-white px-3 py-2 rounded-lg flex items-center gap-1")
+                            if button_link:
+                                download_link = button_link["href"]
+                                result = download_from_url(download_link)
+                                if result == "downloaded":
+                                    return "downloaded"
+                                else:
+                                    return None
+                            else:
+                                return None
+                        else:
+                            return None
+                    else:
+                        return None
+                else:
+                    return None
             else:
                 return None
         else:
@@ -413,7 +447,7 @@ def extract_and_show_progress(zipfile_path, unzips_path):
     
 
 def load_downloaded_model(url):
-    parent_path = find_folder_parent(".", "assets")
+    parent_path = find_folder_parent(now_dir, "assets")
     try:
         infos = []
         zips_path = os.path.join(parent_path, "assets", "zips")
@@ -559,7 +593,7 @@ def load_downloaded_model(url):
 
 
 def load_dowloaded_dataset(url):
-    parent_path = find_folder_parent(".", "assets")
+    parent_path = find_folder_parent(now_dir, "assets")
     infos = []
     try:
         zips_path = os.path.join(parent_path, "assets", "zips")
@@ -670,137 +704,100 @@ def load_dowloaded_dataset(url):
 SAVE_ACTION_CONFIG = {
     i18n("Save all"): {
         'destination_folder': "manual_backup",
-        'copy_files': True,  # "Save all" copia todos los archivos y carpetas
+        'copy_files': True,  # "Save all" Copy all files and folders
         'include_weights': False
     },
     i18n("Save D and G"): {
         'destination_folder': "manual_backup",
-        'copy_files': False,  # "Save D and G" no copia todo, solo archivos específicos
+        'copy_files': False,  # "Save D and G" Do not copy everything, only specific files
         'files_to_copy': ["D_*.pth", "G_*.pth", "added_*.index"],
         'include_weights': True,
     },
     i18n("Save voice"): {
-        'destination_folder': "Finished",
-        'copy_files': False,  # "Save voice" no copia todo, solo archivos específicos
+        'destination_folder': "finished",
+        'copy_files': False,  # "Save voice" Do not copy everything, only specific files
         'files_to_copy': ["added_*.index"],
         'include_weights': True,
     },
 }
 
+import os
+import shutil
+import zipfile
+import glob
+import fnmatch
+
+import os
+import shutil
+import zipfile
+import glob
+
+import os
+import shutil
+import zipfile
+
+
 def save_model(modelname, save_action):
-    parent_path = find_folder_parent(".", "assets")
-    zips_path = os.path.join(parent_path, "assets", "zips")
-    dst = os.path.join(zips_path, modelname)
-    logs_path = os.path.join(parent_path, "logs", modelname)
-    weights_path = os.path.join(parent_path, "logs", "weights", f"{modelname}.pth")
-    save_folder = parent_path
-    infos = []
-
     try:
+        # Define paths
+        parent_path = find_folder_parent(now_dir, "assets")
+        weight_path = os.path.join(parent_path, "logs", "weights", f"{modelname}.pth")
+        logs_path = os.path.join(parent_path, "logs", modelname)
+        save_folder = SAVE_ACTION_CONFIG[save_action]['destination_folder']
+        save_path = os.path.join(parent_path, "logs", save_folder, modelname + ".zip")
+        infos = []
+
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+
+        # Comprobar si el directorio de logs existe
         if not os.path.exists(logs_path):
-            raise Exception("No model found.")
+            raise Exception(f"The logs directory '{logs_path}' does not exist.")
 
-        if not "content" in parent_path:
-            save_folder = os.path.join(parent_path, "logs")
-        else:
-            save_folder = "/content/drive/MyDrive/RVC_Backup"
-
-        infos.append(i18n("Save model"))
-        yield "\n".join(infos)
-
-        if not os.path.exists(save_folder):
-            os.mkdir(save_folder)
-        if not os.path.exists(os.path.join(save_folder, "manual_backup")):
-            os.mkdir(os.path.join(save_folder, "manual_backup"))
-        if not os.path.exists(os.path.join(save_folder, "finished")):
-            os.mkdir(os.path.join(save_folder, "finished"))
-
-        if os.path.exists(zips_path):
-            shutil.rmtree(zips_path)
-
-        os.mkdir(zips_path)
-        added_file = glob.glob(os.path.join(logs_path, "added_*.index"))
-        d_file = glob.glob(os.path.join(logs_path, "D_*.pth"))
-        g_file = glob.glob(os.path.join(logs_path, "G_*.pth"))
-
-        if save_action == i18n("Choose the method"):
-            raise Exception("No method chosen.")
-
-        # Obtener la configuración para la acción de guardado seleccionada
-        save_action_config = SAVE_ACTION_CONFIG.get(save_action)
-
-        if save_action_config is None:
-            raise Exception("Invalid save action.")
-
-        # Definir el destino y los archivos a copiar según la configuración
-        destination_folder = save_action_config['destination_folder']
-        copy_files = save_action_config['copy_files']
-        files_to_copy = save_action_config.get('files_to_copy', [])
-
-        if copy_files:
-            # Utilizar shutil.copytree para copiar todo el contenido recursivamente
-            shutil.copytree(logs_path, dst)
-        else:
-            save_folder = os.path.join(save_folder, destination_folder)
-
-        yield "\n".join(infos)
-
-        # Manejo de archivos de pesos según la configuración
-        if save_action_config['include_weights']:
-            if not os.path.exists(weights_path):
-                infos.append(i18n("Saved without inference model..."))
-            else:
-                if copy_files:
-                    shutil.copy(weights_path, dst)
-                else:
-                    with zipfile.ZipFile(os.path.join(zips_path, f"{modelname}.zip"), 'a', zipfile.ZIP_DEFLATED) as zipf:
-                        zipf.write(weights_path, os.path.basename(weights_path))
-
-        yield "\n".join(infos)
-        infos.append("\n" + i18n("This may take a few minutes, please wait..."))
-        yield "\n".join(infos)
-
-        # Crear un archivo ZIP directamente en zips_path
-        with zipfile.ZipFile(os.path.join(zips_path, f"{modelname}.zip"), 'w', zipfile.ZIP_DEFLATED) as zipf:
-            # Agregar los archivos que deseas incluir en el ZIP al archivo ZIP
-            if copy_files:
-                for root, dirs, files in os.walk(dst):
+        # Realizar las acciones según la opción seleccionada
+        if SAVE_ACTION_CONFIG[save_action]['copy_files']:
+            # Option: Copy all files and folders
+            infos.append(save_action)
+            print(save_action)
+            yield "\n".join(infos)
+            with zipfile.ZipFile(save_path, 'w') as zipf:
+                for root, _, files in os.walk(logs_path):
                     for file in files:
                         file_path = os.path.join(root, file)
-                        zipf.write(file_path, os.path.relpath(file_path, dst))
-            else:
-                for pattern in files_to_copy:
-                    matching_files = glob.glob(os.path.join(logs_path, pattern))
-                    for file_path in matching_files:
-                        zipf.write(file_path, os.path.basename(file_path))
+                        # Create a folder with the model name in the ZIP
+                        model_folder = os.path.join(modelname, "")
+                        zipf.write(file_path, os.path.join(model_folder, os.path.relpath(file_path, logs_path)))
+                zipf.write(weight_path, os.path.join(model_folder, os.path.basename(weight_path)))
+        
+        else:
+            # Option: Copy specific files
+            infos.append(save_action)
+            print(save_action)
+            yield "\n".join(infos)
+            files_to_copy = SAVE_ACTION_CONFIG[save_action]['files_to_copy']
+            with zipfile.ZipFile(save_path, 'w') as zipf:
+                for root, _, files in os.walk(logs_path):
+                    for file in files:
+                        for pattern in files_to_copy:
+                            if fnmatch.fnmatch(file, pattern):
+                                file_path = os.path.join(root, file)
+                                zipf.write(file_path, os.path.relpath(file_path, logs_path))
 
-        # Mover el archivo ZIP creado al directorio save_folder
-        shutil.move(
-            os.path.join(zips_path, f"{modelname}.zip"),
-            os.path.join(save_folder, f"{modelname}.zip"),
-        )
+        if SAVE_ACTION_CONFIG[save_action]['include_weights']:
+            # Include the weight file in the ZIP
+            with zipfile.ZipFile(save_path, 'a') as zipf:
+                zipf.write(weight_path, os.path.basename(weight_path))
 
-
-        shutil.rmtree(zips_path)
-        infos.append("\n" + i18n("Model saved successfully"))
+        infos.append(i18n("The model has been saved successfully."))
         yield "\n".join(infos)
 
     except Exception as e:
-        print(e)
-        if "No model found." in str(e):
-            infos.append(
-                i18n(
-                    "The model you want to save does not exist, be sure to enter the correct name."
-                )
-            )
-        else:
-            infos.append(i18n("An error occurred saving the model"))
-
-        yield "\n".join(infos)
-
+        # Handle exceptions and print error messages
+        error_message = str(e)
+        print(f"Error: {error_message}")
+        yield error_message
 
 def load_downloaded_backup(url):
-    parent_path = find_folder_parent(".", "assets")
+    parent_path = find_folder_parent(now_dir, "assets")
     try:
         infos = []
         logs_folders = [
@@ -1178,7 +1175,7 @@ def uvr(
 
 
 def load_downloaded_audio(url):
-    parent_path = find_folder_parent(".", "assets")
+    parent_path = find_folder_parent(now_dir, "assets")
     try:
         infos = []
         audios_path = os.path.join(parent_path, "assets", "audios")
@@ -1365,7 +1362,7 @@ def download_backup():
 
 def update_dataset_list(name):
     new_datasets = []
-    file_path = find_folder_parent(".", "assets")
+    file_path = find_folder_parent(now_dir, "assets")
     for foldername in os.listdir("./datasets"):
         if "." not in foldername:
             new_datasets.append(

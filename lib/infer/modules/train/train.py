@@ -278,12 +278,12 @@ def run(rank, n_gpus, hps):
         # epoch_str = 1
         # global_step = 0
     except:  # 如果首次不能加载，加载pretrain
-        # traceback.print_exc()
+        os.system('cls' if os.name == 'nt' else 'clear')
         epoch_str = 1
         global_step = 0
         if hps.pretrainG != "":
             if rank == 0:
-                logger.info("loaded pretrained %s" % (hps.pretrainG))
+                logger.info("Loaded pretrained %s" % (hps.pretrainG))
             if hasattr(net_g, "module"):
                 logger.info(
                     net_g.module.load_state_dict(
@@ -298,7 +298,7 @@ def run(rank, n_gpus, hps):
                 )  ##测试不加载优化器
         if hps.pretrainD != "":
             if rank == 0:
-                logger.info("loaded pretrained %s" % (hps.pretrainD))
+                logger.info("Loaded pretrained %s" % (hps.pretrainD))
             if hasattr(net_d, "module"):
                 logger.info(
                     net_d.module.load_state_dict(
@@ -574,7 +574,7 @@ def train_and_evaluate(
 
                 logger.info([global_step, lr])
                 logger.info(
-                    f"loss_disc={loss_disc:.3f}, loss_gen={loss_gen:.3f}, loss_fm={loss_fm:.3f},loss_mel={loss_mel:.3f}, loss_kl={loss_kl:.3f}"
+                    f"[loss_disc={loss_disc:.3f}] | [loss_gen={loss_gen:.3f}] | [loss_fm={loss_fm:.3f}] | [loss_mel={loss_mel:.3f}] | [loss_kl={loss_kl:.3f}]"
                 )
                 scalar_dict = {
                     "loss/g/total": loss_gen_all,
@@ -698,16 +698,16 @@ def train_and_evaluate(
         os._exit(2333333)
 
     if rank == 0:
-        logger.info("====> Epoch: {} {}".format(epoch, epoch_recorder.record()))
+        logger.info("Epoch: {} {}".format(epoch, epoch_recorder.record()))
     if epoch >= hps.total_epoch and rank == 0:
-        logger.info("Training is done. The program is closed.")
+        logger.info("Training successfully completed, closing the program...")
 
         if hasattr(net_g, "module"):
             ckpt = net_g.module.state_dict()
         else:
             ckpt = net_g.state_dict()
         logger.info(
-            "saving final ckpt:%s"
+            "Saving final ckpt... %s"
             % (
                 savee(
                     ckpt, hps.sample_rate, hps.if_f0, hps.name, epoch, hps.version, hps

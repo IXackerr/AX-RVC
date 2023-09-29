@@ -35,12 +35,12 @@ def printt(strr):
 
 n_p = int(sys.argv[2])
 f0method = sys.argv[3]
-extraction_crepe_hop_length = 0
+crepe_hop_length = 0
 try:
-    extraction_crepe_hop_length = int(sys.argv[4])
+    crepe_hop_length = int(sys.argv[4])
 except:
     print("Temp Issue. echl is not being passed with argument!")
-    extraction_crepe_hop_length = 128
+    crepe_hop_length = 128
 
 class FeatureInput(object):
     def __init__(self, samplerate=16000, hop_size=160):
@@ -233,11 +233,12 @@ class FeatureInput(object):
         return f0_coarse
 
     def go(self, paths, f0_method, crepe_hop_length, thread_n):
+        os.system('cls' if os.name == 'nt' else 'clear')
         if len(paths) == 0:
             printt("no-f0-todo")
             return
         with tqdm.tqdm(total=len(paths), leave=True, position=thread_n) as pbar:
-            description = f"thread:{thread_n}, f0ing, Hop-Length:{crepe_hop_length}"
+            description = f"Thread {thread_n} | Hop-Length: {crepe_hop_length}"
             pbar.set_description(description)
                 
             for idx, (inp_path, opt_path1, opt_path2) in enumerate(paths):
@@ -292,7 +293,7 @@ if __name__ == "__main__":
     for i in range(n_p):
         p = Process(
             target=featureInput.go,
-            args=(paths[i::n_p], f0method, extraction_crepe_hop_length, i),
+            args=(paths[i::n_p], f0method, crepe_hop_length, i),
         )
         ps.append(p)
         p.start()

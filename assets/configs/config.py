@@ -23,11 +23,16 @@ import os
 import sys
 import subprocess
 import platform
+
 syspf = platform.system()
 python_version = "39"
 
 def find_python_executable():
-    if syspf == "Linux":
+    runtime_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'runtime'))
+    if os.path.exists(runtime_path):
+        logger.info("Current user: Runtime")
+        return runtime_path
+    elif syspf == "Linux":
         try:
             result = subprocess.run(["which", "python"], capture_output=True, text=True, check=True)
             python_path = result.stdout.strip()
@@ -193,11 +198,20 @@ class Config:
 
     def device_config(self) -> tuple:
         if torch.cuda.is_available():
+            current_device = torch.cuda.current_device()
+            major, minor = torch.cuda.get_device_capability(current_device)
+            cuda_version = f"{major}.{minor}"
             if self.has_xpu():
                 self.device = self.instead = "xpu:0"
                 self.is_half = True
             i_device = int(self.device.split(":")[-1])
             self.gpu_name = torch.cuda.get_device_name(i_device)
+            if 1 < float(cuda_version) < 3.7:
+                logger.info("No supported CUDA version found, using CPU...")
+                os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+                self.device = self.instead = "cpu"
+                self.is_half = False
+                self.use_fp32_config()
             if (
                 ("16" in self.gpu_name and "V100" not in self.gpu_name.upper())
                 or "P40" in self.gpu_name.upper()
@@ -233,7 +247,6 @@ class Config:
             self.device = self.instead = "cpu"
             self.is_half = False
             self.use_fp32_config()
-
         if self.n_cpu == 0:
             self.n_cpu = cpu_count()
 
