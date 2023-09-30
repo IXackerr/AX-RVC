@@ -460,7 +460,7 @@ def start_download_from_huggingface(hgf_token_gr_d,hgf_name_gr_d,hgf_repo_gr_d,z
 def download_train_log(exp_dir1):
 	file_path=f"/kaggle/working/AX-RVC/logs/{exp_dir1}/train.log"
 	if os.path.exists(file_path):
-		with open(file_path,_G)as f:return f.read()
+		with open(file_path,_G)as f:return file_path
 	else:return'File not found.'
 mi_applio=Applio()
 def GradioSetup():

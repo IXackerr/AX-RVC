@@ -1787,7 +1787,7 @@ def download_train_log(exp_dir1):
     file_path = f"/kaggle/working/AX-RVC/logs/{exp_dir1}/train.log"
     if os.path.exists(file_path):
         with open(file_path, "r") as f:
-            return f.read()
+            return file_path
     else:
         return "File not found."
 
