@@ -64,7 +64,7 @@ os.environ['OPENBLAS_NUM_THREADS']='1'
 os.environ['no_proxy']='localhost, 127.0.0.1, ::1'
 import logging,shutil,threading
 from assets.configs.config import Config
-import lib.globals.globals as rvc_globals,lib.tools.model_fetcher as model_fetcher,math as math,ffmpeg as ffmpeg,traceback,warnings
+import lib.globals.globals as rvc_globals,math as math,ffmpeg as ffmpeg,traceback,warnings
 from random import shuffle
 from subprocess import Popen
 from time import sleep
@@ -143,8 +143,6 @@ class ToolButton(gr.Button,gr.components.FormComponent):
 	'Small button with single emoji as text, fits inside gradio forms'
 	def __init__(self,**kwargs):super().__init__(variant='tool',**kwargs)
 	def get_block_name(self):return'button'
-import lib.infer.infer_libs.uvr5_pack.mdx as mdx
-from lib.infer.modules.uvr5.mdxprocess import get_model_list,id_to_ptm,prepare_mdx,run_mdx
 hubert_model=_K
 weight_root='/kaggle/working/AX-RVC/logs/weights'
 weight_uvr5_root=os.getenv(_v)
@@ -460,7 +458,7 @@ def start_download_from_huggingface(hgf_token_gr_d,hgf_name_gr_d,hgf_repo_gr_d,z
 	with zipfile.ZipFile(f"{hug_file_path}/{hug_file_name}",_G)as zip_ref:zip_ref.extractall(destination_folder)
 	os.chdir(_u);time.sleep(2);os.system(f"rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}");return'Succesful download Logs from Hugging Face'
 def download_train_log(exp_dir1):
-	file_path=f"/logs/{exp_dir1}/train.log"
+	file_path=f"/kaggle/working/AX-RVC/logs/{exp_dir1}/train.log"
 	if os.path.exists(file_path):
 		with open(file_path,_G)as f:return f.read()
 	else:return'File not found.'

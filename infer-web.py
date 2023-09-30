@@ -11,7 +11,6 @@ import threading
 from assets.configs.config import Config
 import lib.globals.globals as rvc_globals
 
-import lib.tools.model_fetcher as model_fetcher
 import math as math
 import ffmpeg as ffmpeg
 import traceback
@@ -202,14 +201,6 @@ class ToolButton(gr.Button, gr.components.FormComponent):
 
     def get_block_name(self):
         return "button"
-
-import lib.infer.infer_libs.uvr5_pack.mdx as mdx
-from lib.infer.modules.uvr5.mdxprocess import (
-    get_model_list,
-    id_to_ptm,
-    prepare_mdx,
-    run_mdx,
-)
 
 hubert_model = None
 weight_root = "/kaggle/working/AX-RVC/logs/weights"
@@ -1793,7 +1784,7 @@ def start_download_from_huggingface(hgf_token_gr_d, hgf_name_gr_d, hgf_repo_gr_d
     return "Succesful download Logs from Hugging Face"
 
 def download_train_log(exp_dir1):
-    file_path = f"/logs/{exp_dir1}/train.log"
+    file_path = f"/kaggle/working/AX-RVC/logs/{exp_dir1}/train.log"
     if os.path.exists(file_path):
         with open(file_path, "r") as f:
             return f.read()
