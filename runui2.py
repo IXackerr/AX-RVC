@@ -22,21 +22,21 @@ _l='_v2'
 _k='%s/logs/%s'
 _j='MDX'
 _i='.onnx'
-_h='m4a'
-_g='mp3'
-_f='datasets'
-_e='lib/csvdb/stop.csv'
-_d='v2'
-_c='48k'
-_b='32k'
-_a='choices'
-_Z='VR'
-_Y='flac'
-_X='wav'
-_W='logs'
-_V='trained'
-_U='.index'
-_T='.pth'
+_h='datasets'
+_g='lib/csvdb/stop.csv'
+_f='v2'
+_e='48k'
+_d='32k'
+_c='choices'
+_b='VR'
+_a='m4a'
+_Z='mp3'
+_Y='logs'
+_X='trained'
+_W='.index'
+_V='flac'
+_U='.pth'
+_T='wav'
 _S='40k'
 _R='audios'
 _Q='assets'
@@ -62,9 +62,9 @@ sys.path.append(now_dir)
 os.environ['TF_CPP_MIN_LOG_LEVEL']='3'
 os.environ['OPENBLAS_NUM_THREADS']='1'
 os.environ['no_proxy']='localhost, 127.0.0.1, ::1'
-import logging,shutil,threading,lib.globals.globals as rvc_globals,lib.infer.infer_libs.uvr5_pack.mdx as mdx
-from lib.infer.modules.uvr5.mdxprocess import get_model_list,id_to_ptm,prepare_mdx,run_mdx
-import math as math,ffmpeg as ffmpeg,traceback,warnings
+import logging,shutil,threading
+from assets.configs.config import Config
+import lib.globals.globals as rvc_globals,lib.tools.model_fetcher as model_fetcher,math as math,ffmpeg as ffmpeg,traceback,warnings
 from random import shuffle
 from subprocess import Popen
 from time import sleep
@@ -78,7 +78,6 @@ import datetime
 from glob import glob1
 import signal
 from signal import SIGTERM
-from assets.configs.config import Config
 from assets.i18n.i18n import I18nAuto
 from lib.infer.infer_libs.train.process_ckpt import change_info,extract_small_model,merge,show_info
 from lib.infer.modules.uvr5.mdxnet import MDXNetDereverb
@@ -107,18 +106,18 @@ def remove_text_between_parentheses(lines,start_line,end_line):
 		else:processed_lines.append(line)
 	return _F.join(processed_lines)
 with open('README.md',_G,encoding='utf8')as f:inforeadme=f.read()
-inforeadme=remove_text_between_parentheses(inforeadme.split(_F),6,15)
+inforeadme=remove_text_between_parentheses(inforeadme.split(_F),6,17)
 inforeadme=remove_invalid_chars(inforeadme)
 inforeadme=remove_text_between_parentheses(inforeadme.split(_F),191,207)
 os.makedirs(tmp,exist_ok=_A)
-os.makedirs(os.path.join(now_dir,_W),exist_ok=_A)
+os.makedirs(os.path.join(now_dir,_Y),exist_ok=_A)
 os.makedirs(os.path.join(now_dir,'logs/weights'),exist_ok=_A)
 os.environ['temp']=tmp
 warnings.filterwarnings('ignore')
 torch.manual_seed(114514)
 logging.getLogger('numba').setLevel(logging.WARNING)
 logger=logging.getLogger(__name__)
-if not os.path.isdir('lib/csvdb/'):os.makedirs('lib/csvdb');frmnt,stp=open(_M,'w'),open(_e,'w');frmnt.close();stp.close()
+if not os.path.isdir('lib/csvdb/'):os.makedirs('lib/csvdb');frmnt,stp=open(_M,'w'),open(_g,'w');frmnt.close();stp.close()
 global DoFormant,Quefrency,Timbre
 try:DoFormant,Quefrency,Timbre=CSVutil(_M,_G,_N);DoFormant=(lambda DoFormant:_A if DoFormant.lower()=='true'else _B if DoFormant.lower()=='false'else DoFormant)(DoFormant)
 except(ValueError,TypeError,IndexError):DoFormant,Quefrency,Timbre=_B,1.,1.;CSVutil(_M,_O,_N,DoFormant,Quefrency,Timbre)
@@ -136,55 +135,55 @@ mem=[]
 if_gpu_ok=_B
 isinterrupted=0
 if torch.cuda.is_available()or ngpu!=0:
-	for i in range(ngpu):
-		gpu_name=torch.cuda.get_device_name(i)
-		if any(value in gpu_name.upper()for value in['10','16','20','30','40','A2','A3','A4','P4','A50','500','A60','70','80','90','M4','T4','TITAN']):if_gpu_ok=_A;gpu_infos.append('%s\t%s'%(i,gpu_name));mem.append(int(torch.cuda.get_device_properties(i).total_memory/1024/1024/1024+.4))
-if if_gpu_ok and len(gpu_infos)>0:gpu_info=_F.join(gpu_infos);default_batch_size=min(mem)//2
+	for i in range(ngpu):gpu_name=torch.cuda.get_device_name(i);gpu_infos.append('%s\t%s'%(i,gpu_name));mem.append(int(torch.cuda.get_device_properties(i).total_memory/1024/1024/1024+.4))
+if len(gpu_infos)>0:gpu_info=_F.join(gpu_infos);default_batch_size=min(mem)//2
 else:gpu_info='Unfortunately, there is no compatible GPU available to support your training.';default_batch_size=1
 gpus='-'.join([i[0]for i in gpu_infos])
 class ToolButton(gr.Button,gr.components.FormComponent):
 	'Small button with single emoji as text, fits inside gradio forms'
 	def __init__(self,**kwargs):super().__init__(variant='tool',**kwargs)
 	def get_block_name(self):return'button'
+import lib.infer.infer_libs.uvr5_pack.mdx as mdx
+from lib.infer.modules.uvr5.mdxprocess import get_model_list,id_to_ptm,prepare_mdx,run_mdx
 hubert_model=_K
 weight_root='/kaggle/working/AX-RVC/logs/weights'
 weight_uvr5_root=os.getenv(_v)
 index_root=_w
-datasets_root=_f
+datasets_root=_h
 fshift_root='lib/infer/infer_libs/formantshiftcfg'
 audio_root=_x
 audio_others_root=_y
-sup_audioext={_X,_g,_Y,'ogg','opus',_h,'mp4','aac','alac','wma','aiff','webm','ac3'}
-names=[os.path.join(root,file)for(root,_,files)in os.walk(weight_root)for file in files if file.endswith((_T,_i))]
-indexes_list=[os.path.join(root,name)for(root,_,files)in os.walk(index_root,topdown=_B)for name in files if name.endswith(_U)and _V not in name]
+sup_audioext={_T,_Z,_V,'ogg','opus',_a,'mp4','aac','alac','wma','aiff','webm','ac3'}
+names=[os.path.join(root,file)for(root,_,files)in os.walk(weight_root)for file in files if file.endswith((_U,_i))]
+indexes_list=[os.path.join(root,name)for(root,_,files)in os.walk(index_root,topdown=_B)for name in files if name.endswith(_W)and _X not in name]
 audio_paths=[os.path.join(root,name)for(root,_,files)in os.walk(audio_root,topdown=_B)for name in files if name.endswith(tuple(sup_audioext))and root==audio_root]
 audio_others_paths=[os.path.join(root,name)for(root,_,files)in os.walk(audio_others_root,topdown=_B)for name in files if name.endswith(tuple(sup_audioext))and root==audio_others_root]
-uvr5_names=[name.replace(_T,'')for name in os.listdir(weight_uvr5_root)if name.endswith(_T)or'onnx'in name]
+uvr5_names=[name.replace(_U,'')for name in os.listdir(weight_uvr5_root)if name.endswith(_U)or'onnx'in name]
 check_for_name=lambda:sorted(names)[0]if names else''
 datasets=[]
 for foldername in os.listdir(os.path.join(now_dir,datasets_root)):
-	if _P not in foldername:datasets.append(os.path.join(now_dir,_f,foldername))
+	if _P not in foldername:datasets.append(os.path.join(now_dir,_h,foldername))
 def get_dataset():
 	if len(datasets)>0:return sorted(datasets)[0]
 	else:return''
 def update_model_choices(select_value):
 	model_ids=get_model_list();model_ids_list=list(model_ids)
-	if select_value==_Z:return{_a:uvr5_names,_C:_D}
-	elif select_value==_j:return{_a:model_ids_list,_C:_D}
+	if select_value==_b:return{_c:uvr5_names,_C:_D}
+	elif select_value==_j:return{_c:model_ids_list,_C:_D}
 def update_dataset_list(name):
 	new_datasets=[]
 	for foldername in os.listdir(os.path.join(now_dir,datasets_root)):
-		if _P not in foldername:new_datasets.append(os.path.join(now_dir,_f,foldername))
+		if _P not in foldername:new_datasets.append(os.path.join(now_dir,_h,foldername))
 	return gr.Dropdown.update(choices=new_datasets)
-def get_indexes():indexes_list=[os.path.join(dirpath,filename)for(dirpath,_,filenames)in os.walk(index_root)for filename in filenames if filename.endswith(_U)and _V not in filename];return indexes_list if indexes_list else''
+def get_indexes():indexes_list=[os.path.join(dirpath,filename)for(dirpath,_,filenames)in os.walk(index_root)for filename in filenames if filename.endswith(_W)and _X not in filename];return indexes_list if indexes_list else''
 def get_fshift_presets():fshift_presets_list=[os.path.join(dirpath,filename)for(dirpath,_,filenames)in os.walk(fshift_root)for filename in filenames if filename.endswith('.txt')];return fshift_presets_list if fshift_presets_list else''
 def uvr(model_name,inp_root,save_root_vocal,paths,save_root_ins,agg,format0,architecture):
 	E='%s->Success';D='streams';C='onnx_dereverb_By_FoxJoy';B='Starting audio conversion... (This might take a moment)';A='"';infos=[]
-	if architecture==_Z:
+	if architecture==_b:
 		try:
 			infos.append(i18n(B));inp_root=inp_root.strip(_L).strip(A).strip(_F).strip(A).strip(_L);save_root_vocal=save_root_vocal.strip(_L).strip(A).strip(_F).strip(A).strip(_L);save_root_ins=save_root_ins.strip(_L).strip(A).strip(_F).strip(A).strip(_L)
 			if model_name==C:pre_fun=MDXNetDereverb(15,config.device)
-			else:func=AudioPre if'DeEcho'not in model_name else AudioPreDeEcho;pre_fun=func(agg=int(agg),model_path=os.path.join(os.getenv(_v),model_name+_T),device=config.device,is_half=config.is_half)
+			else:func=AudioPre if'DeEcho'not in model_name else AudioPreDeEcho;pre_fun=func(agg=int(agg),model_path=os.path.join(os.getenv(_v),model_name+_U),device=config.device,is_half=config.is_half)
 			if inp_root!='':paths=[os.path.join(inp_root,name)for(root,_,files)in os.walk(inp_root,topdown=_B)for name in files if name.endswith(tuple(sup_audioext))and root==inp_root]
 			else:paths=[path.name for path in paths]
 			for path in paths:
@@ -226,11 +225,11 @@ def uvr(model_name,inp_root,save_root_vocal,paths,save_root_ins,agg,format0,arch
 			except:traceback.print_exc()
 			print('clean_empty_cache')
 			if torch.cuda.is_available():torch.cuda.empty_cache()
-def change_choices():names=[os.path.join(root,file)for(root,_,files)in os.walk(weight_root)for file in files if file.endswith((_T,_i))];indexes_list=[os.path.join(root,name)for(root,_,files)in os.walk(index_root,topdown=_B)for name in files if name.endswith(_U)and _V not in name];audio_paths=[os.path.join(root,name)for(root,_,files)in os.walk(audio_root,topdown=_B)for name in files if name.endswith(tuple(sup_audioext))and root==audio_root];return gr.Dropdown.update(choices=sorted(names)),gr.Dropdown.update(choices=sorted(indexes_list)),gr.Dropdown.update(choices=sorted(audio_paths))
-def change_choices2():names=[os.path.join(root,file)for(root,_,files)in os.walk(weight_root)for file in files if file.endswith((_T,_i))];indexes_list=[os.path.join(root,name)for(root,_,files)in os.walk(index_root,topdown=_B)for name in files if name.endswith(_U)and _V not in name];return gr.Dropdown.update(choices=sorted(names)),gr.Dropdown.update(choices=sorted(indexes_list))
+def change_choices():names=[os.path.join(root,file)for(root,_,files)in os.walk(weight_root)for file in files if file.endswith((_U,_i))];indexes_list=[os.path.join(root,name)for(root,_,files)in os.walk(index_root,topdown=_B)for name in files if name.endswith(_W)and _X not in name];audio_paths=[os.path.join(root,name)for(root,_,files)in os.walk(audio_root,topdown=_B)for name in files if name.endswith(tuple(sup_audioext))and root==audio_root];return gr.Dropdown.update(choices=sorted(names)),gr.Dropdown.update(choices=sorted(indexes_list)),gr.Dropdown.update(choices=sorted(audio_paths))
+def change_choices2():names=[os.path.join(root,file)for(root,_,files)in os.walk(weight_root)for file in files if file.endswith((_U,_i))];indexes_list=[os.path.join(root,name)for(root,_,files)in os.walk(index_root,topdown=_B)for name in files if name.endswith(_W)and _X not in name];return gr.Dropdown.update(choices=sorted(names)),gr.Dropdown.update(choices=sorted(indexes_list))
 def clean():return{_H:'',_C:_D}
 def export_onnx():from lib.infer.modules.onnx.export import export_onnx as eo;eo()
-sr_dict={_b:32000,_S:40000,_c:48000}
+sr_dict={_d:32000,_S:40000,_e:48000}
 def if_done(done,p):
 	while 1:
 		if p.poll()is _K:sleep(.5)
@@ -295,8 +294,8 @@ def get_pretrained_models(path_str,f0_str,sr2):
 def change_sr2(sr2,if_f0_3,version19):path_str=''if version19==_I else _l;f0_str='f0'if if_f0_3 else'';return get_pretrained_models(path_str,f0_str,sr2)
 def change_version19(sr2,if_f0_3,version19):
 	path_str=''if version19==_I else _l
-	if sr2==_b and version19==_I:sr2=_S
-	to_return_sr2={_a:[_S,_c],_C:_D,_H:sr2}if version19==_I else{_a:[_S,_c,_b],_C:_D,_H:sr2};f0_str='f0'if if_f0_3 else'';return*get_pretrained_models(path_str,f0_str,sr2),to_return_sr2
+	if sr2==_d and version19==_I:sr2=_S
+	to_return_sr2={_c:[_S,_e],_C:_D,_H:sr2}if version19==_I else{_c:[_S,_e,_d],_C:_D,_H:sr2};f0_str='f0'if if_f0_3 else'';return*get_pretrained_models(path_str,f0_str,sr2),to_return_sr2
 def change_f0(if_f0_3,sr2,version19):path_str=''if version19==_I else _l;return{_E:if_f0_3,_C:_D},*get_pretrained_models(path_str,'f0',sr2)
 global log_interval
 def set_log_interval(exp_dir,batch_size12):
@@ -309,7 +308,7 @@ def set_log_interval(exp_dir,batch_size12):
 	return log_interval
 global PID,PROCESS
 def click_train(exp_dir1,sr2,if_f0_3,spk_id5,save_epoch10,total_epoch11,batch_size12,if_save_latest13,pretrained_G14,pretrained_D15,gpus16,if_cache_gpu17,if_save_every_weights18,version19):
-	D='-pd %s';C='-pg %s';B='\\\\';A='\\';CSVutil(_e,_O,_N,_B);exp_dir=_k%(now_dir,exp_dir1);os.makedirs(exp_dir,exist_ok=_A);gt_wavs_dir='%s/0_gt_wavs'%exp_dir;feature_dir=_A1%exp_dir if version19==_I else _A2%exp_dir
+	D='-pd %s';C='-pg %s';B='\\\\';A='\\';CSVutil(_g,_O,_N,_B);exp_dir=_k%(now_dir,exp_dir1);os.makedirs(exp_dir,exist_ok=_A);gt_wavs_dir='%s/0_gt_wavs'%exp_dir;feature_dir=_A1%exp_dir if version19==_I else _A2%exp_dir;log_interval=set_log_interval(exp_dir,batch_size12)
 	if if_f0_3:f0_dir='%s/2a_f0'%exp_dir;f0nsf_dir='%s/2b-f0nsf'%exp_dir;names=set([name.split(_P)[0]for name in os.listdir(gt_wavs_dir)])&set([name.split(_P)[0]for name in os.listdir(feature_dir)])&set([name.split(_P)[0]for name in os.listdir(f0_dir)])&set([name.split(_P)[0]for name in os.listdir(f0nsf_dir)])
 	else:names=set([name.split(_P)[0]for name in os.listdir(gt_wavs_dir)])&set([name.split(_P)[0]for name in os.listdir(feature_dir)])
 	opt=[]
@@ -332,10 +331,10 @@ def click_train(exp_dir1,sr2,if_f0_3,spk_id5,save_epoch10,total_epoch11,batch_si
 	if not pathlib.Path(config_save_path).exists():
 		with open(config_save_path,'w',encoding='utf-8')as f:json.dump(config.json_config[config_path],f,ensure_ascii=_B,indent=4,sort_keys=_A);f.write(_F)
 	if gpus16:cmd='"%s" lib/infer/modules/train/train.py -e "%s" -sr %s -f0 %s -bs %s -g %s -te %s -se %s %s %s -l %s -c %s -sw %s -v %s'%(config.python_cmd,exp_dir1,sr2,1 if if_f0_3 else 0,batch_size12,gpus16,total_epoch11,save_epoch10,C%pretrained_G14 if pretrained_G14!=''else'',D%pretrained_D15 if pretrained_D15!=''else'',1 if if_save_latest13==_A else 0,1 if if_cache_gpu17==_A else 0,1 if if_save_every_weights18==_A else 0,version19)
-	else:cmd='"%s" lib/infer/modules/train/train.py -e "%s" -sr %s -f0 %s -bs %s -te %s -se %s %s %s -l %s -c %s -sw %s -v %s'%(config.python_cmd,exp_dir1,sr2,1 if if_f0_3 else 0,batch_size12,total_epoch11,save_epoch10,C%pretrained_G14 if pretrained_G14!=''else'',D%pretrained_D15 if pretrained_D15!=''else'',1 if if_save_latest13==_A else 0,1 if if_cache_gpu17==_A else 0,1 if if_save_every_weights18==_A else 0,version19)
+	else:cmd='"%s" lib/infer/modules/train/train.py -e "%s" -sr %s -f0 %s -bs %s -te %s -se %s %s %s -l %s -c %s -sw %s -v %s'%(config.python_cmd,exp_dir1,sr2,1 if if_f0_3 else 0,batch_size12,total_epoch11,save_epoch10,C%pretrained_G14 if pretrained_G14!=''else'',D%pretrained_D15 if pretrained_D15!=''else'',1 if if_save_latest13==_A else 0,1 if if_cache_gpu17==_A else 0,1 if if_save_every_weights18==_A else 0)
 	logger.info(cmd);global p;p=Popen(cmd,shell=_A,cwd=now_dir);global PID;PID=p.pid;p.wait();return i18n('Training is done, check train.log'),{_E:_B,_C:_D},{_E:_A,_C:_D}
 def train_index(exp_dir1,version19):
-	exp_dir=os.path.join(now_dir,_W,exp_dir1);os.makedirs(exp_dir,exist_ok=_A);feature_dir=_A1%exp_dir if version19==_I else _A2%exp_dir
+	C='Files generated successfully!';B='Generating adding file...';A='Generating training file...';exp_dir=os.path.join(now_dir,_Y,exp_dir1);os.makedirs(exp_dir,exist_ok=_A);feature_dir=_A1%exp_dir if version19==_I else _A2%exp_dir
 	if not os.path.exists(feature_dir):return'Please do the feature extraction first'
 	listdir_res=list(os.listdir(feature_dir))
 	if len(listdir_res)==0:return'Please perform the feature extraction first'
@@ -346,14 +345,14 @@ def train_index(exp_dir1,version19):
 		infos.append('Trying doing kmeans %s shape to 10k centers.'%big_npy.shape[0]);yield _F.join(infos)
 		try:big_npy=MiniBatchKMeans(n_clusters=10000,verbose=_A,batch_size=256*config.n_cpu,compute_labels=_B,init='random').fit(big_npy).cluster_centers_
 		except:info=traceback.format_exc();logger.info(info);infos.append(info);yield _F.join(infos)
-	np.save('%s/total_fea.npy'%exp_dir,big_npy);n_ivf=min(int(16*np.sqrt(big_npy.shape[0])),big_npy.shape[0]//39);infos.append('%s,%s'%(big_npy.shape,n_ivf));yield _F.join(infos);index=faiss.index_factory(256 if version19==_I else 768,'IVF%s,Flat'%n_ivf);infos.append('training');yield _F.join(infos);index_ivf=faiss.extract_index_ivf(index);index_ivf.nprobe=1;index.train(big_npy);faiss.write_index(index,'%s/trained_IVF%s_Flat_nprobe_%s_%s_%s.index'%(exp_dir,n_ivf,index_ivf.nprobe,exp_dir1,version19));infos.append('adding');yield _F.join(infos);batch_size_add=8192
+	np.save('%s/total_fea.npy'%exp_dir,big_npy);n_ivf=min(int(16*np.sqrt(big_npy.shape[0])),big_npy.shape[0]//39);yield _F.join(infos);index=faiss.index_factory(256 if version19==_I else 768,'IVF%s,Flat'%n_ivf);infos.append(A);print(A);yield _F.join(infos);index_ivf=faiss.extract_index_ivf(index);index_ivf.nprobe=1;index.train(big_npy);faiss.write_index(index,'%s/trained_IVF%s_Flat_nprobe_%s_%s_%s.index'%(exp_dir,n_ivf,index_ivf.nprobe,exp_dir1,version19));infos.append(B);print(B);yield _F.join(infos);batch_size_add=8192
 	for i in range(0,big_npy.shape[0],batch_size_add):index.add(big_npy[i:i+batch_size_add])
-	faiss.write_index(index,'%s/added_IVF%s_Flat_nprobe_%s_%s_%s.index'%(exp_dir,n_ivf,index_ivf.nprobe,exp_dir1,version19));infos.append('Successful Index Construction，added_IVF%s_Flat_nprobe_%s_%s_%s.index'%(n_ivf,index_ivf.nprobe,exp_dir1,version19));yield _F.join(infos)
+	faiss.write_index(index,'%s/added_IVF%s_Flat_nprobe_%s_%s_%s.index'%(exp_dir,n_ivf,index_ivf.nprobe,exp_dir1,version19));infos.append(C);print(C)
 def change_info_(ckpt_path):
 	B='version';A='train.log'
 	if not os.path.exists(ckpt_path.replace(os.path.basename(ckpt_path),A)):return{_C:_D},{_C:_D},{_C:_D}
 	try:
-		with open(ckpt_path.replace(os.path.basename(ckpt_path),A),_G)as f:info=eval(f.read().strip(_F).split(_F)[0].split('\t')[-1]);sr,f0=info[_z],info['if_f0'];version=_d if B in info and info[B]==_d else _I;return sr,str(f0),version
+		with open(ckpt_path.replace(os.path.basename(ckpt_path),A),_G)as f:info=eval(f.read().strip(_F).split(_F)[0].split('\t')[-1]);sr,f0=info[_z],info['if_f0'];version=_f if B in info and info[B]==_f else _I;return sr,str(f0),version
 	except:traceback.print_exc();return{_C:_D},{_C:_D},{_C:_D}
 F0GPUVisible=config.dml==_B
 import re as regex,scipy.io.wavfile as wavfile
@@ -419,10 +418,10 @@ def match_index(sid0):
 	sid0strip=re.sub('\\.pth|\\.onnx$','',sid0);sid0name=os.path.split(sid0strip)[-1]
 	if re.match('.+_e\\d+_s\\d+$',sid0name):base_model_name=sid0name.rsplit('_',2)[0]
 	else:base_model_name=sid0name
-	sid_directory=os.path.join(_W,base_model_name);directories_to_search=[sid_directory]if os.path.exists(sid_directory)else[];directories_to_search.append(_W);matching_index_files=[]
+	sid_directory=os.path.join(_Y,base_model_name);directories_to_search=[sid_directory]if os.path.exists(sid_directory)else[];directories_to_search.append(_Y);matching_index_files=[]
 	for directory in directories_to_search:
 		for filename in os.listdir(directory):
-			if filename.endswith(_U)and _V not in filename:
+			if filename.endswith(_W)and _X not in filename:
 				name_match=any(name.lower()in filename.lower()for name in[sid0name,base_model_name]);folder_match=directory==sid_directory
 				if name_match or folder_match:
 					index_path=os.path.join(directory,filename)
@@ -431,7 +430,7 @@ def match_index(sid0):
 	return'',''
 def stoptraining(mim):
 	if int(mim)==1:
-		CSVutil(_e,_O,'stop','True')
+		CSVutil(_g,_O,'stop','True')
 		try:os.kill(PID,signal.SIGTERM)
 		except Exception as e:print(f"Couldn't click due to {e}");pass
 	else:0
@@ -460,14 +459,19 @@ def start_download_from_huggingface(hgf_token_gr_d,hgf_name_gr_d,hgf_repo_gr_d,z
 	hug_file_path=_A4;hug_file_name=f"{zip_name_gr_d}.zip";hug_repo_id=f"{hgf_name_gr_d}/{hgf_repo_gr_d}";destination_folder=_w;os.chdir(hug_file_path);hf_hub_download(repo_id=hug_repo_id,filename=hug_file_name,token=hgf_token_gr_d,local_dir=hug_file_path);time.sleep(2)
 	with zipfile.ZipFile(f"{hug_file_path}/{hug_file_name}",_G)as zip_ref:zip_ref.extractall(destination_folder)
 	os.chdir(_u);time.sleep(2);os.system(f"rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}");return'Succesful download Logs from Hugging Face'
+def download_train_log(exp_dir1):
+	file_path=f"/logs/{exp_dir1}/train.log"
+	if os.path.exists(file_path):
+		with open(file_path,_G)as f:return f.read()
+	else:return'File not found.'
 mi_applio=Applio()
 def GradioSetup():
-	j='Name of Zip file:';i='Enter HuggingFace Model-Repo name:';h='Enter HuggingFace Username:';g='Enter HuggingFace Write Token:';f='Edge-tts';e="Provide the GPU index(es) separated by '-', like 0-1-2 for using GPUs 0, 1, and 2:";d='Export file format:';c='You can also input audio files in batches. Choose one of the two options. Priority is given to reading from the folder.';b='multiple';a='Default value is 1.0';Z='Search feature ratio:';Y='Protect voiceless consonants and breath sounds to prevent artifacts such as tearing in electronic music. Set to 0.5 to disable. Decrease the value to increase protection, but it may reduce indexing accuracy:';X='Use the volume envelope of the input to replace or mix with the volume envelope of the output. The closer the ratio is to 1, the more the output envelope is used:';W='Resample the output audio in post-processing to the final sample rate. Set to 0 for no resampling:';V='Feature search database file path:';U='Max pitch:';T='Min pitch:';S='If >=3: apply median filtering to the harvested pitch results. The value represents the filter radius and can reduce breathiness.';R='Enable autotune';Q='rmvpe+';P='crepe-tiny';O='Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12):';N='Auto-detect index path and select from the dropdown:';M='Refresh';L='Mangio-Crepe Hop Length (Only applies to mangio-crepe): Hop length refers to the time it takes for the speaker to jump to a dramatic pitch. Lower hop lengths take more time to infer but are more pitch accurate.';K='crepe';J='dio';I='harvest';H='pm';G='Select the pitch extraction algorithm:';F='Convert';E='Advanced Settings';D='mangio-crepe-tiny';C='mangio-crepe';B='Output information:';A='primary';default_weight=names[0]if names else''
+	j='Name of Zip file:';i='Enter HuggingFace Model-Repo name:';h='Enter HuggingFace Username:';g='Enter HuggingFace Write Token:';f='Edge-tts';e="Provide the GPU index(es) separated by '-', like 0-1-2 for using GPUs 0, 1, and 2:";d='Hop Length (lower hop lengths take more time to infer but are more pitch accurate):';c='You can also input audio files in batches. Choose one of the two options. Priority is given to reading from the folder.';b='multiple';a='Default value is 1.0';Z='Search feature ratio:';Y='Protect voiceless consonants and breath sounds to prevent artifacts such as tearing in electronic music. Set to 0.5 to disable. Decrease the value to increase protection, but it may reduce indexing accuracy:';X='Use the volume envelope of the input to replace or mix with the volume envelope of the output. The closer the ratio is to 1, the more the output envelope is used:';W='Resample the output audio in post-processing to the final sample rate. Set to 0 for no resampling:';V='Feature search database file path:';U='Max pitch:';T='Min pitch:';S='If >=3: apply median filtering to the harvested pitch results. The value represents the filter radius and can reduce breathiness.';R='Enable autotune';Q='rmvpe+';P='crepe-tiny';O='Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12):';N='Auto-detect index path and select from the dropdown:';M='Refresh';L='Export file format:';K='mangio-crepe-tiny';J='crepe';I='dio';H='harvest';G='pm';F='Select the pitch extraction algorithm:';E='Convert';D='mangio-crepe';C='Advanced Settings';B='Output information:';A='primary';default_weight=names[0]if names else''
 	with gr.Blocks(title='🔊 AX-RVC',theme=gr.themes.Base(primary_hue='sky',neutral_hue='zinc'))as app:
 		gr.HTML('<h1> 🍏 AX-RVC </h1>')
 		with gr.Tabs():
 			with gr.TabItem(i18n('Model Inference')):
-				with gr.Row():sid0=gr.Dropdown(label=i18n('Inferencing voice:'),choices=sorted(names),value=default_weight);refresh_button=gr.Button(i18n(M),variant=A);clean_button=gr.Button(i18n('Unload voice to save GPU memory'),variant=A);clean_button.click(fn=lambda:{_H:'',_C:_D},inputs=[],outputs=[sid0])
+				with gr.Row():sid0=gr.Dropdown(label=i18n('Inferencing voice:'),choices=sorted(names),value=default_weight);refresh_button=gr.Button(i18n(M),variant=A);clean_button=gr.Button(i18n('Unload voice to save GPU memory'),variant=A);clean_button.click(fn=lambda:{_H:'',_C:_D},inputs=[],outputs=[sid0],api_name='infer_clean')
 				with gr.TabItem(i18n('Single')):
 					with gr.Row():spk_item=gr.Slider(minimum=0,maximum=2333,step=1,label=i18n('Select Speaker/Singer ID:'),value=0,visible=_B,interactive=_A)
 					with gr.Row():
@@ -476,63 +480,70 @@ def GradioSetup():
 						with gr.Column():
 							file_index2=gr.Dropdown(label=i18n(N),choices=get_indexes(),value=best_match_index_path1,interactive=_A,allow_custom_value=_A)
 							with gr.Column():input_audio1=gr.Dropdown(label=i18n('Auto detect audio path and select from the dropdown:'),choices=sorted(audio_paths),value='',interactive=_A);vc_transform0=gr.Number(label=i18n(O),value=0)
-							dropbox.upload(fn=save_to_wav2,inputs=[dropbox],outputs=[input_audio1]);record_button.change(fn=save_to_wav,inputs=[record_button],outputs=[input_audio1]);refresh_button.click(fn=change_choices,inputs=[],outputs=[sid0,file_index2,input_audio1])
-					advanced_settings_checkbox=gr.Checkbox(value=_B,label=i18n(E),interactive=_A)
+							dropbox.upload(fn=save_to_wav2,inputs=[dropbox],outputs=[input_audio1]);record_button.change(fn=save_to_wav,inputs=[record_button],outputs=[input_audio1]);refresh_button.click(fn=change_choices,inputs=[],outputs=[sid0,file_index2,input_audio1],api_name='infer_refresh')
+					advanced_settings_checkbox=gr.Checkbox(value=_B,label=i18n(C),interactive=_A)
 					with gr.Column(visible=_B)as advanced_settings:
-						with gr.Row(label=i18n(E),open=_B):
-							with gr.Column():f0method0=gr.Radio(label=i18n(G),choices=[H,I,J,K,P,C,D,_J,Q],value=Q,interactive=_A);f0_autotune=gr.Checkbox(label=R,interactive=_A);crepe_hop_length=gr.Slider(minimum=1,maximum=512,step=1,label=i18n(L),value=120,interactive=_A,visible=_B);filter_radius0=gr.Slider(minimum=0,maximum=7,label=i18n(S),value=3,step=1,interactive=_A);minpitch_slider=gr.Slider(label=i18n(T),info=i18n('Specify minimal pitch for inference [HZ]'),step=.1,minimum=1,scale=0,value=50,maximum=16000,interactive=_A,visible=not rvc_globals.NotesOrHertz and f0method0.value!=_J);minpitch_txtbox=gr.Textbox(label=i18n(T),info=i18n('Specify minimal pitch for inference [NOTE][OCTAVE]'),placeholder='C5',visible=rvc_globals.NotesOrHertz and f0method0.value!=_J,interactive=_A);maxpitch_slider=gr.Slider(label=i18n(U),info=i18n('Specify max pitch for inference [HZ]'),step=.1,minimum=1,scale=0,value=1100,maximum=16000,interactive=_A,visible=not rvc_globals.NotesOrHertz and f0method0.value!=_J);maxpitch_txtbox=gr.Textbox(label=i18n(U),info=i18n('Specify max pitch for inference [NOTE][OCTAVE]'),placeholder='C6',visible=rvc_globals.NotesOrHertz and f0method0.value!=_J,interactive=_A);file_index1=gr.Textbox(label=i18n(V),value='',interactive=_A);f0_file=gr.File(label=i18n('F0 curve file (optional). One pitch per line. Replaces the default F0 and pitch modulation:'))
-							f0method0.change(fn=lambda radio:{_E:radio in[C,D],_C:_D},inputs=[f0method0],outputs=[crepe_hop_length]);f0method0.change(fn=switch_pitch_controls,inputs=[f0method0],outputs=[minpitch_slider,minpitch_txtbox,maxpitch_slider,maxpitch_txtbox])
+						with gr.Row(label=i18n(C),open=_B):
+							with gr.Column():f0method0=gr.Radio(label=i18n(F),choices=[G,H,I,J,P,D,K,_J,Q],value=Q,interactive=_A);f0_autotune=gr.Checkbox(label=R,interactive=_A);split_audio=gr.Checkbox(label='Split Audio (Better Results)',interactive=_A);format1_=gr.Radio(label=i18n(L),choices=[_T,_V,_Z,_a],value=_T,interactive=_A);crepe_hop_length=gr.Slider(minimum=1,maximum=512,step=1,label=i18n('Mangio-Crepe Hop Length (Only applies to mangio-crepe): Hop length refers to the time it takes for the speaker to jump to a dramatic pitch. Lower hop lengths take more time to infer but are more pitch accurate.'),value=120,interactive=_A,visible=_B);filter_radius0=gr.Slider(minimum=0,maximum=7,label=i18n(S),value=3,step=1,interactive=_A);minpitch_slider=gr.Slider(label=i18n(T),info=i18n('Specify minimal pitch for inference [HZ]'),step=.1,minimum=1,scale=0,value=50,maximum=16000,interactive=_A,visible=not rvc_globals.NotesOrHertz and f0method0.value!=_J);minpitch_txtbox=gr.Textbox(label=i18n(T),info=i18n('Specify minimal pitch for inference [NOTE][OCTAVE]'),placeholder='C5',visible=rvc_globals.NotesOrHertz and f0method0.value!=_J,interactive=_A);maxpitch_slider=gr.Slider(label=i18n(U),info=i18n('Specify max pitch for inference [HZ]'),step=.1,minimum=1,scale=0,value=1100,maximum=16000,interactive=_A,visible=not rvc_globals.NotesOrHertz and f0method0.value!=_J);maxpitch_txtbox=gr.Textbox(label=i18n(U),info=i18n('Specify max pitch for inference [NOTE][OCTAVE]'),placeholder='C6',visible=rvc_globals.NotesOrHertz and f0method0.value!=_J,interactive=_A);file_index1=gr.Textbox(label=i18n(V),value='',interactive=_A);f0_file=gr.File(label=i18n('F0 curve file (optional). One pitch per line. Replaces the default F0 and pitch modulation:'))
+							f0method0.change(fn=lambda radio:{_E:radio in[D,K],_C:_D},inputs=[f0method0],outputs=[crepe_hop_length]);f0method0.change(fn=switch_pitch_controls,inputs=[f0method0],outputs=[minpitch_slider,minpitch_txtbox,maxpitch_slider,maxpitch_txtbox])
 							with gr.Column():resample_sr0=gr.Slider(minimum=0,maximum=48000,label=i18n(W),value=0,step=1,interactive=_A);rms_mix_rate0=gr.Slider(minimum=0,maximum=1,label=i18n(X),value=.25,interactive=_A);protect0=gr.Slider(minimum=0,maximum=.5,label=i18n(Y),value=.33,step=.01,interactive=_A);index_rate1=gr.Slider(minimum=0,maximum=1,label=i18n(Z),value=.75,interactive=_A);formanting=gr.Checkbox(value=bool(DoFormant),label=i18n('Formant shift inference audio'),info=i18n('Used for male to female and vice-versa conversions'),interactive=_A,visible=_A);formant_preset=gr.Dropdown(value='',choices=get_fshift_presets(),label=i18n('Browse presets for formanting'),info=i18n('Presets are located in formantshiftcfg/ folder'),visible=bool(DoFormant));formant_refresh_button=gr.Button(value='🔄',visible=bool(DoFormant),variant=A);qfrency=gr.Slider(value=Quefrency,info=i18n(a),label=i18n('Quefrency for formant shifting'),minimum=.0,maximum=16.,step=.1,visible=bool(DoFormant),interactive=_A);tmbre=gr.Slider(value=Timbre,info=i18n(a),label=i18n('Timbre for formant shifting'),minimum=.0,maximum=16.,step=.1,visible=bool(DoFormant),interactive=_A);frmntbut=gr.Button('Apply',variant=A,visible=bool(DoFormant))
 							formant_preset.change(fn=preset_apply,inputs=[formant_preset,qfrency,tmbre],outputs=[qfrency,tmbre]);formanting.change(fn=formant_enabled,inputs=[formanting,qfrency,tmbre,frmntbut,formant_preset,formant_refresh_button],outputs=[formanting,qfrency,tmbre,frmntbut,formant_preset,formant_refresh_button]);frmntbut.click(fn=formant_apply,inputs=[qfrency,tmbre],outputs=[qfrency,tmbre]);formant_refresh_button.click(fn=update_fshift_presets,inputs=[formant_preset,qfrency,tmbre],outputs=[formant_preset,qfrency,tmbre])
 					def toggle_advanced_settings(checkbox):return{_E:checkbox,_C:_D}
-					advanced_settings_checkbox.change(fn=toggle_advanced_settings,inputs=[advanced_settings_checkbox],outputs=[advanced_settings]);but0=gr.Button(i18n(F),variant=A).style(full_width=_A)
+					advanced_settings_checkbox.change(fn=toggle_advanced_settings,inputs=[advanced_settings_checkbox],outputs=[advanced_settings]);but0=gr.Button(i18n(E),variant=A).style(full_width=_A)
 					with gr.Row():vc_output1=gr.Textbox(label=i18n(B));vc_output2=gr.Audio(label=i18n('Export audio (click on the three dots in the lower right corner to download)'))
 					with gr.Group():
-						with gr.Row():but0.click(vc.vc_single,[spk_item,input_audio1,vc_transform0,f0_file,f0method0,file_index1,file_index2,index_rate1,filter_radius0,resample_sr0,rms_mix_rate0,protect0,crepe_hop_length,minpitch_slider,minpitch_txtbox,maxpitch_slider,maxpitch_txtbox,f0_autotune],[vc_output1,vc_output2])
+						with gr.Row():but0.click(vc.vc_single,[spk_item,input_audio1,vc_transform0,f0_file,f0method0,file_index1,file_index2,index_rate1,filter_radius0,resample_sr0,rms_mix_rate0,protect0,format1_,split_audio,crepe_hop_length,minpitch_slider,minpitch_txtbox,maxpitch_slider,maxpitch_txtbox,f0_autotune],[vc_output1,vc_output2],api_name='infer_convert')
 				with gr.TabItem(i18n('Batch')):
 					with gr.Row():
 						with gr.Column():vc_transform1=gr.Number(label=i18n(O),value=0);opt_input=gr.Textbox(label=i18n('Specify output folder:'),value='opt')
-						with gr.Column():file_index4=gr.Dropdown(label=i18n(N),choices=get_indexes(),value=best_match_index_path1,interactive=_A);dir_input=gr.Textbox(label=i18n('Enter the path of the audio folder to be processed (copy it from the address bar of the file manager):'),value=os.path.join(now_dir,_Q,_R));sid0.select(fn=match_index,inputs=[sid0],outputs=[file_index2,file_index4]);refresh_button.click(fn=lambda:change_choices()[1],inputs=[],outputs=file_index4)
+						with gr.Column():file_index4=gr.Dropdown(label=i18n(N),choices=get_indexes(),value=best_match_index_path1,interactive=_A);dir_input=gr.Textbox(label=i18n('Enter the path of the audio folder to be processed (copy it from the address bar of the file manager):'),value=os.path.join(now_dir,_Q,_R));sid0.select(fn=match_index,inputs=[sid0],outputs=[file_index2,file_index4]);refresh_button.click(fn=lambda:change_choices()[1],inputs=[],outputs=file_index4,api_name='infer_refresh_batch')
 						with gr.Column():inputs=gr.File(file_count=b,label=i18n(c))
 					with gr.Row():
 						with gr.Column():
-							advanced_settings_batch_checkbox=gr.Checkbox(value=_B,label=i18n(E),interactive=_A)
+							advanced_settings_batch_checkbox=gr.Checkbox(value=_B,label=i18n(C),interactive=_A)
 							with gr.Row(visible=_B)as advanced_settings_batch:
-								with gr.Row(label=i18n(E),open=_B):
-									with gr.Column():file_index3=gr.Textbox(label=i18n(V),value='',interactive=_A);f0method1=gr.Radio(label=i18n(G),choices=[H,I,J,K,P,C,D,_J],value=_J,interactive=_A);format1=gr.Radio(label=i18n(d),choices=[_X,_Y,_g,_h],value=_X,interactive=_A)
-								with gr.Column():resample_sr1=gr.Slider(minimum=0,maximum=48000,label=i18n(W),value=0,step=1,interactive=_A);rms_mix_rate1=gr.Slider(minimum=0,maximum=1,label=i18n(X),value=1,interactive=_A);protect1=gr.Slider(minimum=0,maximum=.5,label=i18n(Y),value=.33,step=.01,interactive=_A);filter_radius1=gr.Slider(minimum=0,maximum=7,label=i18n(S),value=3,step=1,interactive=_A);index_rate2=gr.Slider(minimum=0,maximum=1,label=i18n(Z),value=.75,interactive=_A);f0_autotune=gr.Checkbox(label=R,interactive=_A);crepe_hop_length=gr.Slider(minimum=1,maximum=512,step=1,label=i18n(L),value=120,interactive=_A,visible=_B)
-							but1=gr.Button(i18n(F),variant=A);vc_output3=gr.Textbox(label=i18n(B));but1.click(vc.vc_multi,[spk_item,dir_input,opt_input,inputs,vc_transform1,f0method1,file_index3,file_index4,index_rate2,filter_radius1,resample_sr1,rms_mix_rate1,protect1,format1,crepe_hop_length,minpitch_slider,minpitch_txtbox,maxpitch_slider,maxpitch_txtbox,f0_autotune],[vc_output3])
-					sid0.change(fn=vc.get_vc,inputs=[sid0,protect0,protect1],outputs=[spk_item,protect0,protect1])
+								with gr.Row(label=i18n(C),open=_B):
+									with gr.Column():file_index3=gr.Textbox(label=i18n(V),value='',interactive=_A);f0method1=gr.Radio(label=i18n(F),choices=[G,H,I,J,P,D,K,_J],value=_J,interactive=_A);format1=gr.Radio(label=i18n(L),choices=[_T,_V,_Z,_a],value=_T,interactive=_A)
+								with gr.Column():resample_sr1=gr.Slider(minimum=0,maximum=48000,label=i18n(W),value=0,step=1,interactive=_A);rms_mix_rate1=gr.Slider(minimum=0,maximum=1,label=i18n(X),value=1,interactive=_A);protect1=gr.Slider(minimum=0,maximum=.5,label=i18n(Y),value=.33,step=.01,interactive=_A);filter_radius1=gr.Slider(minimum=0,maximum=7,label=i18n(S),value=3,step=1,interactive=_A);index_rate2=gr.Slider(minimum=0,maximum=1,label=i18n(Z),value=.75,interactive=_A);f0_autotune=gr.Checkbox(label=R,interactive=_A);hop_length=gr.Slider(minimum=1,maximum=512,step=1,label=i18n(d),value=120,interactive=_A,visible=_B)
+							but1=gr.Button(i18n(E),variant=A);vc_output3=gr.Textbox(label=i18n(B));but1.click(vc.vc_multi,[spk_item,dir_input,opt_input,inputs,vc_transform1,f0method1,file_index3,file_index4,index_rate2,filter_radius1,resample_sr1,rms_mix_rate1,protect1,format1,hop_length,minpitch_slider,minpitch_txtbox,maxpitch_slider,maxpitch_txtbox,f0_autotune],[vc_output3],api_name='infer_convert_batch')
+					sid0.change(fn=vc.get_vc,inputs=[sid0,protect0,protect1],outputs=[spk_item,protect0,protect1],api_name='infer_change_voice')
 					if not sid0.value=='':spk_item,protect0,protect1=vc.get_vc(sid0.value,protect0,protect1)
 					def toggle_advanced_settings_batch(checkbox):return{_E:checkbox,_C:_D}
 					advanced_settings_batch_checkbox.change(fn=toggle_advanced_settings_batch,inputs=[advanced_settings_batch_checkbox],outputs=[advanced_settings_batch])
 			with gr.TabItem(i18n('Train')):
 				with gr.Accordion(label=i18n('Step 1: Processing data')):
-					with gr.Row():exp_dir1=gr.Textbox(label=i18n('Enter the model name:'),value=i18n('Model_Name'));sr2=gr.Radio(label=i18n('Target sample rate:'),choices=[_S,_c,_b],value=_S,interactive=_A);if_f0_3=gr.Checkbox(label=i18n('Whether the model has pitch guidance.'),value=_A,interactive=_A);version19=gr.Radio(label=i18n('Version:'),choices=[_d],value=_d,interactive=_A,visible=_A);np7=gr.Slider(minimum=1,maximum=config.n_cpu,step=1,label=i18n('Number of CPU processes:'),value=config.n_cpu,interactive=_A)
-				with gr.Accordion(label=i18n('Step 2: Skipping pitch extraction')):
 					with gr.Row():
-						with gr.Column():trainset_dir4=gr.Dropdown(choices=sorted(datasets),label=i18n('Select your dataset:'),value=get_dataset());btn_update_dataset_list=gr.Button(i18n('Update list'),variant=A)
-						with gr.Column():dataset_path=gr.Textbox(label=i18n('Or add your dataset path:'),interactive=_A)
-						spk_id5=gr.Slider(minimum=0,maximum=4,step=1,label=i18n('Specify the model ID:'),value=0,interactive=_A);btn_update_dataset_list.click(resources.update_dataset_list,[spk_id5],trainset_dir4);but1=gr.Button(i18n('Process data'),variant=A);info1=gr.Textbox(label=i18n(B),value='');but1.click(preprocess_dataset,[trainset_dir4,exp_dir1,sr2,np7,dataset_path],[info1])
-				with gr.Accordion(label=i18n('Step 3: Extracting features')):
+						with gr.Column():exp_dir1=gr.Textbox(label=i18n('Enter the model name:'),value=i18n('Model_Name'));if_f0_3=gr.Checkbox(label=i18n('Whether the model has pitch guidance.'),value=_A,interactive=_A)
+						sr2=gr.Radio(label=i18n('Target sample rate:'),choices=[_S,_e,_d],value=_S,interactive=_A);version19=gr.Radio(label=i18n('Version:'),choices=[_f],value=_f,interactive=_A,visible=_A)
+						with gr.Column():np7=gr.Slider(minimum=1,maximum=config.n_cpu,step=1,label=i18n('Number of CPU processes:'),value=config.n_cpu,interactive=_A);spk_id5=gr.Slider(minimum=0,maximum=4,step=1,label=i18n('Specify the model ID:'),value=0,interactive=_A)
+					with gr.Row():
+						with gr.Column():trainset_dir4=gr.Dropdown(choices=sorted(datasets),label=i18n('Select your dataset:'),value=get_dataset());dataset_path=gr.Textbox(label=i18n('Or add your dataset path:'),interactive=_A);btn_update_dataset_list=gr.Button(i18n('Update list'),variant=A)
+						btn_update_dataset_list.click(resources.update_dataset_list,[spk_id5],trainset_dir4);but1=gr.Button(i18n('Process data'),variant=A);info1=gr.Textbox(label=i18n(B),value='');but1.click(preprocess_dataset,[trainset_dir4,exp_dir1,sr2,np7,dataset_path],[info1],api_name='train_preprocess')
+				with gr.Accordion(label=i18n('Step 2: Extracting features')):
 					with gr.Row():
 						with gr.Column():gpus6=gr.Textbox(label=i18n(e),value=gpus,interactive=_A);gpu_info9=gr.Textbox(label=i18n('GPU Information:'),value=gpu_info,visible=F0GPUVisible)
-						with gr.Column():f0method8=gr.Radio(label=i18n(G),choices=[H,I,J,K,C,_J,_A0],value=_J,interactive=_A);extraction_crepe_hop_length=gr.Slider(minimum=1,maximum=512,step=1,label=i18n(L),value=64,interactive=_A,visible=_B);f0method8.change(fn=lambda radio:{_E:radio in[C,D],_C:_D},inputs=[f0method8],outputs=[extraction_crepe_hop_length])
-						but2=gr.Button(i18n('Feature extraction'),variant=A);info2=gr.Textbox(label=i18n(B),value='',max_lines=8,interactive=_B);but2.click(extract_f0_feature,[gpus6,np7,f0method8,if_f0_3,exp_dir1,version19,extraction_crepe_hop_length],[info2])
+						with gr.Column():f0method8=gr.Radio(label=i18n(F),choices=[G,H,I,J,D,_J,_A0],value=_J,interactive=_A);hop_length=gr.Slider(minimum=1,maximum=512,step=1,label=i18n(d),value=64,interactive=_A)
+					with gr.Row():but2=gr.Button(i18n('Feature extraction'),variant=A);info2=gr.Textbox(label=i18n(B),value='',max_lines=8,interactive=_B)
+					but2.click(extract_f0_feature,[gpus6,np7,f0method8,if_f0_3,exp_dir1,version19,hop_length],[info2],api_name='train_extract_f0_feature')
 				with gr.Row():
-					with gr.Accordion(label=i18n('Step 4: Model training started')):
+					with gr.Accordion(label=i18n('Step 3: Model training started')):
 						with gr.Row():save_epoch10=gr.Slider(minimum=1,maximum=100,step=1,label=i18n('Save frequency:'),value=10,interactive=_A,visible=_A);total_epoch11=gr.Slider(minimum=1,maximum=10000,step=2,label=i18n('Training epochs:'),value=750,interactive=_A);batch_size12=gr.Slider(minimum=1,maximum=50,step=1,label=i18n('Batch size per GPU:'),value=default_batch_size,interactive=_A)
 						with gr.Row():if_save_latest13=gr.Checkbox(label=i18n('Whether to save only the latest .ckpt file to save hard drive space'),value=_A,interactive=_A);if_cache_gpu17=gr.Checkbox(label=i18n('Cache all training sets to GPU memory. Caching small datasets (less than 10 minutes) can speed up training'),value=_B,interactive=_A);if_save_every_weights18=gr.Checkbox(label=i18n("Save a small final model to the 'weights' folder at each save point"),value=_A,interactive=_A)
+						with gr.Column():
+							with gr.Row():
+								pretrained_G14=gr.Textbox(label=i18n('Load pre-trained base model G path:'),value='/kaggle/input/ax-rmf/pretrained_v2/f0G40k.pth',interactive=_A);pretrained_D15=gr.Textbox(label=i18n('Load pre-trained base model D path:'),value='/kaggle/input/ax-rmf/pretrained_v2/f0D40k.pth',interactive=_A)
+								with gr.Row():gpus16=gr.Textbox(label=i18n(e),value=gpus,interactive=_A)
+							sr2.change(change_sr2,[sr2,if_f0_3,version19],[pretrained_G14,pretrained_D15]);version19.change(change_version19,[sr2,if_f0_3,version19],[pretrained_G14,pretrained_D15,sr2]);if_f0_3.change(fn=change_f0,inputs=[if_f0_3,sr2,version19],outputs=[f0method8,pretrained_G14,pretrained_D15])
 						with gr.Row():
-							pretrained_G14=gr.Textbox(lines=4,label=i18n('Load pre-trained base model G path:'),value='/kaggle/input/ax-rmf/pretrained_v2/f0G40k.pth',interactive=_A);pretrained_D15=gr.Textbox(lines=4,label=i18n('Load pre-trained base model D path:'),value='/kaggle/input/ax-rmf/pretrained_v2/f0D40k.pth',interactive=_A);gpus16=gr.Textbox(label=i18n(e),value=gpus,interactive=_A);sr2.change(change_sr2,[sr2,if_f0_3,version19],[pretrained_G14,pretrained_D15]);version19.change(change_version19,[sr2,if_f0_3,version19],[pretrained_G14,pretrained_D15,sr2]);if_f0_3.change(fn=change_f0,inputs=[if_f0_3,sr2,version19],outputs=[f0method8,pretrained_G14,pretrained_D15]);if_f0_3.change(fn=lambda radio:{_E:radio in[C,D],_C:_D},inputs=[f0method8],outputs=[extraction_crepe_hop_length]);butstop=gr.Button(i18n('Stop training'),variant=A,visible=_B);but3=gr.Button(i18n('Train model'),variant=A,visible=_A);but3.click(fn=stoptraining,inputs=[gr.Number(value=0,visible=_B)],outputs=[but3,butstop]);butstop.click(fn=stoptraining,inputs=[gr.Number(value=1,visible=_B)],outputs=[but3,butstop])
-							with gr.Column():info3=gr.Textbox(label=i18n(B),value='',max_lines=4);save_action=gr.Dropdown(label=i18n('Save type'),choices=[i18n('Save all'),i18n('Save D and G'),i18n('Save voice')],value=i18n('Choose the method'),interactive=_A);but7=gr.Button(i18n('Save model'),variant=A);but4=gr.Button(i18n('Train feature index'),variant=A)
+							butstop=gr.Button(i18n('Stop training'),variant=A,visible=_B);but3=gr.Button(i18n('Train model'),variant=A,visible=_A);but3.click(fn=stoptraining,inputs=[gr.Number(value=0,visible=_B)],outputs=[but3,butstop],api_name='train_stop');butstop.click(fn=stoptraining,inputs=[gr.Number(value=1,visible=_B)],outputs=[but3,butstop]);info3=gr.Textbox(label=i18n(B),value='',lines=4,max_lines=4)
+							with gr.Column():save_action=gr.Dropdown(label=i18n('Save type'),choices=[i18n('Save all'),i18n('Save D and G'),i18n('Save voice')],value=i18n('Choose the method'),interactive=_A);but4=gr.Button(i18n('Train feature index'),variant=A);but7=gr.Button(i18n('Save model'),variant=A);download_trainlogbut=gr.Button('Download train.log',variant=A);download_trainlogout=gr.outputs.File(label='Download Logs')
 							if_save_every_weights18.change(fn=lambda if_save_every_weights:{_E:if_save_every_weights,_C:_D},inputs=[if_save_every_weights18],outputs=[save_epoch10])
-						but3.click(click_train,[exp_dir1,sr2,if_f0_3,spk_id5,save_epoch10,total_epoch11,batch_size12,if_save_latest13,pretrained_G14,pretrained_D15,gpus16,if_cache_gpu17,if_save_every_weights18,version19],[info3,butstop,but3]);but4.click(train_index,[exp_dir1,version19],info3);but7.click(resources.save_model,[exp_dir1,save_action],info3)
+						but3.click(click_train,[exp_dir1,sr2,if_f0_3,spk_id5,save_epoch10,total_epoch11,batch_size12,if_save_latest13,pretrained_G14,pretrained_D15,gpus16,if_cache_gpu17,if_save_every_weights18,version19],[info3,butstop,but3],api_name='train_start');but4.click(train_index,[exp_dir1,version19],info3);but7.click(resources.save_model,[exp_dir1,save_action],info3);download_trainlogbut.click(download_train_log,[exp_dir1],download_trainlogout)
 			with gr.TabItem(i18n('UVR5')):
 				with gr.Row():
-					with gr.Column():model_select=gr.Radio(label=i18n('Model Architecture:'),choices=[_Z,_j],value=_Z,interactive=_A);dir_wav_input=gr.Textbox(label=i18n('Enter the path of the audio folder to be processed:'),value=os.path.join(now_dir,_Q,_R));wav_inputs=gr.File(file_count=b,label=i18n(c))
-					with gr.Column():model_choose=gr.Dropdown(label=i18n('Model:'),choices=uvr5_names);agg=gr.Slider(minimum=0,maximum=20,step=1,label='Vocal Extraction Aggressive',value=10,interactive=_A,visible=_B);opt_vocal_root=gr.Textbox(label=i18n('Specify the output folder for vocals:'),value=_x);opt_ins_root=gr.Textbox(label=i18n('Specify the output folder for accompaniment:'),value=_y);format0=gr.Radio(label=i18n(d),choices=[_X,_Y,_g,_h],value=_Y,interactive=_A)
-					model_select.change(fn=update_model_choices,inputs=model_select,outputs=model_choose);but2=gr.Button(i18n(F),variant=A);vc_output4=gr.Textbox(label=i18n(B));but2.click(uvr,[model_choose,dir_wav_input,opt_vocal_root,wav_inputs,opt_ins_root,agg,format0,model_select],[vc_output4])
+					with gr.Column():model_select=gr.Radio(label=i18n('Model Architecture:'),choices=[_b,_j],value=_b,interactive=_A);dir_wav_input=gr.Textbox(label=i18n('Enter the path of the audio folder to be processed:'),value=os.path.join(now_dir,_Q,_R));wav_inputs=gr.File(file_count=b,label=i18n(c))
+					with gr.Column():model_choose=gr.Dropdown(label=i18n('Model:'),choices=uvr5_names);agg=gr.Slider(minimum=0,maximum=20,step=1,label='Vocal Extraction Aggressive',value=10,interactive=_A,visible=_B);opt_vocal_root=gr.Textbox(label=i18n('Specify the output folder for vocals:'),value=_x);opt_ins_root=gr.Textbox(label=i18n('Specify the output folder for accompaniment:'),value=_y);format0=gr.Radio(label=i18n(L),choices=[_T,_V,_Z,_a],value=_V,interactive=_A)
+					model_select.change(fn=update_model_choices,inputs=model_select,outputs=model_choose);but2=gr.Button(i18n(E),variant=A);vc_output4=gr.Textbox(label=i18n(B));but2.click(uvr,[model_choose,dir_wav_input,opt_vocal_root,wav_inputs,opt_ins_root,agg,format0,model_select],[vc_output4],api_name='uvr_convert')
 			with gr.TabItem(i18n('TTS')):
 				with gr.Column():text_test=gr.Textbox(label=i18n('Text:'),placeholder=i18n('Enter the text you want to convert to voice...'),lines=6)
 				with gr.Row():
@@ -540,7 +551,7 @@ def GradioSetup():
 					with gr.Column():model_voice_path07=gr.Dropdown(label=i18n('RVC Model:'),choices=sorted(names),value=default_weight);best_match_index_path1,_=match_index(model_voice_path07.value);file_index2_07=gr.Dropdown(label=i18n('Select the .index file:'),choices=get_indexes(),value=best_match_index_path1,interactive=_A,allow_custom_value=_A)
 				with gr.Row():refresh_button_=gr.Button(i18n(M),variant=A);refresh_button_.click(fn=change_choices2,inputs=[],outputs=[model_voice_path07,file_index2_07])
 				with gr.Row():original_ttsvoice=gr.Audio(label=i18n('Audio TTS:'));ttsvoice=gr.Audio(label=i18n('Audio RVC:'))
-				with gr.Row():button_test=gr.Button(i18n(F),variant=A)
+				with gr.Row():button_test=gr.Button(i18n(E),variant=A)
 				button_test.click(tts.use_tts,inputs=[text_test,tts_test,model_voice_path07,file_index2_07,vc_transform0,f0method8,index_rate1,crepe_hop_length,f0_autotune,ttsmethod_test],outputs=[ttsvoice,original_ttsvoice])
 			with gr.TabItem('HuggingFace 🤗'):
 				with gr.Accordion(label=i18n('Upload Model and Logs')):
@@ -568,6 +579,4 @@ def GradioRun(app):
 	B='./assets/images/icon.png';A='0.0.0.0';share_gradio_link=config.iscolab or config.paperspace;concurrency_count=511;max_size=1022
 	if config.iscolab or config.paperspace:app.queue(concurrency_count=concurrency_count,max_size=max_size).launch(server_name=A,inbrowser=not config.noautoopen,server_port=config.listen_port,quiet=_A,favicon_path=B,share=_B)
 	else:app.queue(concurrency_count=concurrency_count,max_size=max_size).launch(server_name=A,inbrowser=not config.noautoopen,server_port=config.listen_port,quiet=_A,favicon_path=B,share=_B)
-if __name__=='__main__':
-	if os.name=='nt':logger.info(i18n('Any ConnectionResetErrors post-conversion are irrelevant and purely visual; they can be ignored.\n'))
-	app=GradioSetup();GradioRun(app)
+if __name__=='__main__':app=GradioSetup();GradioRun(app)

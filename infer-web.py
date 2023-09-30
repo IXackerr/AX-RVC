@@ -1792,6 +1792,14 @@ def start_download_from_huggingface(hgf_token_gr_d, hgf_name_gr_d, hgf_repo_gr_d
 
     return "Succesful download Logs from Hugging Face"
 
+def download_train_log(exp_dir1):
+    file_path = f"/logs/{exp_dir1}/train.log"
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            return f.read()
+    else:
+        return "File not found."
+
 # Crear una instancia de Applio
 mi_applio = Applio()
 
@@ -2695,6 +2703,9 @@ def GradioSetup():
 
                                 but7 = gr.Button(i18n("Save model"), variant="primary")
 
+                                download_trainlogbut = gr.Button("Download train.log", variant="primary")
+                                download_trainlogout = gr.outputs.File(label="Download Logs")
+
                             if_save_every_weights18.change(
                                 fn=lambda if_save_every_weights: (
                                     {
@@ -2730,6 +2741,8 @@ def GradioSetup():
 
                         but4.click(train_index, [exp_dir1, version19], info3)
                         but7.click(resources.save_model, [exp_dir1, save_action], info3)
+                        download_trainlogbut.click(download_train_log, [exp_dir1], download_trainlogout)
+                        
 
             with gr.TabItem(i18n("UVR5")):  # UVR section
                 with gr.Row():
