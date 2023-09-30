@@ -732,5 +732,4 @@ class Pipeline(object):
             torch.cuda.empty_cache()
 
         print("Returning completed audio...")
-        print("-------------------")
         return audio_opt
