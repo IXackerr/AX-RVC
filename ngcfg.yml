@@ -2,10 +2,6 @@ tunnels:
   tensorboard:
     proto: http
     addr: 6006
-    basic-auth: 
-      - "AX:RVC!AX"
   ax:
     proto: http
     addr: 3745
-    basic-auth:
-      - "AX:RVC!AX"
