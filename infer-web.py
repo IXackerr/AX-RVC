@@ -3,6 +3,7 @@ import shutil
 import sys
 import json  # Mangio fork using json for preset saving
 import math
+
 import signal
 
 now_dir = os.getcwd()
@@ -138,10 +139,11 @@ gpus = "-".join([i[0] for i in gpu_infos])
 
 hubert_model = None
 
+
 def load_hubert():
     global hubert_model
     models, _, _ = checkpoint_utils.load_model_ensemble_and_task(
-        ["/kaggle/input/ax-rmf/hubert_base.pt"],
+        ["hubert_base.pt"],
         suffix="",
     )
     hubert_model = models[0]
@@ -815,26 +817,26 @@ def change_sr2(sr2, if_f0_3, version19):
     path_str = "" if version19 == "v1" else "_v2"
     f0_str = "f0" if if_f0_3 else ""
     if_pretrained_generator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2), os.F_OK
+        "pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if_pretrained_discriminator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2), os.F_OK
+        "pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if not if_pretrained_generator_exist:
         print(
-            "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2),
+            "pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2),
             "doesn't exist, will not use pretrained model",
         )
     if not if_pretrained_discriminator_exist:
         print(
-            "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2),
+            "pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2),
             "doesn't exist, will not use pretrained model",
         )
     return (
-        "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2)
+        "pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2)
         if if_pretrained_generator_exist
         else "",
-        "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2)
+        "pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2)
         if if_pretrained_discriminator_exist
         else "",
     )
@@ -851,26 +853,26 @@ def change_version19(sr2, if_f0_3, version19):
     )
     f0_str = "f0" if if_f0_3 else ""
     if_pretrained_generator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2), os.F_OK
+        "pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if_pretrained_discriminator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2), os.F_OK
+        "pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if not if_pretrained_generator_exist:
         print(
-            "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2),
+            "pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2),
             "doesn't exist, will not use pretrained model",
         )
     if not if_pretrained_discriminator_exist:
         print(
-            "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2),
+            "pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2),
             "doesn't exist, will not use pretrained model",
         )
     return (
-        "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2)
+        "pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2)
         if if_pretrained_generator_exist
         else "",
-        "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2)
+        "pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2)
         if if_pretrained_discriminator_exist
         else "",
         to_return_sr2,
@@ -890,29 +892,29 @@ def change_f0(
 ):  # f0method8,pretrained_G14,pretrained_D15
     path_str = "" if version19 == "v1" else "_v2"
     if_pretrained_generator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/f0G%s.pth" % (path_str, sr2), os.F_OK
+        "pretrained%s/f0G%s.pth" % (path_str, sr2), os.F_OK
     )
     if_pretrained_discriminator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/f0D%s.pth" % (path_str, sr2), os.F_OK
+        "pretrained%s/f0D%s.pth" % (path_str, sr2), os.F_OK
     )
     if not if_pretrained_generator_exist:
         print(
-            "/kaggle/input/ax-rmf/pretrained%s/f0G%s.pth" % (path_str, sr2),
+            "pretrained%s/f0G%s.pth" % (path_str, sr2),
             "not exist, will not use pretrained model",
         )
     if not if_pretrained_discriminator_exist:
         print(
-            "/kaggle/input/ax-rmf/pretrained%s/f0D%s.pth" % (path_str, sr2),
+            "pretrained%s/f0D%s.pth" % (path_str, sr2),
             "not exist, will not use pretrained model",
         )
 
     if if_f0_3:
         return (
             {"visible": True, "__type__": "update"},
-            "/kaggle/input/ax-rmf/pretrained%s/f0G%s.pth" % (path_str, sr2)
+            "pretrained%s/f0G%s.pth" % (path_str, sr2)
             if if_pretrained_generator_exist
             else "",
-            "/kaggle/input/ax-rmf/pretrained%s/f0D%s.pth" % (path_str, sr2)
+            "pretrained%s/f0D%s.pth" % (path_str, sr2)
             if if_pretrained_discriminator_exist
             else "",
             {"visible": True, "__type__": "update"},
@@ -925,10 +927,10 @@ def change_f0(
 
     return (
         {"visible": False, "__type__": "update"},
-        ("/kaggle/input/ax-rmf/pretrained%s/G%s.pth" % (path_str, sr2))
+        ("pretrained%s/G%s.pth" % (path_str, sr2))
         if if_pretrained_generator_exist
         else "",
-        ("/kaggle/input/ax-rmf/pretrained%s/D%s.pth" % (path_str, sr2))
+        ("pretrained%s/D%s.pth" % (path_str, sr2))
         if if_pretrained_discriminator_exist
         else "",
         {"visible": False, "__type__": "update"},
@@ -1048,7 +1050,7 @@ def click_train(
         f.write("\n".join(opt))
     print("write filelist done")
     # 生成config#无需生成config
-    # cmd = python_cmd + " train_nsf_sim_cache_sid_load_pretrain.py -e mi-test -sr 40k -f0 1 -bs 4 -g 0 -te 10 -se 5 -pg /kaggle/input/ax-rmf/pretrained/f0G40k.pth -pd pretrained/f0D40k.pth -l 1 -c 0"
+    # cmd = python_cmd + " train_nsf_sim_cache_sid_load_pretrain.py -e mi-test -sr 40k -f0 1 -bs 4 -g 0 -te 10 -se 5 -pg pretrained/f0G40k.pth -pd pretrained/f0D40k.pth -l 1 -c 0"
     print("use gpus:", gpus16)
     if pretrained_G14 == "":
         print("no pretrained Generator")
@@ -1984,8 +1986,13 @@ def whethercrepeornah(radio):
 
 
 # Change your Gradio Theme here. 👇 👇 👇 👇 Example: " theme='HaleyCH/HaleyCH_Theme' "
-with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as app:
-    gr.HTML("<h1> AX RVC ( Mangio-RVC-Fork ) 🍏 </h1>")  
+with gr.Blocks(theme=gr.themes.Soft(), title="Mangio-RVC-Web 💻") as app:
+    gr.HTML("<h1> The Mangio-RVC-Fork 💻 </h1>")
+    gr.Markdown(
+        value=i18n(
+            "本软件以MIT协议开源, 作者不对软件具备任何控制力, 使用软件者、传播软件导出的声音者自负全责. <br>如不认可该条款, 则不能使用或引用软件包内任何代码和文件. 详见根目录<b>使用需遵守的协议-LICENSE.txt</b>."
+        )
+    )
     with gr.Tabs():
         with gr.TabItem(i18n("模型推理")):
             # Inference Preset Row
@@ -2459,7 +2466,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
                 exp_dir1 = gr.Textbox(label=i18n("输入实验名"), value="mi-test")
                 sr2 = gr.Radio(
                     label=i18n("目标采样率"),
-                    choices=["40k"],
+                    choices=["40k", "48k"],
                     value="40k",
                     interactive=True,
                 )
@@ -2470,8 +2477,8 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
                 )
                 version19 = gr.Radio(
                     label=i18n("版本"),
-                    choices=["v2"],
-                    value="v2",
+                    choices=["v1", "v2"],
+                    value="v1",
                     interactive=True,
                     visible=True,
                 )
@@ -2509,7 +2516,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
                     )
             with gr.Group():
                 step2b = gr.Markdown(
-                   value=i18n("step2b: 使用CPU提取音高(如果模型带音高), 使用GPU提取特征(选择卡号)")
+                    value=i18n("step2b: 使用CPU提取音高(如果模型带音高), 使用GPU提取特征(选择卡号)")
                 )
                 with gr.Row():
                     with gr.Column():
@@ -2615,13 +2622,13 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
                     pretrained_G14 = gr.Textbox(
                         lines=2,
                         label=i18n("加载预训练底模G路径"),
-                        value="/kaggle/input/ax-rmf/pretrained_v2/f0G40k.pth",
+                        value="/kaggle/input/ax-rmf/pretrained/f0G40k.pth",
                         interactive=True,
                     )
                     pretrained_D15 = gr.Textbox(
                         lines=2,
                         label=i18n("加载预训练底模D路径"),
-                        value="/kaggle/input/ax-rmf/pretrained_v2/f0D40k.pth",
+                        value="/kaggle/input/ax-rmf/pretrained/f0D40k.pth",
                         interactive=True,
                     )
                     sr2.change(
@@ -2943,7 +2950,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
                         info = f.read()
                 gr.Markdown(value=info)
             except:
-                gr.Markdown(value=traceback.format_exc())
+                gr.Markdown(traceback.format_exc())
 
     # region Mangio Preset Handler Region
     def save_preset(
@@ -3072,20 +3079,20 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC 🍏") as a
     # with gr.TabItem(i18n("点击查看交流、问题反馈群号")):
     #     gr.Markdown(value=i18n("xxxxx"))
 
-    if (
-        config.iscolab or config.paperspace
-    ):  # Share gradio link for colab and paperspace (FORK FEATURE)
+    if config.iscolab or config.paperspace:
         app.queue(concurrency_count=511, max_size=1022).launch(
+            server_name="0.0.0.0",
+            inbrowser=not config.noautoopen,
             server_port=config.listen_port,
+            quiet=True,
             share=False,
-            )
+        )
     else:
         app.queue(concurrency_count=511, max_size=1022).launch(
             server_name="0.0.0.0",
             inbrowser=not config.noautoopen,
             server_port=config.listen_port,
             quiet=False,
-            share=False,
         )
 
 # endregion

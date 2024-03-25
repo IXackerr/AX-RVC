@@ -107,7 +107,7 @@ def get_vc(sid):
 def load_hubert():
     global hubert_model
     models, _, _ = checkpoint_utils.load_model_ensemble_and_task(
-        ["/kaggle/input/ax-rmf/hubert_base.pt"],
+        ["hubert_base.pt"],
         suffix="",
     )
     hubert_model = models[0]
@@ -210,9 +210,9 @@ with app:
     with gr.Tabs():
         with gr.TabItem("在线demo"):
             gr.Markdown(
-                value="
-                RVC
-                "
+                value="""
+                RVC 在线demo
+                """
             )
             sid = gr.Dropdown(label=i18n("推理音色"), choices=sorted(names))
             with gr.Column():

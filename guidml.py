@@ -296,7 +296,7 @@ class GUI:
                     layout=[
                         [
                             sg.Input(
-                                default_text="/kaggle/input/ax-rmf/hubert_base.pt",
+                                default_text="hubert_base.pt",
                                 key="hubert_path",
                                 disabled=True,
                             ),
@@ -497,7 +497,7 @@ class GUI:
             sg.popup(i18n("index文件路径不可包含中文"))
             return False
         self.set_devices(values["sg_input_device"], values["sg_output_device"])
-        self.config.hubert_path = os.path.join(current_dir, "/kaggle/input/ax-rmf/hubert_base.pt")
+        self.config.hubert_path = os.path.join(current_dir, "hubert_base.pt")
         self.config.pth_path = values["pth_path"]
         self.config.index_path = values["index_path"]
         self.config.npy_path = values["npy_path"]
