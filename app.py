@@ -31,7 +31,7 @@ from assets.discord_presence import RPCManager
 from assets.flask.server import start_flask, load_config_flask
 from core import run_prerequisites_script
 
-run_prerequisites_script("False", "True", "True", "True")
+run_prerequisites_script("False", "False", "False", "False")
 
 i18n = I18nAuto()
 if load_config_presence() == True:
