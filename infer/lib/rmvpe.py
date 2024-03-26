@@ -27,6 +27,7 @@ import sys
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+
 class STFT(torch.nn.Module):
     def __init__(
         self, filter_length=1024, hop_length=512, win_length=None, window="hann"

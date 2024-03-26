@@ -7,7 +7,6 @@ import traceback
 import logging
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 from multiprocessing import cpu_count
 

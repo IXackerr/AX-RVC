@@ -14,7 +14,6 @@ logging.getLogger("markdown_it").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("matplotlib").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 i18n = I18nAuto()
 logger.info(i18n)
