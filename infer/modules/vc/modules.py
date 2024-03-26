@@ -2,7 +2,6 @@ import traceback
 import logging
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 import numpy as np
 import soundfile as sf

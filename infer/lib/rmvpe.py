@@ -24,7 +24,6 @@ from scipy.signal import get_window
 import logging
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 
 

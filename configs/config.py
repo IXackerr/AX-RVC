@@ -19,7 +19,6 @@ except Exception:  # pylint: disable=broad-exception-caught
 import logging
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 
 version_config_list = [

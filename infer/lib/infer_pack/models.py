@@ -3,7 +3,6 @@ import logging
 from typing import Optional
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 import numpy as np
 import torch
