@@ -31,7 +31,7 @@ def forward_dml(ctx, x, scale):
 
 fairseq.modules.grad_multiply.GradMultiply.forward = forward_dml
 
-model_path = "hubert_base.pt"
+model_path = "/kaggle/input/ax-rmf/hubert_base.pt"
 
 wav_path = f"{exp_dir}/1_16k_wavs"
 out_path = f"{exp_dir}/3_feature256" if version == "v1" else f"{exp_dir}/3_feature768"

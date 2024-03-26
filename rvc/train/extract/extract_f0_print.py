@@ -133,7 +133,7 @@ class FeatureInput:
         if not hasattr(self, "model_rmvpe"):
             from rvc.lib.rmvpe import RMVPE
 
-            self.model_rmvpe = RMVPE("rmvpe.pt", is_half=False, device="cpu")
+            self.model_rmvpe = RMVPE("/kaggle/input/ax-rmf/rmvpe.pt", is_half=False, device="cpu")
         return self.model_rmvpe.infer_from_audio(x, thred=0.03)
 
     def get_f0_method_dict(self):

@@ -215,13 +215,13 @@ class VC(object):
                     from rvc.lib.rmvpe import RMVPE
 
                     self.model_rmvpe = RMVPE(
-                        "rmvpe.pt", is_half=self.is_half, device=self.device
+                        "/kaggle/input/ax-rmf/rmvpe.pt", is_half=self.is_half, device=self.device
                     )
                 f0 = self.model_rmvpe.infer_from_audio(x, thred=0.03)
                 f0 = f0[1:]
             elif method == "fcpe":
                 self.model_fcpe = FCPEF0Predictor(
-                    "fcpe.pt",
+                    "/kaggle/input/ax-rmf/fcpe.pt",
                     f0_min=int(f0_min),
                     f0_max=int(f0_max),
                     dtype=torch.float32,
@@ -305,12 +305,12 @@ class VC(object):
                 from rvc.lib.rmvpe import RMVPE
 
                 self.model_rmvpe = RMVPE(
-                    "rmvpe.pt", is_half=self.is_half, device=self.device
+                    "/kaggle/input/ax-rmf/rmvpe.pt", is_half=self.is_half, device=self.device
                 )
             f0 = self.model_rmvpe.infer_from_audio(x, thred=0.03)
         elif f0_method == "fcpe":
             self.model_fcpe = FCPEF0Predictor(
-                "fcpe.pt",
+                "/kaggle/input/ax-rmf/fcpe.pt",
                 f0_min=int(f0_min),
                 f0_max=int(f0_max),
                 dtype=torch.float32,

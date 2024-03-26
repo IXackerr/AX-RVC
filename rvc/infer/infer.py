@@ -29,7 +29,7 @@ hubert_model = None
 def load_hubert():
     global hubert_model
     models, _, _ = checkpoint_utils.load_model_ensemble_and_task(
-        ["hubert_base.pt"],
+        ["/kaggle/input/ax-rmf/hubert_base.pt"],
         suffix="",
     )
     hubert_model = models[0]
