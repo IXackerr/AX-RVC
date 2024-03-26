@@ -97,10 +97,6 @@ if torch.cuda.is_available()or ngpu!=0:
 if if_gpu_ok and len(gpu_infos)>0:gpu_info=_G.join(gpu_infos);default_batch_size=min(mem)//2
 else:gpu_info=i18n('很遗憾您这没有能用的显卡来支持您训练');default_batch_size=1
 gpus='-'.join([i[0]for i in gpu_infos])
-class ToolButton(gr.Button,gr.components.FormComponent):
-	'Small button with single emoji as text, fits inside gradio forms'
-	def __init__(self,**kwargs):super().__init__(variant='tool',**kwargs)
-	def get_block_name(self):return'button'
 weight_root=os.getenv('weight_root')
 weight_uvr5_root=os.getenv('weight_uvr5_root')
 index_root=os.getenv('index_root')
