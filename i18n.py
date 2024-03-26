@@ -4,7 +4,7 @@ import os
 
 
 def load_language_list(language):
-    with open(f"./lib/i18n/{language}.json", "r", encoding="utf-8") as f:
+    with open(f"/kaggle/working/AX-RVC/lib/i18n/{language}.json", "r", encoding="utf-8") as f:
         language_list = json.load(f)
     return language_list
 
