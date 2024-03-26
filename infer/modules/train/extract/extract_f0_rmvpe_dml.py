@@ -48,7 +48,7 @@ class FeatureInput(object):
 
                 print("Loading rmvpe model")
                 self.model_rmvpe = RMVPE(
-                    "/kaggle/input/ax-rmf/rmvpe.pt", is_half=False, device=device
+                    "assets/rmvpe/rmvpe.pt", is_half=False, device=device
                 )
             f0 = self.model_rmvpe.infer_from_audio(x, thred=0.03)
         return f0
@@ -104,7 +104,7 @@ if __name__ == "__main__":
     # exp_dir=r"E:\codes\py39\dataset\mi-test"
     # n_p=16
     # f = open("%s/log_extract_f0.log"%exp_dir, "w")
-    printt(sys.argv)
+    printt(" ".join(sys.argv))
     featureInput = FeatureInput()
     paths = []
     inp_root = "%s/1_16k_wavs" % (exp_dir)
