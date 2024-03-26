@@ -6,6 +6,7 @@ import os
 import logging
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 import faiss
 import numpy as np

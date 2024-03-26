@@ -69,6 +69,7 @@ import warnings,traceback,threading,shutil,logging
 logging.getLogger('numba').setLevel(logging.WARNING)
 logging.getLogger('httpx').setLevel(logging.WARNING)
 logger=logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 tmp=os.path.join(now_dir,'TEMP')
 shutil.rmtree(tmp,ignore_errors=_A)
 shutil.rmtree('%s/runtime/Lib/site-packages/infer_pack'%now_dir,ignore_errors=_A)

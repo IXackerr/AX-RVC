@@ -4,6 +4,7 @@ import os
 import logging
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 import torch
 import torch.nn as nn

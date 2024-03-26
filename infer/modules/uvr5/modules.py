@@ -3,6 +3,7 @@ import traceback
 import logging
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 import ffmpeg
 import torch
