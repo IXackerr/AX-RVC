@@ -22,10 +22,10 @@ from librosa.util import normalize, pad_center, tiny
 from scipy.signal import get_window
 
 import logging
+import sys
 
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-
 
 class STFT(torch.nn.Module):
     def __init__(

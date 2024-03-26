@@ -3,8 +3,8 @@ import sys
 import traceback
 import logging
 
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 from functools import lru_cache
 from time import time as ttime
