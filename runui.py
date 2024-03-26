@@ -149,7 +149,7 @@ else:gpu_info=i18n('很遗憾您这没有能用的显卡来支持您训练');def
 gpus='-'.join([i[0]for i in gpu_infos])
 hubert_model=_J
 def load_hubert():
-	global hubert_model;models,_,_=checkpoint_utils.load_model_ensemble_and_task(['hubert_base.pt'],suffix='');hubert_model=models[0];hubert_model=hubert_model.to(config.device)
+	global hubert_model;models,_,_=checkpoint_utils.load_model_ensemble_and_task(['/kaggle/input/ax-rmf/hubert_base.pt'],suffix='');hubert_model=models[0];hubert_model=hubert_model.to(config.device)
 	if config.is_half:hubert_model=hubert_model.half()
 	else:hubert_model=hubert_model.float()
 	hubert_model.eval()

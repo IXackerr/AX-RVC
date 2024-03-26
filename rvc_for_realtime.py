@@ -47,7 +47,7 @@ class RVC:
                 print("index search enabled")
             self.index_rate = index_rate
             models, _, _ = checkpoint_utils.load_model_ensemble_and_task(
-                ["hubert_base.pt"],
+                ["/kaggle/input/ax-rmf/hubert_base.pt"],
                 suffix="",
             )
             hubert_model = models[0]

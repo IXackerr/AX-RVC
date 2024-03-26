@@ -126,7 +126,7 @@ hubert_model = None
 def load_hubert():
     global hubert_model
     models, saved_cfg, task = checkpoint_utils.load_model_ensemble_and_task(
-        ["hubert_base.pt"],
+        ["/kaggle/input/ax-rmf/hubert_base.pt"],
         suffix="",
     )
     hubert_model = models[0]
@@ -180,7 +180,7 @@ def get_vc(model_path):
     tgt_sr = cpt["config"][-1]
     cpt["config"][-3] = cpt["weight"]["emb_g.weight"].shape[0]  # n_spk
     if_f0 = cpt.get("f0", 1)
-    version = cpt.get("version", "v1")
+    version = cpt.get("version", "v2")
     if version == "v1":
         if if_f0 == 1:
             net_g = SynthesizerTrnMs256NSFsid(*cpt["config"], is_half=is_half)

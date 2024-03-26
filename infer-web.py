@@ -143,7 +143,7 @@ hubert_model = None
 def load_hubert():
     global hubert_model
     models, _, _ = checkpoint_utils.load_model_ensemble_and_task(
-        ["hubert_base.pt"],
+        ["/kaggle/input/ax-rmf/hubert_base.pt"],
         suffix="",
     )
     hubert_model = models[0]
@@ -498,7 +498,7 @@ def get_vc(sid, to_return_protect0, to_return_protect1):
                 torch.cuda.empty_cache()
             ###楼下不这么折腾清理不干净
             if_f0 = cpt.get("f0", 1)
-            version = cpt.get("version", "v1")
+            version = cpt.get("version", "v2")
             if version == "v1":
                 if if_f0 == 1:
                     net_g = SynthesizerTrnMs256NSFsid(
@@ -545,7 +545,7 @@ def get_vc(sid, to_return_protect0, to_return_protect1):
             "value": to_return_protect1,
             "__type__": "update",
         }
-    version = cpt.get("version", "v1")
+    version = cpt.get("version", "v2")
     if version == "v1":
         if if_f0 == 1:
             net_g = SynthesizerTrnMs256NSFsid(*cpt["config"], is_half=config.is_half)
