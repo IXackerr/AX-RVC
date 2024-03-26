@@ -795,7 +795,7 @@ def change_f0_method(f0method8):
     return {"visible": visible, "__type__": "update"}
 
 
-with gr.Blocks(title="RVC WebUI") as app:
+with gr.Interface(title="RVC WebUI") as app:
     gr.Markdown("## RVC WebUI")
     gr.Markdown(
         value=i18n(
@@ -1602,7 +1602,7 @@ with gr.Blocks(title="RVC WebUI") as app:
             server_name="0.0.0.0",
             inbrowser=not config.noautoopen,
             server_port=config.listen_port,
-            quiet=True,
+            quiet=False,
             share=False,
         )
     else:
@@ -1610,5 +1610,5 @@ with gr.Blocks(title="RVC WebUI") as app:
             server_name="0.0.0.0",
             inbrowser=not config.noautoopen,
             server_port=config.listen_port,
-            quiet=True,
+            quiet=False,
         )

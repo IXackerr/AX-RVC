@@ -241,7 +241,7 @@ def change_f0_method(f0method8):
 	if f0method8==_V:visible=F0GPUVisible
 	else:visible=_B
 	return{_a:visible,_D:_E}
-with gr.Blocks(title='RVC WebUI')as app:
+with gr.Interface(title='RVC WebUI')as app:
 	gr.Markdown('## RVC WebUI');gr.Markdown(value=i18n('本软件以MIT协议开源, 作者不对软件具备任何控制力, 使用软件者、传播软件导出的声音者自负全责. <br>如不认可该条款, 则不能使用或引用软件包内任何代码和文件. 详见根目录<b>LICENSE</b>.'))
 	with gr.Tabs():
 		with gr.TabItem(i18n('模型推理')):
