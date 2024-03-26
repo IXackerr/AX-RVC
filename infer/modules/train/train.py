@@ -1,10 +1,9 @@
 import os
 import sys
 import logging
-import sys
 
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 now_dir = os.getcwd()
 sys.path.append(os.path.join(now_dir))

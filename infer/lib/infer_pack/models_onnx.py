@@ -1,9 +1,8 @@
 import math
 import logging
-import sys
 
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 import numpy as np
 import torch

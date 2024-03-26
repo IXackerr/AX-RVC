@@ -4,10 +4,9 @@
 
 import os
 import logging
-import sys
 
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 import faiss
 import numpy as np
