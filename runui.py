@@ -325,5 +325,5 @@ with gr.Blocks(title='RVC WebUI')as app:
 					with open('docs/en/faq_en.md',_K,encoding='utf8')as f:info=f.read()
 				gr.Markdown(value=info)
 			except:gr.Markdown(traceback.format_exc())
-	if config.iscolab or config.paperspace:app.queue(concurrency_limi=511,max_size=1022).launch(server_name='0.0.0.0',inbrowser=not config.noautoopen,server_port=config.listen_port,quiet=_A,share=_B)
-	else:app.queue(concurrency_limi=511,max_size=1022).launch(server_name='0.0.0.0',inbrowser=not config.noautoopen,server_port=config.listen_port,quiet=_A)
+	if config.iscolab or config.paperspace:app.queue(concurrency_limit=511,max_size=1022).launch(server_name='0.0.0.0',inbrowser=not config.noautoopen,server_port=config.listen_port,quiet=_A,share=_B)
+	else:app.queue(concurrency_limit=511,max_size=1022).launch(server_name='0.0.0.0',inbrowser=not config.noautoopen,server_port=config.listen_port,quiet=_A)
