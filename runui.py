@@ -241,7 +241,7 @@ def change_f0_method(f0method8):
 	if f0method8==_V:visible=F0GPUVisible
 	else:visible=_B
 	return{_a:visible,_D:_E}
-with gr.Interface(title='RVC WebUI')as app:
+with gr.Blocks(title='RVC WebUI')as app:
 	gr.Markdown('## RVC WebUI');gr.Markdown(value=i18n('本软件以MIT协议开源, 作者不对软件具备任何控制力, 使用软件者、传播软件导出的声音者自负全责. <br>如不认可该条款, 则不能使用或引用软件包内任何代码和文件. 详见根目录<b>LICENSE</b>.'))
 	with gr.Tabs():
 		with gr.TabItem(i18n('模型推理')):
@@ -325,5 +325,5 @@ with gr.Interface(title='RVC WebUI')as app:
 					with open('docs/en/faq_en.md',_K,encoding='utf8')as f:info=f.read()
 				gr.Markdown(value=info)
 			except:gr.Markdown(traceback.format_exc())
-	if config.iscolab or config.paperspace:app.queue(concurrency_limit=511,max_size=1022).launch(server_name='0.0.0.0',inbrowser=not config.noautoopen,server_port=config.listen_port,quiet=_A,share=_B)
-	else:app.queue(concurrency_limit=511,max_size=1022).launch(server_name='0.0.0.0',inbrowser=not config.noautoopen,server_port=config.listen_port,quiet=_A)
+	if config.iscolab or config.paperspace:app.queue(concurrency_count=511,max_size=1022).launch(server_name='0.0.0.0',inbrowser=not config.noautoopen,server_port=config.listen_port,quiet=_A,share=_B)
+	else:app.queue(concurrency_count=511,max_size=1022).launch(server_name='0.0.0.0',inbrowser=not config.noautoopen,server_port=config.listen_port,quiet=_A)
