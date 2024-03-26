@@ -67,13 +67,13 @@ _c='choices'
 _b='version'
 _a='%s/%s'
 _Z='./logs/'
-_Y='v2'
-_X='w+'
-_W='formanting'
-_V='csvdb/formanting.csv'
-_U='w'
-_T='输出信息'
-_S='40k'
+_Y='w+'
+_X='formanting'
+_W='csvdb/formanting.csv'
+_V='w'
+_U='输出信息'
+_T='40k'
+_S='v2'
 _R='\\\\'
 _Q='"'
 _P=' '
@@ -84,8 +84,8 @@ _L='.'
 _K='primary'
 _J=None
 _I='r'
-_H='\\'
-_G='v1'
+_H='v1'
+_G='\\'
 _F='\n'
 _E='visible'
 _D=False
@@ -128,10 +128,10 @@ warnings.filterwarnings('ignore')
 torch.manual_seed(114514)
 logging.getLogger('numba').setLevel(logging.WARNING)
 import csv
-if not os.path.isdir('csvdb/'):os.makedirs('csvdb');frmnt,stp=open(_V,_U),open(_u,_U);frmnt.close();stp.close()
+if not os.path.isdir('csvdb/'):os.makedirs('csvdb');frmnt,stp=open(_W,_V),open(_u,_V);frmnt.close();stp.close()
 global DoFormant,Quefrency,Timbre
-try:DoFormant,Quefrency,Timbre=CSVutil(_V,_I,_W);DoFormant=(lambda DoFormant:_A if DoFormant.lower()=='true'else _D if DoFormant.lower()=='false'else DoFormant)(DoFormant)
-except(ValueError,TypeError,IndexError):DoFormant,Quefrency,Timbre=_D,1.,1.;CSVutil(_V,_X,_W,DoFormant,Quefrency,Timbre)
+try:DoFormant,Quefrency,Timbre=CSVutil(_W,_I,_X);DoFormant=(lambda DoFormant:_A if DoFormant.lower()=='true'else _D if DoFormant.lower()=='false'else DoFormant)(DoFormant)
+except(ValueError,TypeError,IndexError):DoFormant,Quefrency,Timbre=_D,1.,1.;CSVutil(_W,_Y,_X,DoFormant,Quefrency,Timbre)
 config=Config()
 i18n=I18nAuto()
 i18n.print()
@@ -180,13 +180,13 @@ def get_index():
 		chosen_model=sorted(names)[0].split(_L)[0];logs_path=_Z+chosen_model
 		if os.path.exists(logs_path):
 			for file in os.listdir(logs_path):
-				if file.endswith(_i):return os.path.join(logs_path,file).replace(_H,_N)
+				if file.endswith(_i):return os.path.join(logs_path,file).replace(_G,_N)
 			return''
 		else:return''
 def get_indexes():
 	for(dirpath,dirnames,filenames)in os.walk(_Z):
 		for filename in filenames:
-			if filename.endswith(_i)and _m not in filename:indexes_list.append(os.path.join(dirpath,filename).replace(_H,_N))
+			if filename.endswith(_i)and _m not in filename:indexes_list.append(os.path.join(dirpath,filename).replace(_G,_N))
 	if len(indexes_list)>0:return indexes_list
 	else:return''
 fshift_presets_list=[]
@@ -194,7 +194,7 @@ def get_fshift_presets():
 	fshift_presets_list=[]
 	for(dirpath,dirnames,filenames)in os.walk('./formantshiftcfg/'):
 		for filename in filenames:
-			if filename.endswith('.txt'):fshift_presets_list.append(os.path.join(dirpath,filename).replace(_H,_N))
+			if filename.endswith('.txt'):fshift_presets_list.append(os.path.join(dirpath,filename).replace(_G,_N))
 	if len(fshift_presets_list)>0:return fshift_presets_list
 	else:return''
 def vc_single(sid,input_audio_path0,input_audio_path1,f0_up_key,f0_file,f0_method,file_index,file_index2,index_rate,filter_radius,resample_sr,rms_mix_rate,protect,crepe_hop_length):
@@ -268,11 +268,11 @@ def get_vc(sid,to_return_protect0,to_return_protect1):
 		if hubert_model is not _J:
 			print(_AF);del net_g,n_spk,vc,hubert_model,tgt_sr;hubert_model=net_g=n_spk=vc=hubert_model=tgt_sr=_J
 			if torch.cuda.is_available():torch.cuda.empty_cache()
-			if_f0=cpt.get(_j,1);version=cpt.get(_b,_G)
-			if version==_G:
+			if_f0=cpt.get(_j,1);version=cpt.get(_b,_S)
+			if version==_H:
 				if if_f0==1:net_g=SynthesizerTrnMs256NSFsid(*cpt[_O],is_half=config.is_half)
 				else:net_g=SynthesizerTrnMs256NSFsid_nono(*cpt[_O])
-			elif version==_Y:
+			elif version==_S:
 				if if_f0==1:net_g=SynthesizerTrnMs768NSFsid(*cpt[_O],is_half=config.is_half)
 				else:net_g=SynthesizerTrnMs768NSFsid_nono(*cpt[_O])
 			del net_g,cpt
@@ -282,11 +282,11 @@ def get_vc(sid,to_return_protect0,to_return_protect1):
 	person=_a%(weight_root,sid);print('loading %s'%person);cpt=torch.load(person,map_location=_x);tgt_sr=cpt[_O][-1];cpt[_O][-3]=cpt[_n][_AG].shape[0];if_f0=cpt.get(_j,1)
 	if if_f0==0:to_return_protect0=to_return_protect1={_E:_D,_M:.5,_B:_C}
 	else:to_return_protect0={_E:_A,_M:to_return_protect0,_B:_C};to_return_protect1={_E:_A,_M:to_return_protect1,_B:_C}
-	version=cpt.get(_b,_G)
-	if version==_G:
+	version=cpt.get(_b,_S)
+	if version==_H:
 		if if_f0==1:net_g=SynthesizerTrnMs256NSFsid(*cpt[_O],is_half=config.is_half)
 		else:net_g=SynthesizerTrnMs256NSFsid_nono(*cpt[_O])
-	elif version==_Y:
+	elif version==_S:
 		if if_f0==1:net_g=SynthesizerTrnMs768NSFsid(*cpt[_O],is_half=config.is_half)
 		else:net_g=SynthesizerTrnMs768NSFsid_nono(*cpt[_O])
 	del net_g.enc_q;print(net_g.load_state_dict(cpt[_n],strict=_D));net_g.eval().to(config.device)
@@ -304,7 +304,7 @@ def change_choices():
 	for file in os.listdir(audios_path):audio_paths.append(_a%(audio_root,file))
 	return{_c:sorted(names),_B:_C},{_c:sorted(index_paths),_B:_C},{_c:sorted(audio_paths),_B:_C}
 def clean():return{_M:'',_B:_C}
-sr_dict={_p:32000,_S:40000,_d:48000}
+sr_dict={_p:32000,_T:40000,_d:48000}
 def if_done(done,p):
 	while 1:
 		if p.poll()is _J:sleep(.5)
@@ -318,9 +318,9 @@ def if_done_multi(done,ps):
 		if flag==1:break
 	done[0]=_A
 def formant_enabled(cbox,qfrency,tmbre,frmntapply,formantpreset,formant_refresh_button):
-	if cbox:DoFormant=_A;CSVutil(_V,_X,_W,DoFormant,qfrency,tmbre);return{_M:_A,_B:_C},{_E:_A,_B:_C},{_E:_A,_B:_C},{_E:_A,_B:_C},{_E:_A,_B:_C},{_E:_A,_B:_C}
-	else:DoFormant=_D;CSVutil(_V,_X,_W,DoFormant,qfrency,tmbre);return{_M:_D,_B:_C},{_E:_D,_B:_C},{_E:_D,_B:_C},{_E:_D,_B:_C},{_E:_D,_B:_C},{_E:_D,_B:_C},{_E:_D,_B:_C}
-def formant_apply(qfrency,tmbre):Quefrency=qfrency;Timbre=tmbre;DoFormant=_A;CSVutil(_V,_X,_W,DoFormant,qfrency,tmbre);return{_M:Quefrency,_B:_C},{_M:Timbre,_B:_C}
+	if cbox:DoFormant=_A;CSVutil(_W,_Y,_X,DoFormant,qfrency,tmbre);return{_M:_A,_B:_C},{_E:_A,_B:_C},{_E:_A,_B:_C},{_E:_A,_B:_C},{_E:_A,_B:_C},{_E:_A,_B:_C}
+	else:DoFormant=_D;CSVutil(_W,_Y,_X,DoFormant,qfrency,tmbre);return{_M:_D,_B:_C},{_E:_D,_B:_C},{_E:_D,_B:_C},{_E:_D,_B:_C},{_E:_D,_B:_C},{_E:_D,_B:_C},{_E:_D,_B:_C}
+def formant_apply(qfrency,tmbre):Quefrency=qfrency;Timbre=tmbre;DoFormant=_A;CSVutil(_W,_Y,_X,DoFormant,qfrency,tmbre);return{_M:Quefrency,_B:_C},{_M:Timbre,_B:_C}
 def update_fshift_presets(preset,qfrency,tmbre):
 	qfrency,tmbre=preset_apply(preset,qfrency,tmbre)
 	if str(preset)!='':
@@ -328,7 +328,7 @@ def update_fshift_presets(preset,qfrency,tmbre):
 	else:0
 	return{_c:get_fshift_presets(),_B:_C},{_M:qfrency,_B:_C},{_M:tmbre,_B:_C}
 def preprocess_dataset(trainset_dir,exp_dir,sr,n_p):
-	A='%s/logs/%s/preprocess.log';sr=sr_dict[sr];os.makedirs(_l%(now_dir,exp_dir),exist_ok=_A);f=open(A%(now_dir,exp_dir),_U);f.close();cmd=config.python_cmd+' trainset_preprocess_pipeline_print.py %s %s %s %s/logs/%s '%(trainset_dir,sr,n_p,now_dir,exp_dir)+str(config.noparallel);print(cmd);p=Popen(cmd,shell=_A);done=[_D];threading.Thread(target=if_done,args=(done,p)).start()
+	A='%s/logs/%s/preprocess.log';sr=sr_dict[sr];os.makedirs(_l%(now_dir,exp_dir),exist_ok=_A);f=open(A%(now_dir,exp_dir),_V);f.close();cmd=config.python_cmd+' trainset_preprocess_pipeline_print.py %s %s %s %s/logs/%s '%(trainset_dir,sr,n_p,now_dir,exp_dir)+str(config.noparallel);print(cmd);p=Popen(cmd,shell=_A);done=[_D];threading.Thread(target=if_done,args=(done,p)).start()
 	while 1:
 		with open(A%(now_dir,exp_dir),_I)as f:yield f.read()
 		sleep(1)
@@ -336,7 +336,7 @@ def preprocess_dataset(trainset_dir,exp_dir,sr,n_p):
 	with open(A%(now_dir,exp_dir),_I)as f:log=f.read()
 	print(log);yield log
 def extract_f0_feature(gpus,n_p,f0method,if_f0,exp_dir,version19,echl):
-	A='%s/logs/%s/extract_f0_feature.log';gpus=gpus.split('-');os.makedirs(_l%(now_dir,exp_dir),exist_ok=_A);f=open(A%(now_dir,exp_dir),_U);f.close()
+	A='%s/logs/%s/extract_f0_feature.log';gpus=gpus.split('-');os.makedirs(_l%(now_dir,exp_dir),exist_ok=_A);f=open(A%(now_dir,exp_dir),_V);f.close()
 	if if_f0:
 		cmd=config.python_cmd+' extract_f0_print.py %s/logs/%s %s %s %s'%(now_dir,exp_dir,n_p,f0method,echl);print(cmd);p=Popen(cmd,shell=_A,cwd=now_dir);done=[_D];threading.Thread(target=if_done,args=(done,p)).start()
 		while 1:
@@ -355,19 +355,19 @@ def extract_f0_feature(gpus,n_p,f0method,if_f0,exp_dir,version19,echl):
 	with open(A%(now_dir,exp_dir),_I)as f:log=f.read()
 	print(log);yield log
 def change_sr2(sr2,if_f0_3,version19):
-	path_str=''if version19==_G else _y;f0_str=_j if if_f0_3 else'';if_pretrained_generator_exist=os.access(_e%(path_str,f0_str,sr2),os.F_OK);if_pretrained_discriminator_exist=os.access(_f%(path_str,f0_str,sr2),os.F_OK)
+	path_str=''if version19==_H else _y;f0_str=_j if if_f0_3 else'';if_pretrained_generator_exist=os.access(_e%(path_str,f0_str,sr2),os.F_OK);if_pretrained_discriminator_exist=os.access(_f%(path_str,f0_str,sr2),os.F_OK)
 	if not if_pretrained_generator_exist:print(_e%(path_str,f0_str,sr2),_q)
 	if not if_pretrained_discriminator_exist:print(_f%(path_str,f0_str,sr2),_q)
 	return _e%(path_str,f0_str,sr2)if if_pretrained_generator_exist else'',_f%(path_str,f0_str,sr2)if if_pretrained_discriminator_exist else''
 def change_version19(sr2,if_f0_3,version19):
-	path_str=''if version19==_G else _y
-	if sr2==_p and version19==_G:sr2=_S
-	to_return_sr2={_c:[_S,_d],_B:_C,_M:sr2}if version19==_G else{_c:[_S,_d,_p],_B:_C,_M:sr2};f0_str=_j if if_f0_3 else'';if_pretrained_generator_exist=os.access(_e%(path_str,f0_str,sr2),os.F_OK);if_pretrained_discriminator_exist=os.access(_f%(path_str,f0_str,sr2),os.F_OK)
+	path_str=''if version19==_H else _y
+	if sr2==_p and version19==_H:sr2=_T
+	to_return_sr2={_c:[_T,_d],_B:_C,_M:sr2}if version19==_H else{_c:[_T,_d,_p],_B:_C,_M:sr2};f0_str=_j if if_f0_3 else'';if_pretrained_generator_exist=os.access(_e%(path_str,f0_str,sr2),os.F_OK);if_pretrained_discriminator_exist=os.access(_f%(path_str,f0_str,sr2),os.F_OK)
 	if not if_pretrained_generator_exist:print(_e%(path_str,f0_str,sr2),_q)
 	if not if_pretrained_discriminator_exist:print(_f%(path_str,f0_str,sr2),_q)
 	return _e%(path_str,f0_str,sr2)if if_pretrained_generator_exist else'',_f%(path_str,f0_str,sr2)if if_pretrained_discriminator_exist else'',to_return_sr2
 def change_f0(if_f0_3,sr2,version19,step2b,gpus6,gpu_info9,extraction_crepe_hop_length,but2,info2):
-	C='not exist, will not use pretrained model';B='pretrained%s/f0D%s.pth';A='pretrained%s/f0G%s.pth';path_str=''if version19==_G else _y;if_pretrained_generator_exist=os.access(A%(path_str,sr2),os.F_OK);if_pretrained_discriminator_exist=os.access(B%(path_str,sr2),os.F_OK)
+	C='not exist, will not use pretrained model';B='pretrained%s/f0D%s.pth';A='pretrained%s/f0G%s.pth';path_str=''if version19==_H else _y;if_pretrained_generator_exist=os.access(A%(path_str,sr2),os.F_OK);if_pretrained_discriminator_exist=os.access(B%(path_str,sr2),os.F_OK)
 	if not if_pretrained_generator_exist:print(A%(path_str,sr2),C)
 	if not if_pretrained_discriminator_exist:print(B%(path_str,sr2),C)
 	if if_f0_3:return{_E:_A,_B:_C},A%(path_str,sr2)if if_pretrained_generator_exist else'',B%(path_str,sr2)if if_pretrained_discriminator_exist else'',{_E:_A,_B:_C},{_E:_A,_B:_C},{_E:_A,_B:_C},{_E:_A,_B:_C},{_E:_A,_B:_C},{_E:_A,_B:_C}
@@ -382,20 +382,20 @@ def set_log_interval(exp_dir,batch_size12):
 			if log_interval>1:log_interval+=1
 	return log_interval
 def click_train(exp_dir1,sr2,if_f0_3,spk_id5,save_epoch10,total_epoch11,batch_size12,if_save_latest13,pretrained_G14,pretrained_D15,gpus16,if_cache_gpu17,if_save_every_weights18,version19):
-	A='\x08';CSVutil(_u,_X,_W,_D);exp_dir=_l%(now_dir,exp_dir1);os.makedirs(exp_dir,exist_ok=_A);gt_wavs_dir=_AH%exp_dir;feature_dir=_z%exp_dir if version19==_G else _A0%exp_dir;log_interval=set_log_interval(exp_dir,batch_size12)
+	A='\x08';CSVutil(_u,_Y,_X,_D);exp_dir=_l%(now_dir,exp_dir1);os.makedirs(exp_dir,exist_ok=_A);gt_wavs_dir=_AH%exp_dir;feature_dir=_z%exp_dir if version19==_H else _A0%exp_dir;log_interval=set_log_interval(exp_dir,batch_size12)
 	if if_f0_3:f0_dir='%s/2a_f0'%exp_dir;f0nsf_dir=_AI%exp_dir;names=set([name.split(_L)[0]for name in os.listdir(gt_wavs_dir)])&set([name.split(_L)[0]for name in os.listdir(feature_dir)])&set([name.split(_L)[0]for name in os.listdir(f0_dir)])&set([name.split(_L)[0]for name in os.listdir(f0nsf_dir)])
 	else:names=set([name.split(_L)[0]for name in os.listdir(gt_wavs_dir)])&set([name.split(_L)[0]for name in os.listdir(feature_dir)])
 	opt=[]
 	for name in names:
-		if if_f0_3:opt.append(_AJ%(gt_wavs_dir.replace(_H,_R),name,feature_dir.replace(_H,_R),name,f0_dir.replace(_H,_R),name,f0nsf_dir.replace(_H,_R),name,spk_id5))
-		else:opt.append(_AK%(gt_wavs_dir.replace(_H,_R),name,feature_dir.replace(_H,_R),name,spk_id5))
-	fea_dim=256 if version19==_G else 768
+		if if_f0_3:opt.append(_AJ%(gt_wavs_dir.replace(_G,_R),name,feature_dir.replace(_G,_R),name,f0_dir.replace(_G,_R),name,f0nsf_dir.replace(_G,_R),name,spk_id5))
+		else:opt.append(_AK%(gt_wavs_dir.replace(_G,_R),name,feature_dir.replace(_G,_R),name,spk_id5))
+	fea_dim=256 if version19==_H else 768
 	if if_f0_3:
 		for _ in range(2):opt.append(_AL%(now_dir,sr2,now_dir,fea_dim,now_dir,now_dir,spk_id5))
 	else:
 		for _ in range(2):opt.append(_AM%(now_dir,sr2,now_dir,fea_dim,spk_id5))
 	shuffle(opt)
-	with open(_AN%exp_dir,_U)as f:f.write(_F.join(opt))
+	with open(_AN%exp_dir,_V)as f:f.write(_F.join(opt))
 	print(_AO);print('use gpus:',gpus16)
 	if pretrained_G14=='':print('no pretrained Generator')
 	if pretrained_D15=='':print('no pretrained Discriminator')
@@ -403,7 +403,7 @@ def click_train(exp_dir1,sr2,if_f0_3,spk_id5,save_epoch10,total_epoch11,batch_si
 	else:cmd=config.python_cmd+' train_nsf_sim_cache_sid_load_pretrain.py -e %s -sr %s -f0 %s -bs %s -te %s -se %s %s %s -l %s -c %s -sw %s -v %s -li %s'%(exp_dir1,sr2,1 if if_f0_3 else 0,batch_size12,total_epoch11,save_epoch10,_r%pretrained_G14 if pretrained_G14!=''else A,_s%pretrained_D15 if pretrained_D15!=''else A,1 if if_save_latest13==_A else 0,1 if if_cache_gpu17==_A else 0,1 if if_save_every_weights18==_A else 0,version19,log_interval)
 	print(cmd);global p;p=Popen(cmd,shell=_A,cwd=now_dir);global PID;PID=p.pid;p.wait();return _AP,{_E:_D,_B:_C},{_E:_A,_B:_C}
 def train_index(exp_dir1,version19):
-	exp_dir=_l%(now_dir,exp_dir1);os.makedirs(exp_dir,exist_ok=_A);feature_dir=_z%exp_dir if version19==_G else _A0%exp_dir
+	exp_dir=_l%(now_dir,exp_dir1);os.makedirs(exp_dir,exist_ok=_A);feature_dir=_z%exp_dir if version19==_H else _A0%exp_dir
 	if not os.path.exists(feature_dir):return'请先进行特征提取!'
 	listdir_res=list(os.listdir(feature_dir))
 	if len(listdir_res)==0:return'请先进行特征提取！'
@@ -414,15 +414,15 @@ def train_index(exp_dir1,version19):
 		infos.append(_AQ%big_npy.shape[0]);yield _F.join(infos)
 		try:big_npy=MiniBatchKMeans(n_clusters=10000,verbose=_A,batch_size=256*config.n_cpu,compute_labels=_D,init='random').fit(big_npy).cluster_centers_
 		except:info=traceback.format_exc();print(info);infos.append(info);yield _F.join(infos)
-	np.save(_AR%exp_dir,big_npy);n_ivf=min(int(16*np.sqrt(big_npy.shape[0])),big_npy.shape[0]//39);infos.append('%s,%s'%(big_npy.shape,n_ivf));yield _F.join(infos);index=faiss.index_factory(256 if version19==_G else 768,_AS%n_ivf);infos.append('training');yield _F.join(infos);index_ivf=faiss.extract_index_ivf(index);index_ivf.nprobe=1;index.train(big_npy);faiss.write_index(index,_AT%(exp_dir,n_ivf,index_ivf.nprobe,exp_dir1,version19));infos.append('adding');yield _F.join(infos);batch_size_add=8192
+	np.save(_AR%exp_dir,big_npy);n_ivf=min(int(16*np.sqrt(big_npy.shape[0])),big_npy.shape[0]//39);infos.append('%s,%s'%(big_npy.shape,n_ivf));yield _F.join(infos);index=faiss.index_factory(256 if version19==_H else 768,_AS%n_ivf);infos.append('training');yield _F.join(infos);index_ivf=faiss.extract_index_ivf(index);index_ivf.nprobe=1;index.train(big_npy);faiss.write_index(index,_AT%(exp_dir,n_ivf,index_ivf.nprobe,exp_dir1,version19));infos.append('adding');yield _F.join(infos);batch_size_add=8192
 	for i in range(0,big_npy.shape[0],batch_size_add):index.add(big_npy[i:i+batch_size_add])
 	faiss.write_index(index,_AU%(exp_dir,n_ivf,index_ivf.nprobe,exp_dir1,version19));infos.append('Successful Index Construction，added_IVF%s_Flat_nprobe_%s_%s_%s.index'%(n_ivf,index_ivf.nprobe,exp_dir1,version19));yield _F.join(infos)
 def train1key(exp_dir1,sr2,if_f0_3,trainset_dir4,spk_id5,np7,f0method8,save_epoch10,total_epoch11,batch_size12,if_save_latest13,pretrained_G14,pretrained_D15,gpus16,if_cache_gpu17,if_save_every_weights18,version19,echl):
 	infos=[]
 	def get_info_str(strr):infos.append(strr);return _F.join(infos)
-	model_log_dir=_l%(now_dir,exp_dir1);preprocess_log_path='%s/preprocess.log'%model_log_dir;extract_f0_feature_log_path='%s/extract_f0_feature.log'%model_log_dir;gt_wavs_dir=_AH%model_log_dir;feature_dir=_z%model_log_dir if version19==_G else _A0%model_log_dir;os.makedirs(model_log_dir,exist_ok=_A);open(preprocess_log_path,_U).close();cmd=config.python_cmd+' trainset_preprocess_pipeline_print.py %s %s %s %s '%(trainset_dir4,sr_dict[sr2],np7,model_log_dir)+str(config.noparallel);yield get_info_str(i18n('step1:正在处理数据'));yield get_info_str(cmd);p=Popen(cmd,shell=_A);p.wait()
+	model_log_dir=_l%(now_dir,exp_dir1);preprocess_log_path='%s/preprocess.log'%model_log_dir;extract_f0_feature_log_path='%s/extract_f0_feature.log'%model_log_dir;gt_wavs_dir=_AH%model_log_dir;feature_dir=_z%model_log_dir if version19==_H else _A0%model_log_dir;os.makedirs(model_log_dir,exist_ok=_A);open(preprocess_log_path,_V).close();cmd=config.python_cmd+' trainset_preprocess_pipeline_print.py %s %s %s %s '%(trainset_dir4,sr_dict[sr2],np7,model_log_dir)+str(config.noparallel);yield get_info_str(i18n('step1:正在处理数据'));yield get_info_str(cmd);p=Popen(cmd,shell=_A);p.wait()
 	with open(preprocess_log_path,_I)as f:print(f.read())
-	open(extract_f0_feature_log_path,_U)
+	open(extract_f0_feature_log_path,_V)
 	if if_f0_3:
 		yield get_info_str('step2a:正在提取音高');cmd=config.python_cmd+' extract_f0_print.py %s %s %s %s'%(model_log_dir,np7,f0method8,echl);yield get_info_str(cmd);p=Popen(cmd,shell=_A,cwd=now_dir);p.wait()
 		with open(extract_f0_feature_log_path,_I)as f:print(f.read())
@@ -436,15 +436,15 @@ def train1key(exp_dir1,sr2,if_f0_3,trainset_dir4,spk_id5,np7,f0method8,save_epoc
 	else:names=set([name.split(_L)[0]for name in os.listdir(gt_wavs_dir)])&set([name.split(_L)[0]for name in os.listdir(feature_dir)])
 	opt=[]
 	for name in names:
-		if if_f0_3:opt.append(_AJ%(gt_wavs_dir.replace(_H,_R),name,feature_dir.replace(_H,_R),name,f0_dir.replace(_H,_R),name,f0nsf_dir.replace(_H,_R),name,spk_id5))
-		else:opt.append(_AK%(gt_wavs_dir.replace(_H,_R),name,feature_dir.replace(_H,_R),name,spk_id5))
-	fea_dim=256 if version19==_G else 768
+		if if_f0_3:opt.append(_AJ%(gt_wavs_dir.replace(_G,_R),name,feature_dir.replace(_G,_R),name,f0_dir.replace(_G,_R),name,f0nsf_dir.replace(_G,_R),name,spk_id5))
+		else:opt.append(_AK%(gt_wavs_dir.replace(_G,_R),name,feature_dir.replace(_G,_R),name,spk_id5))
+	fea_dim=256 if version19==_H else 768
 	if if_f0_3:
 		for _ in range(2):opt.append(_AL%(now_dir,sr2,now_dir,fea_dim,now_dir,now_dir,spk_id5))
 	else:
 		for _ in range(2):opt.append(_AM%(now_dir,sr2,now_dir,fea_dim,spk_id5))
 	shuffle(opt)
-	with open(_AN%model_log_dir,_U)as f:f.write(_F.join(opt))
+	with open(_AN%model_log_dir,_V)as f:f.write(_F.join(opt))
 	yield get_info_str(_AO)
 	if gpus16:cmd=config.python_cmd+' train_nsf_sim_cache_sid_load_pretrain.py -e %s -sr %s -f0 %s -bs %s -g %s -te %s -se %s %s %s -l %s -c %s -sw %s -v %s'%(exp_dir1,sr2,1 if if_f0_3 else 0,batch_size12,gpus16,total_epoch11,save_epoch10,_r%pretrained_G14 if pretrained_G14!=''else'',_s%pretrained_D15 if pretrained_D15!=''else'',1 if if_save_latest13==_A else 0,1 if if_cache_gpu17==_A else 0,1 if if_save_every_weights18==_A else 0,version19)
 	else:cmd=config.python_cmd+' train_nsf_sim_cache_sid_load_pretrain.py -e %s -sr %s -f0 %s -bs %s -te %s -se %s %s %s -l %s -c %s -sw %s -v %s'%(exp_dir1,sr2,1 if if_f0_3 else 0,batch_size12,total_epoch11,save_epoch10,_r%pretrained_G14 if pretrained_G14!=''else'',_s%pretrained_D15 if pretrained_D15!=''else'',1 if if_save_latest13==_A else 0,1 if if_cache_gpu17==_A else 0,1 if if_save_every_weights18==_A else 0,version19)
@@ -455,16 +455,16 @@ def train1key(exp_dir1,sr2,if_f0_3,trainset_dir4,spk_id5,np7,f0method8,save_epoc
 		info=_AQ%big_npy.shape[0];print(info);yield get_info_str(info)
 		try:big_npy=MiniBatchKMeans(n_clusters=10000,verbose=_A,batch_size=256*config.n_cpu,compute_labels=_D,init='random').fit(big_npy).cluster_centers_
 		except:info=traceback.format_exc();print(info);yield get_info_str(info)
-	np.save(_AR%model_log_dir,big_npy);n_ivf=min(int(16*np.sqrt(big_npy.shape[0])),big_npy.shape[0]//39);yield get_info_str('%s,%s'%(big_npy.shape,n_ivf));index=faiss.index_factory(256 if version19==_G else 768,_AS%n_ivf);yield get_info_str('training index');index_ivf=faiss.extract_index_ivf(index);index_ivf.nprobe=1;index.train(big_npy);faiss.write_index(index,_AT%(model_log_dir,n_ivf,index_ivf.nprobe,exp_dir1,version19));yield get_info_str('adding index');batch_size_add=8192
+	np.save(_AR%model_log_dir,big_npy);n_ivf=min(int(16*np.sqrt(big_npy.shape[0])),big_npy.shape[0]//39);yield get_info_str('%s,%s'%(big_npy.shape,n_ivf));index=faiss.index_factory(256 if version19==_H else 768,_AS%n_ivf);yield get_info_str('training index');index_ivf=faiss.extract_index_ivf(index);index_ivf.nprobe=1;index.train(big_npy);faiss.write_index(index,_AT%(model_log_dir,n_ivf,index_ivf.nprobe,exp_dir1,version19));yield get_info_str('adding index');batch_size_add=8192
 	for i in range(0,big_npy.shape[0],batch_size_add):index.add(big_npy[i:i+batch_size_add])
 	faiss.write_index(index,_AU%(model_log_dir,n_ivf,index_ivf.nprobe,exp_dir1,version19));yield get_info_str('成功构建索引, added_IVF%s_Flat_nprobe_%s_%s_%s.index'%(n_ivf,index_ivf.nprobe,exp_dir1,version19));yield get_info_str(i18n('全流程结束！'))
 def change_info_(ckpt_path):
 	A='train.log'
 	if not os.path.exists(ckpt_path.replace(os.path.basename(ckpt_path),A)):return{_B:_C},{_B:_C},{_B:_C}
 	try:
-		with open(ckpt_path.replace(os.path.basename(ckpt_path),A),_I)as f:info=eval(f.read().strip(_F).split(_F)[0].split('\t')[-1]);sr,f0=info[_AE],info['if_f0'];version=_Y if _b in info and info[_b]==_Y else _G;return sr,str(f0),version
+		with open(ckpt_path.replace(os.path.basename(ckpt_path),A),_I)as f:info=eval(f.read().strip(_F).split(_F)[0].split('\t')[-1]);sr,f0=info[_AE],info['if_f0'];version=_S if _b in info and info[_b]==_S else _H;return sr,str(f0),version
 	except:traceback.print_exc();return{_B:_C},{_B:_C},{_B:_C}
-def export_onnx(ModelPath,ExportedPath):D='rnd';C='pitchf';B='pitch';A='phone';cpt=torch.load(ModelPath,map_location=_x);cpt[_O][-3]=cpt[_n][_AG].shape[0];vec_channels=256 if cpt.get(_b,_G)==_G else 768;test_phone=torch.rand(1,200,vec_channels);test_phone_lengths=torch.tensor([200]).long();test_pitch=torch.randint(size=(1,200),low=5,high=255);test_pitchf=torch.rand(1,200);test_ds=torch.LongTensor([0]);test_rnd=torch.rand(1,192,200);device=_x;net_g=SynthesizerTrnMsNSFsidM(*cpt[_O],is_half=_D,version=cpt.get(_b,_G));net_g.load_state_dict(cpt[_n],strict=_D);input_names=[A,'phone_lengths',B,C,'ds',D];output_names=['audio'];torch.onnx.export(net_g,(test_phone.to(device),test_phone_lengths.to(device),test_pitch.to(device),test_pitchf.to(device),test_ds.to(device),test_rnd.to(device)),ExportedPath,dynamic_axes={A:[1],B:[1],C:[1],D:[2]},do_constant_folding=_D,opset_version=13,verbose=_D,input_names=input_names,output_names=output_names);return'Finished'
+def export_onnx(ModelPath,ExportedPath):D='rnd';C='pitchf';B='pitch';A='phone';cpt=torch.load(ModelPath,map_location=_x);cpt[_O][-3]=cpt[_n][_AG].shape[0];vec_channels=256 if cpt.get(_b,_H)==_H else 768;test_phone=torch.rand(1,200,vec_channels);test_phone_lengths=torch.tensor([200]).long();test_pitch=torch.randint(size=(1,200),low=5,high=255);test_pitchf=torch.rand(1,200);test_ds=torch.LongTensor([0]);test_rnd=torch.rand(1,192,200);device=_x;net_g=SynthesizerTrnMsNSFsidM(*cpt[_O],is_half=_D,version=cpt.get(_b,_H));net_g.load_state_dict(cpt[_n],strict=_D);input_names=[A,'phone_lengths',B,C,'ds',D];output_names=['audio'];torch.onnx.export(net_g,(test_phone.to(device),test_phone_lengths.to(device),test_pitch.to(device),test_pitchf.to(device),test_ds.to(device),test_rnd.to(device)),ExportedPath,dynamic_axes={A:[1],B:[1],C:[1],D:[2]},do_constant_folding=_D,opset_version=13,verbose=_D,input_names=input_names,output_names=output_names);return'Finished'
 import re as regex,scipy.io.wavfile as wavfile
 cli_current_page='HOME'
 def cli_split_command(com):exp='(?:(?<=\\s)|^)"(.*?)"(?=\\s|$)|(\\S+)';split_array=regex.findall(exp,com);split_array=[group[0]if group[0]else group[1]for group in split_array];return split_array
@@ -472,14 +472,14 @@ def execute_generator_function(genObject):
 	for _ in genObject:0
 def cli_infer(com):
 	A='audio-outputs';com=cli_split_command(com);model_name=com[0];source_audio_path=com[1];output_file_name=com[2];feature_index_path=com[3];f0_file=_J;speaker_id=int(com[4]);transposition=float(com[5]);f0_method=com[6];crepe_hop_length=int(com[7]);harvest_median_filter=int(com[8]);resample=int(com[9]);mix=float(com[10]);feature_ratio=float(com[11]);protection_amnt=float(com[12]);protect1=.5
-	if com[14]=='False'or com[14]=='false':DoFormant=_D;Quefrency=.0;Timbre=.0;CSVutil(_V,_X,_W,DoFormant,Quefrency,Timbre)
-	else:DoFormant=_A;Quefrency=float(com[15]);Timbre=float(com[16]);CSVutil(_V,_X,_W,DoFormant,Quefrency,Timbre)
+	if com[14]=='False'or com[14]=='false':DoFormant=_D;Quefrency=.0;Timbre=.0;CSVutil(_W,_Y,_X,DoFormant,Quefrency,Timbre)
+	else:DoFormant=_A;Quefrency=float(com[15]);Timbre=float(com[16]);CSVutil(_W,_Y,_X,DoFormant,Quefrency,Timbre)
 	print('Mangio-RVC-Fork Infer-CLI: Starting the inference...');vc_data=get_vc(model_name,protection_amnt,protect1);print(vc_data);print('Mangio-RVC-Fork Infer-CLI: Performing inference...');conversion_data=vc_single(speaker_id,source_audio_path,source_audio_path,transposition,f0_file,f0_method,feature_index_path,feature_index_path,feature_ratio,harvest_median_filter,resample,mix,protection_amnt,crepe_hop_length)
 	if'Success.'in conversion_data[0]:print('Mangio-RVC-Fork Infer-CLI: Inference succeeded. Writing to %s/%s...'%(A,output_file_name));wavfile.write(_a%(A,output_file_name),conversion_data[1][0],conversion_data[1][1]);print('Mangio-RVC-Fork Infer-CLI: Finished! Saved output to %s/%s'%(A,output_file_name))
 	else:print("Mangio-RVC-Fork Infer-CLI: Inference failed. Here's the traceback: ");print(conversion_data[0])
 def cli_pre_process(com):com=cli_split_command(com);model_name=com[0];trainset_directory=com[1];sample_rate=com[2];num_processes=int(com[3]);print('Mangio-RVC-Fork Pre-process: Starting...');generator=preprocess_dataset(trainset_directory,model_name,sample_rate,num_processes);execute_generator_function(generator);print('Mangio-RVC-Fork Pre-process: Finished')
 def cli_extract_feature(com):com=cli_split_command(com);model_name=com[0];gpus=com[1];num_processes=int(com[2]);has_pitch_guidance=_A if int(com[3])==1 else _D;f0_method=com[4];crepe_hop_length=int(com[5]);version=com[6];print('Mangio-RVC-CLI: Extract Feature Has Pitch: '+str(has_pitch_guidance));print('Mangio-RVC-CLI: Extract Feature Version: '+str(version));print('Mangio-RVC-Fork Feature Extraction: Starting...');generator=extract_f0_feature(gpus,num_processes,f0_method,has_pitch_guidance,model_name,version,crepe_hop_length);execute_generator_function(generator);print('Mangio-RVC-Fork Feature Extraction: Finished')
-def cli_train(com):com=cli_split_command(com);model_name=com[0];sample_rate=com[1];has_pitch_guidance=_A if int(com[2])==1 else _D;speaker_id=int(com[3]);save_epoch_iteration=int(com[4]);total_epoch=int(com[5]);batch_size=int(com[6]);gpu_card_slot_numbers=com[7];if_save_latest=_A if int(com[8])==1 else _D;if_cache_gpu=_A if int(com[9])==1 else _D;if_save_every_weight=_A if int(com[10])==1 else _D;version=com[11];pretrained_base='/kaggle/input/ax-rmf/pretrained/'if version==_G else'/kaggle/input/ax-rmf/pretrained_v2/';g_pretrained_path='%sf0G%s.pth'%(pretrained_base,sample_rate);d_pretrained_path='%sf0D%s.pth'%(pretrained_base,sample_rate);print('Mangio-RVC-Fork Train-CLI: Training...');click_train(model_name,sample_rate,has_pitch_guidance,speaker_id,save_epoch_iteration,total_epoch,batch_size,if_save_latest,g_pretrained_path,d_pretrained_path,gpu_card_slot_numbers,if_cache_gpu,if_save_every_weight,version)
+def cli_train(com):com=cli_split_command(com);model_name=com[0];sample_rate=com[1];has_pitch_guidance=_A if int(com[2])==1 else _D;speaker_id=int(com[3]);save_epoch_iteration=int(com[4]);total_epoch=int(com[5]);batch_size=int(com[6]);gpu_card_slot_numbers=com[7];if_save_latest=_A if int(com[8])==1 else _D;if_cache_gpu=_A if int(com[9])==1 else _D;if_save_every_weight=_A if int(com[10])==1 else _D;version=com[11];pretrained_base='/kaggle/input/ax-rmf/pretrained/'if version==_H else'/kaggle/input/ax-rmf/pretrained_v2/';g_pretrained_path='%sf0G%s.pth'%(pretrained_base,sample_rate);d_pretrained_path='%sf0D%s.pth'%(pretrained_base,sample_rate);print('Mangio-RVC-Fork Train-CLI: Training...');click_train(model_name,sample_rate,has_pitch_guidance,speaker_id,save_epoch_iteration,total_epoch,batch_size,if_save_latest,g_pretrained_path,d_pretrained_path,gpu_card_slot_numbers,if_cache_gpu,if_save_every_weight,version)
 def cli_train_feature(com):com=cli_split_command(com);model_name=com[0];version=com[1];print('Mangio-RVC-Fork Train Feature Index-CLI: Training... Please wait');generator=train_index(model_name,version);execute_generator_function(generator);print('Mangio-RVC-Fork Train Feature Index-CLI: Done!')
 def cli_extract_model(com):
 	com=cli_split_command(com);model_path=com[0];save_name=com[1];sample_rate=com[2];has_pitch_guidance=com[3];info=com[4];version=com[5];extract_small_model_process=extract_small_model(model_path,save_name,sample_rate,has_pitch_guidance,info,version)
@@ -530,16 +530,16 @@ def stepdisplay(if_save_every_weights):return{_E:if_save_every_weights,_B:_C}
 def match_index(sid0):
 	picked=_D;folder=sid0.split(_L)[0].split('_')[0];parent_dir=_Z+folder
 	if os.path.exists(parent_dir):
-		for filename in os.listdir(parent_dir.replace(_H,_N)):
+		for filename in os.listdir(parent_dir.replace(_G,_N)):
 			if filename.endswith(_i):
 				for i in range(len(indexes_list)):
-					if indexes_list[i]==os.path.join(_Z+folder,filename).replace(_H,_N):break
-					elif indexes_list[i]==os.path.join(_Z+folder.lower(),filename).replace(_H,_N):parent_dir=_Z+folder.lower();break
-				index_path=os.path.join(parent_dir.replace(_H,_N),filename.replace(_H,_N)).replace(_H,_N);return index_path,index_path
+					if indexes_list[i]==os.path.join(_Z+folder,filename).replace(_G,_N):break
+					elif indexes_list[i]==os.path.join(_Z+folder.lower(),filename).replace(_G,_N):parent_dir=_Z+folder.lower();break
+				index_path=os.path.join(parent_dir.replace(_G,_N),filename.replace(_G,_N)).replace(_G,_N);return index_path,index_path
 	else:return'',''
 def stoptraining(mim):
 	if int(mim)==1:
-		CSVutil(_u,_X,'stop','True')
+		CSVutil(_u,_Y,'stop','True')
 		try:os.kill(PID,signal.SIGTERM)
 		except Exception as e:print(f"Couldn't click due to {e}");pass
 	else:0
@@ -553,11 +553,11 @@ with gr.Blocks(theme=gr.themes.Soft(),title='Mangio-RVC-Web 💻')as app:
 			with gr.Group():
 				gr.Markdown(value=i18n('男转女推荐+12key, 女转男推荐-12key, 如果音域爆炸导致音色失真也可以自己调整到合适音域. '))
 				with gr.Row():
-					with gr.Column():vc_transform0=gr.Number(label=i18n(_AW),value=0);input_audio0=gr.Textbox(label=i18n("Add audio's name to the path to the audio file to be processed (default is the correct format example) Remove the path to use an audio from the dropdown list:"),value=os.path.abspath(os.getcwd()).replace(_H,_N)+_o+'audio.wav');input_audio1=gr.Dropdown(label=i18n('Auto detect audio path and select from the dropdown:'),choices=sorted(audio_paths),value='',interactive=_A);input_audio1.change(fn=lambda:'',inputs=[],outputs=[input_audio0]);f0method0=gr.Radio(label=i18n(_AX),choices=['pm',_A9,'dio',_AA,'crepe-tiny',_A8,_AV,_g],value=_g,interactive=_A);crepe_hop_length=gr.Slider(minimum=1,maximum=512,step=1,label=i18n(_AB),value=120,interactive=_A,visible=_D);f0method0.change(fn=whethercrepeornah,inputs=[f0method0],outputs=[crepe_hop_length]);filter_radius0=gr.Slider(minimum=0,maximum=7,label=i18n(_AY),value=3,step=1,interactive=_A)
+					with gr.Column():vc_transform0=gr.Number(label=i18n(_AW),value=0);input_audio0=gr.Textbox(label=i18n("Add audio's name to the path to the audio file to be processed (default is the correct format example) Remove the path to use an audio from the dropdown list:"),value=os.path.abspath(os.getcwd()).replace(_G,_N)+_o+'audio.wav');input_audio1=gr.Dropdown(label=i18n('Auto detect audio path and select from the dropdown:'),choices=sorted(audio_paths),value='',interactive=_A);input_audio1.change(fn=lambda:'',inputs=[],outputs=[input_audio0]);f0method0=gr.Radio(label=i18n(_AX),choices=['pm',_A9,'dio',_AA,'crepe-tiny',_A8,_AV,_g],value=_g,interactive=_A);crepe_hop_length=gr.Slider(minimum=1,maximum=512,step=1,label=i18n(_AB),value=120,interactive=_A,visible=_D);f0method0.change(fn=whethercrepeornah,inputs=[f0method0],outputs=[crepe_hop_length]);filter_radius0=gr.Slider(minimum=0,maximum=7,label=i18n(_AY),value=3,step=1,interactive=_A)
 					with gr.Column():file_index1=gr.Textbox(label=i18n(_AZ),value='',interactive=_A);file_index2=gr.Dropdown(label="3. Path to your added.index file (if it didn't automatically find it.)",choices=get_indexes(),value=get_index(),interactive=_A,allow_custom_value=_A);refresh_button.click(fn=change_choices,inputs=[],outputs=[sid0,file_index2,input_audio1]);index_rate1=gr.Slider(minimum=0,maximum=1,label=i18n('检索特征占比'),value=.75,interactive=_A)
 					with gr.Column():resample_sr0=gr.Slider(minimum=0,maximum=48000,label=i18n(_Aa),value=0,step=1,interactive=_A);rms_mix_rate0=gr.Slider(minimum=0,maximum=1,label=i18n(_Ab),value=.25,interactive=_A);protect0=gr.Slider(minimum=0,maximum=.5,label=i18n(_Ac),value=.33,step=.01,interactive=_A);formanting=gr.Checkbox(value=bool(DoFormant),label='[EXPERIMENTAL] Formant shift inference audio',info='Used for male to female and vice-versa conversions',interactive=_A,visible=_A);formant_preset=gr.Dropdown(value='',choices=get_fshift_presets(),label='browse presets for formanting',visible=bool(DoFormant));formant_refresh_button=gr.Button(value='🔄',visible=bool(DoFormant),variant=_K);qfrency=gr.Slider(value=Quefrency,info=_Ad,label='Quefrency for formant shifting',minimum=.0,maximum=16.,step=.1,visible=bool(DoFormant),interactive=_A);tmbre=gr.Slider(value=Timbre,info=_Ad,label='Timbre for formant shifting',minimum=.0,maximum=16.,step=.1,visible=bool(DoFormant),interactive=_A);formant_preset.change(fn=preset_apply,inputs=[formant_preset,qfrency,tmbre],outputs=[qfrency,tmbre]);frmntbut=gr.Button('Apply',variant=_K,visible=bool(DoFormant));formanting.change(fn=formant_enabled,inputs=[formanting,qfrency,tmbre,frmntbut,formant_preset,formant_refresh_button],outputs=[formanting,qfrency,tmbre,frmntbut,formant_preset,formant_refresh_button]);frmntbut.click(fn=formant_apply,inputs=[qfrency,tmbre],outputs=[qfrency,tmbre]);formant_refresh_button.click(fn=update_fshift_presets,inputs=[formant_preset,qfrency,tmbre],outputs=[formant_preset,qfrency,tmbre])
 					f0_file=gr.File(label=i18n('F0曲线文件, 可选, 一行一个音高, 代替默认F0及升降调'));but0=gr.Button(i18n('转换'),variant=_K)
-					with gr.Row():vc_output1=gr.Textbox(label=i18n(_T));vc_output2=gr.Audio(label=i18n('输出音频(右下角三个点,点了可以下载)'))
+					with gr.Row():vc_output1=gr.Textbox(label=i18n(_U));vc_output2=gr.Audio(label=i18n('输出音频(右下角三个点,点了可以下载)'))
 					but0.click(vc_single,[spk_item,input_audio0,input_audio1,vc_transform0,f0_file,f0method0,file_index1,file_index2,index_rate1,filter_radius0,resample_sr0,rms_mix_rate0,protect0,crepe_hop_length],[vc_output1,vc_output2])
 			with gr.Group():
 				gr.Markdown(value=i18n('批量转换, 输入待转换音频文件夹, 或上传多个音频文件, 在指定文件夹(默认opt)下输出转换的音频. '))
@@ -565,52 +565,52 @@ with gr.Blocks(theme=gr.themes.Soft(),title='Mangio-RVC-Web 💻')as app:
 					with gr.Column():vc_transform1=gr.Number(label=i18n(_AW),value=0);opt_input=gr.Textbox(label=i18n('指定输出文件夹'),value='opt');f0method1=gr.Radio(label=i18n(_AX),choices=['pm',_A9,_AA,_g],value=_g,interactive=_A);filter_radius1=gr.Slider(minimum=0,maximum=7,label=i18n(_AY),value=3,step=1,interactive=_A)
 					with gr.Column():file_index3=gr.Textbox(label=i18n(_AZ),value='',interactive=_A);file_index4=gr.Dropdown(label=i18n('自动检测index路径,下拉式选择(dropdown)'),choices=get_indexes(),value=get_index(),interactive=_A);sid0.select(fn=match_index,inputs=[sid0],outputs=[file_index2,file_index4]);refresh_button.click(fn=lambda:change_choices()[1],inputs=[],outputs=file_index4);index_rate2=gr.Slider(minimum=0,maximum=1,label=i18n('检索特征占比'),value=1,interactive=_A)
 					with gr.Column():resample_sr1=gr.Slider(minimum=0,maximum=48000,label=i18n(_Aa),value=0,step=1,interactive=_A);rms_mix_rate1=gr.Slider(minimum=0,maximum=1,label=i18n(_Ab),value=1,interactive=_A);protect1=gr.Slider(minimum=0,maximum=.5,label=i18n(_Ac),value=.33,step=.01,interactive=_A)
-					with gr.Column():dir_input=gr.Textbox(label=i18n('输入待处理音频文件夹路径(去文件管理器地址栏拷就行了)'),value=os.path.abspath(os.getcwd()).replace(_H,_N)+_o);inputs=gr.File(file_count='multiple',label=i18n(_Ae))
-					with gr.Row():format1=gr.Radio(label=i18n('导出文件格式'),choices=[_v,_k,_w,'m4a'],value=_k,interactive=_A);but1=gr.Button(i18n('转换'),variant=_K);vc_output3=gr.Textbox(label=i18n(_T))
+					with gr.Column():dir_input=gr.Textbox(label=i18n('输入待处理音频文件夹路径(去文件管理器地址栏拷就行了)'),value=os.path.abspath(os.getcwd()).replace(_G,_N)+_o);inputs=gr.File(file_count='multiple',label=i18n(_Ae))
+					with gr.Row():format1=gr.Radio(label=i18n('导出文件格式'),choices=[_v,_k,_w,'m4a'],value=_k,interactive=_A);but1=gr.Button(i18n('转换'),variant=_K);vc_output3=gr.Textbox(label=i18n(_U))
 					but1.click(vc_multi,[spk_item,dir_input,opt_input,inputs,vc_transform1,f0method1,file_index3,file_index4,index_rate2,filter_radius1,resample_sr1,rms_mix_rate1,protect1,format1,crepe_hop_length],[vc_output3])
 			sid0.change(fn=get_vc,inputs=[sid0,protect0,protect1],outputs=[spk_item,protect0,protect1])
 		with gr.TabItem(i18n('伴奏人声分离&去混响&去回声')):
 			with gr.Group():
 				gr.Markdown(value=i18n('人声伴奏分离批量处理， 使用UVR5模型。 <br>合格的文件夹路径格式举例： E:\\codes\\py39\\vits_vc_gpu\\白鹭霜华测试样例(去文件管理器地址栏拷就行了)。 <br>模型分为三类： <br>1、保留人声：不带和声的音频选这个，对主人声保留比HP5更好。内置HP2和HP3两个模型，HP3可能轻微漏伴奏但对主人声保留比HP2稍微好一丁点； <br>2、仅保留主人声：带和声的音频选这个，对主人声可能有削弱。内置HP5一个模型； <br> 3、去混响、去延迟模型（by FoxJoy）：<br>\u2003\u2003(1)MDX-Net(onnx_dereverb):对于双通道混响是最好的选择，不能去除单通道混响；<br>&emsp;(234)DeEcho:去除延迟效果。Aggressive比Normal去除得更彻底，DeReverb额外去除混响，可去除单声道混响，但是对高频重的板式混响去不干净。<br>去混响/去延迟，附：<br>1、DeEcho-DeReverb模型的耗时是另外2个DeEcho模型的接近2倍；<br>2、MDX-Net-Dereverb模型挺慢的；<br>3、个人推荐的最干净的配置是先MDX-Net再DeEcho-Aggressive。'))
 				with gr.Row():
-					with gr.Column():dir_wav_input=gr.Textbox(label=i18n('输入待处理音频文件夹路径'),value=os.getcwd().replace(_H,_N)+_o);wav_inputs=gr.File(file_count='multiple',label=i18n(_Ae))
+					with gr.Column():dir_wav_input=gr.Textbox(label=i18n('输入待处理音频文件夹路径'),value=os.getcwd().replace(_G,_N)+_o);wav_inputs=gr.File(file_count='multiple',label=i18n(_Ae))
 					with gr.Column():model_choose=gr.Dropdown(label=i18n('模型'),choices=uvr5_names);agg=gr.Slider(minimum=0,maximum=20,step=1,label='人声提取激进程度',value=10,interactive=_A,visible=_D);opt_vocal_root=gr.Textbox(label=i18n('指定输出主人声文件夹'),value='opt');opt_ins_root=gr.Textbox(label=i18n('指定输出非主人声文件夹'),value='opt');format0=gr.Radio(label=i18n('导出文件格式'),choices=[_v,_k,_w,'m4a'],value=_k,interactive=_A)
-					but2=gr.Button(i18n('转换'),variant=_K);vc_output4=gr.Textbox(label=i18n(_T));but2.click(uvr,[model_choose,dir_wav_input,opt_vocal_root,wav_inputs,opt_ins_root,agg,format0],[vc_output4])
+					but2=gr.Button(i18n('转换'),variant=_K);vc_output4=gr.Textbox(label=i18n(_U));but2.click(uvr,[model_choose,dir_wav_input,opt_vocal_root,wav_inputs,opt_ins_root,agg,format0],[vc_output4])
 		with gr.TabItem(i18n('训练')):
 			gr.Markdown(value=i18n('step1: 填写实验配置. 实验数据放在logs下, 每个实验一个文件夹, 需手工输入实验名路径, 内含实验配置, 日志, 训练得到的模型文件. '))
-			with gr.Row():exp_dir1=gr.Textbox(label=i18n('输入实验名'),value='mi-test');sr2=gr.Radio(label=i18n(_AC),choices=[_S,_d],value=_S,interactive=_A);if_f0_3=gr.Checkbox(label=_AD,value=_A,interactive=_A);version19=gr.Radio(label=i18n('版本'),choices=[_G,_Y],value=_G,interactive=_A,visible=_A);np7=gr.Slider(minimum=0,maximum=config.n_cpu,step=1,label=i18n('提取音高和处理数据使用的CPU进程数'),value=int(np.ceil(config.n_cpu/1.5)),interactive=_A)
+			with gr.Row():exp_dir1=gr.Textbox(label=i18n('输入实验名'),value='mi-test');sr2=gr.Radio(label=i18n(_AC),choices=[_T,_d],value=_T,interactive=_A);if_f0_3=gr.Checkbox(label=_AD,value=_A,interactive=_A);version19=gr.Radio(label=i18n('版本'),choices=[_S],value=_S,interactive=_A,visible=_A);np7=gr.Slider(minimum=0,maximum=config.n_cpu,step=1,label=i18n('提取音高和处理数据使用的CPU进程数'),value=int(np.ceil(config.n_cpu/1.5)),interactive=_A)
 			with gr.Group():
 				gr.Markdown(value=i18n('step2a: 自动遍历训练文件夹下所有可解码成音频的文件并进行切片归一化, 在实验目录下生成2个wav文件夹; 暂时只支持单人训练. '))
-				with gr.Row():trainset_dir4=gr.Textbox(label=i18n('输入训练文件夹路径'),value=os.path.abspath(os.getcwd())+'\\datasets\\');spk_id5=gr.Slider(minimum=0,maximum=4,step=1,label=i18n('请指定说话人id'),value=0,interactive=_A);but1=gr.Button(i18n('处理数据'),variant=_K);info1=gr.Textbox(label=i18n(_T),value='');but1.click(preprocess_dataset,[trainset_dir4,exp_dir1,sr2,np7],[info1])
+				with gr.Row():trainset_dir4=gr.Textbox(label=i18n('输入训练文件夹路径'),value=os.path.abspath(os.getcwd())+'\\datasets\\');spk_id5=gr.Slider(minimum=0,maximum=4,step=1,label=i18n('请指定说话人id'),value=0,interactive=_A);but1=gr.Button(i18n('处理数据'),variant=_K);info1=gr.Textbox(label=i18n(_U),value='');but1.click(preprocess_dataset,[trainset_dir4,exp_dir1,sr2,np7],[info1])
 			with gr.Group():
 				step2b=gr.Markdown(value=i18n('step2b: 使用CPU提取音高(如果模型带音高), 使用GPU提取特征(选择卡号)'))
 				with gr.Row():
 					with gr.Column():gpus6=gr.Textbox(label=i18n(_Af),value=gpus,interactive=_A);gpu_info9=gr.Textbox(label=i18n('显卡信息'),value=gpu_info)
 					with gr.Column():f0method8=gr.Radio(label=i18n('选择音高提取算法:输入歌声可用pm提速,高质量语音但CPU差可用dio提速,harvest质量更好但慢'),choices=['pm',_A9,'dio',_AA,_A8,_g],value=_g,interactive=_A);extraction_crepe_hop_length=gr.Slider(minimum=1,maximum=512,step=1,label=i18n(_AB),value=64,interactive=_A,visible=_D);f0method8.change(fn=whethercrepeornah,inputs=[f0method8],outputs=[extraction_crepe_hop_length])
-					but2=gr.Button(i18n('特征提取'),variant=_K);info2=gr.Textbox(label=i18n(_T),value='',max_lines=8,interactive=_D);but2.click(extract_f0_feature,[gpus6,np7,f0method8,if_f0_3,exp_dir1,version19,extraction_crepe_hop_length],[info2])
+					but2=gr.Button(i18n('特征提取'),variant=_K);info2=gr.Textbox(label=i18n(_U),value='',max_lines=8,interactive=_D);but2.click(extract_f0_feature,[gpus6,np7,f0method8,if_f0_3,exp_dir1,version19,extraction_crepe_hop_length],[info2])
 			with gr.Group():
 				gr.Markdown(value=i18n('step3: 填写训练设置, 开始训练模型和索引'))
 				with gr.Row():save_epoch10=gr.Slider(minimum=1,maximum=50,step=1,label=i18n('保存频率save_every_epoch'),value=5,interactive=_A,visible=_A);total_epoch11=gr.Slider(minimum=1,maximum=10000,step=1,label=i18n('总训练轮数total_epoch'),value=20,interactive=_A);batch_size12=gr.Slider(minimum=1,maximum=40,step=1,label=i18n('每张显卡的batch_size'),value=default_batch_size,interactive=_A);if_save_latest13=gr.Checkbox(label='Whether to save only the latest .ckpt file to save hard drive space',value=_A,interactive=_A);if_cache_gpu17=gr.Checkbox(label='Cache all training sets to GPU memory. Caching small datasets (less than 10 minutes) can speed up training, but caching large datasets will consume a lot of GPU memory and may not provide much speed improvement',value=_D,interactive=_A);if_save_every_weights18=gr.Checkbox(label="Save a small final model to the 'weights' folder at each save point",value=_A,interactive=_A)
-				with gr.Row():pretrained_G14=gr.Textbox(lines=2,label=i18n('加载预训练底模G路径'),value='/kaggle/input/ax-rmf/pretrained/f0G40k.pth',interactive=_A);pretrained_D15=gr.Textbox(lines=2,label=i18n('加载预训练底模D路径'),value='/kaggle/input/ax-rmf/pretrained/f0D40k.pth',interactive=_A);sr2.change(change_sr2,[sr2,if_f0_3,version19],[pretrained_G14,pretrained_D15]);version19.change(change_version19,[sr2,if_f0_3,version19],[pretrained_G14,pretrained_D15,sr2]);if_f0_3.change(fn=change_f0,inputs=[if_f0_3,sr2,version19,step2b,gpus6,gpu_info9,extraction_crepe_hop_length,but2,info2],outputs=[f0method8,pretrained_G14,pretrained_D15,step2b,gpus6,gpu_info9,extraction_crepe_hop_length,but2,info2]);if_f0_3.change(fn=whethercrepeornah,inputs=[f0method8],outputs=[extraction_crepe_hop_length]);gpus16=gr.Textbox(label=i18n(_Af),value=gpus,interactive=_A);butstop=gr.Button('Stop Training',variant=_K,visible=_D);but3=gr.Button(i18n('训练模型'),variant=_K,visible=_A);but3.click(fn=stoptraining,inputs=[gr.Number(value=0,visible=_D)],outputs=[but3,butstop]);butstop.click(fn=stoptraining,inputs=[gr.Number(value=1,visible=_D)],outputs=[butstop,but3]);but4=gr.Button(i18n('训练特征索引'),variant=_K);info3=gr.Textbox(label=i18n(_T),value='',max_lines=10);if_save_every_weights18.change(fn=stepdisplay,inputs=[if_save_every_weights18],outputs=[save_epoch10]);but3.click(click_train,[exp_dir1,sr2,if_f0_3,spk_id5,save_epoch10,total_epoch11,batch_size12,if_save_latest13,pretrained_G14,pretrained_D15,gpus16,if_cache_gpu17,if_save_every_weights18,version19],[info3,butstop,but3]);but4.click(train_index,[exp_dir1,version19],info3)
+				with gr.Row():pretrained_G14=gr.Textbox(lines=2,label=i18n('加载预训练底模G路径'),value='/kaggle/input/ax-rmf/pretrained/f0G40k.pth',interactive=_A);pretrained_D15=gr.Textbox(lines=2,label=i18n('加载预训练底模D路径'),value='/kaggle/input/ax-rmf/pretrained/f0D40k.pth',interactive=_A);sr2.change(change_sr2,[sr2,if_f0_3,version19],[pretrained_G14,pretrained_D15]);version19.change(change_version19,[sr2,if_f0_3,version19],[pretrained_G14,pretrained_D15,sr2]);if_f0_3.change(fn=change_f0,inputs=[if_f0_3,sr2,version19,step2b,gpus6,gpu_info9,extraction_crepe_hop_length,but2,info2],outputs=[f0method8,pretrained_G14,pretrained_D15,step2b,gpus6,gpu_info9,extraction_crepe_hop_length,but2,info2]);if_f0_3.change(fn=whethercrepeornah,inputs=[f0method8],outputs=[extraction_crepe_hop_length]);gpus16=gr.Textbox(label=i18n(_Af),value=gpus,interactive=_A);butstop=gr.Button('Stop Training',variant=_K,visible=_D);but3=gr.Button(i18n('训练模型'),variant=_K,visible=_A);but3.click(fn=stoptraining,inputs=[gr.Number(value=0,visible=_D)],outputs=[but3,butstop]);butstop.click(fn=stoptraining,inputs=[gr.Number(value=1,visible=_D)],outputs=[butstop,but3]);but4=gr.Button(i18n('训练特征索引'),variant=_K);info3=gr.Textbox(label=i18n(_U),value='',max_lines=10);if_save_every_weights18.change(fn=stepdisplay,inputs=[if_save_every_weights18],outputs=[save_epoch10]);but3.click(click_train,[exp_dir1,sr2,if_f0_3,spk_id5,save_epoch10,total_epoch11,batch_size12,if_save_latest13,pretrained_G14,pretrained_D15,gpus16,if_cache_gpu17,if_save_every_weights18,version19],[info3,butstop,but3]);but4.click(train_index,[exp_dir1,version19],info3)
 		with gr.TabItem(i18n('ckpt处理')):
 			with gr.Group():
 				gr.Markdown(value=i18n('模型融合, 可用于测试音色融合'))
 				with gr.Row():ckpt_a=gr.Textbox(label=i18n('A模型路径'),value='',interactive=_A,placeholder='Path to your model A.');ckpt_b=gr.Textbox(label=i18n('B模型路径'),value='',interactive=_A,placeholder='Path to your model B.');alpha_a=gr.Slider(minimum=0,maximum=1,label=i18n('A模型权重'),value=.5,interactive=_A)
-				with gr.Row():sr_=gr.Radio(label=i18n(_AC),choices=[_S,_d],value=_S,interactive=_A);if_f0_=gr.Checkbox(label=_AD,value=_A,interactive=_A);info__=gr.Textbox(label=i18n('要置入的模型信息'),value='',max_lines=8,interactive=_A,placeholder='Model information to be placed.');name_to_save0=gr.Textbox(label=i18n('保存的模型名不带后缀'),value='',placeholder='Name for saving.',max_lines=1,interactive=_A);version_2=gr.Radio(label=i18n('模型版本型号'),choices=[_G,_Y],value=_G,interactive=_A)
-				with gr.Row():but6=gr.Button(i18n('融合'),variant=_K);info4=gr.Textbox(label=i18n(_T),value='',max_lines=8)
+				with gr.Row():sr_=gr.Radio(label=i18n(_AC),choices=[_T,_d],value=_T,interactive=_A);if_f0_=gr.Checkbox(label=_AD,value=_A,interactive=_A);info__=gr.Textbox(label=i18n('要置入的模型信息'),value='',max_lines=8,interactive=_A,placeholder='Model information to be placed.');name_to_save0=gr.Textbox(label=i18n('保存的模型名不带后缀'),value='',placeholder='Name for saving.',max_lines=1,interactive=_A);version_2=gr.Radio(label=i18n('模型版本型号'),choices=[_H,_S],value=_H,interactive=_A)
+				with gr.Row():but6=gr.Button(i18n('融合'),variant=_K);info4=gr.Textbox(label=i18n(_U),value='',max_lines=8)
 				but6.click(merge,[ckpt_a,ckpt_b,alpha_a,sr_,if_f0_,info__,name_to_save0,version_2],info4)
 			with gr.Group():
 				gr.Markdown(value=i18n('修改模型信息(仅支持weights文件夹下提取的小模型文件)'))
 				with gr.Row():ckpt_path0=gr.Textbox(label=i18n('模型路径'),placeholder='Path to your Model.',value='',interactive=_A);info_=gr.Textbox(label=i18n('要改的模型信息'),value='',max_lines=8,interactive=_A,placeholder='Model information to be changed.');name_to_save1=gr.Textbox(label=i18n('保存的文件名, 默认空为和源文件同名'),placeholder='Either leave empty or put in the Name of the Model to be saved.',value='',max_lines=8,interactive=_A)
-				with gr.Row():but7=gr.Button(i18n('修改'),variant=_K);info5=gr.Textbox(label=i18n(_T),value='',max_lines=8)
+				with gr.Row():but7=gr.Button(i18n('修改'),variant=_K);info5=gr.Textbox(label=i18n(_U),value='',max_lines=8)
 				but7.click(change_info,[ckpt_path0,info_,name_to_save1],info5)
 			with gr.Group():
 				gr.Markdown(value=i18n('查看模型信息(仅支持weights文件夹下提取的小模型文件)'))
-				with gr.Row():ckpt_path1=gr.Textbox(label=i18n('模型路径'),value='',interactive=_A,placeholder='Model path here.');but8=gr.Button(i18n('查看'),variant=_K);info6=gr.Textbox(label=i18n(_T),value='',max_lines=8)
+				with gr.Row():ckpt_path1=gr.Textbox(label=i18n('模型路径'),value='',interactive=_A,placeholder='Model path here.');but8=gr.Button(i18n('查看'),variant=_K);info6=gr.Textbox(label=i18n(_U),value='',max_lines=8)
 				but8.click(show_info,[ckpt_path1],info6)
 			with gr.Group():
 				gr.Markdown(value=i18n('模型提取(输入logs文件夹下大文件模型路径),适用于训一半不想训了模型没有自动提取保存小文件模型,或者想测试中间模型的情况'))
-				with gr.Row():ckpt_path2=gr.Textbox(lines=3,label=i18n('模型路径'),value=os.path.abspath(os.getcwd()).replace(_H,_N)+'/logs/[YOUR_MODEL]/G_23333.pth',interactive=_A);save_name=gr.Textbox(label=i18n('保存名'),value='',interactive=_A,placeholder='Your filename here.');sr__=gr.Radio(label=i18n(_AC),choices=[_p,_S,_d],value=_S,interactive=_A);if_f0__=gr.Checkbox(label=_AD,value=_A,interactive=_A);version_1=gr.Radio(label=i18n('模型版本型号'),choices=[_G,_Y],value=_Y,interactive=_A);info___=gr.Textbox(label=i18n('要置入的模型信息'),value='',max_lines=8,interactive=_A,placeholder='Model info here.');but9=gr.Button(i18n('提取'),variant=_K);info7=gr.Textbox(label=i18n(_T),value='',max_lines=8);ckpt_path2.change(change_info_,[ckpt_path2],[sr__,if_f0__,version_1])
+				with gr.Row():ckpt_path2=gr.Textbox(lines=3,label=i18n('模型路径'),value=os.path.abspath(os.getcwd()).replace(_G,_N)+'/logs/[YOUR_MODEL]/G_23333.pth',interactive=_A);save_name=gr.Textbox(label=i18n('保存名'),value='',interactive=_A,placeholder='Your filename here.');sr__=gr.Radio(label=i18n(_AC),choices=[_p,_T,_d],value=_T,interactive=_A);if_f0__=gr.Checkbox(label=_AD,value=_A,interactive=_A);version_1=gr.Radio(label=i18n('模型版本型号'),choices=[_H,_S],value=_S,interactive=_A);info___=gr.Textbox(label=i18n('要置入的模型信息'),value='',max_lines=8,interactive=_A,placeholder='Model info here.');but9=gr.Button(i18n('提取'),variant=_K);info7=gr.Textbox(label=i18n(_U),value='',max_lines=8);ckpt_path2.change(change_info_,[ckpt_path2],[sr__,if_f0__,version_1])
 				but9.click(extract_small_model,[ckpt_path2,save_name,sr__,if_f0__,info___,version_1],info7)
 		with gr.TabItem(i18n('Onnx导出')):
 			with gr.Row():ckpt_dir=gr.Textbox(label=i18n('RVC模型路径'),value='',interactive=_A,placeholder='RVC model path.')
@@ -631,7 +631,7 @@ with gr.Blocks(theme=gr.themes.Soft(),title='Mangio-RVC-Web 💻')as app:
 		data=_J
 		with open(_t,_I)as file:data=json.load(file)
 		preset_json={'name':preset_name,'model':sid0,'transpose':vc_transform,'audio_file':input_audio0,'auto_audio_file':input_audio1,'f0_method':f0method,_AB:crepe_hop_length,'median_filtering':filter_radius,'feature_path':file_index1,'auto_feature_path':file_index2,'search_feature_ratio':index_rate,'resample':resample_sr,'volume_envelope':rms_mix_rate,'protect_voiceless':protect,'f0_file_path':f0_file};data[_A7].append(preset_json)
-		with open(_t,_U)as file:json.dump(data,file);file.flush()
+		with open(_t,_V)as file:json.dump(data,file);file.flush()
 		print('Saved Preset %s into inference-presets.json!'%preset_name)
 	def on_preset_changed(preset_name):
 		print('Changed Preset to %s!'%preset_name);data=_J
