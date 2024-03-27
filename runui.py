@@ -447,7 +447,7 @@ with gr.Blocks(title='🔊 AX-RVC UI',theme=gr.themes.Base(primary_hue='sky',neu
 					with gr.Column():resample_sr0=gr.Slider(minimum=0,maximum=48000,label=i18n(_AN),value=0,step=1,interactive=_A);rms_mix_rate0=gr.Slider(minimum=0,maximum=1,label=i18n(_AO),value=.25,interactive=_A);protect0=gr.Slider(minimum=0,maximum=.5,label=i18n(_AP),value=.33,step=.01,interactive=_A)
 					f0_file=gr.File(label=i18n('F0曲线文件, 可选, 一行一个音高, 代替默认F0及升降调'));but0=gr.Button(i18n('转换'),variant=_P)
 					with gr.Row():vc_output1=gr.Textbox(label=i18n(_b));vc_output2=gr.Audio(label=i18n('输出音频(右下角三个点,点了可以下载)'))
-					but0.click(vc_single,[spk_item,input_audio0,vc_transform0,f0_file,f0method0,file_index1,file_index2,index_rate1,filter_radius0,resample_sr0,rms_mix_rate0,protect0],[vc_output1,vc_output2],api_name='infer_convert')
+					but0.click(vc_single,[spk_item,input_audio0,vc_transform0,f0_file,f0method0,file_index2,index_rate1,filter_radius0,resample_sr0,rms_mix_rate0,protect0],[vc_output1,vc_output2],api_name='infer_convert')
 			with gr.Group():
 				gr.Markdown(value=i18n('批量转换, 输入待转换音频文件夹, 或上传多个音频文件, 在指定文件夹(默认opt)下输出转换的音频. '))
 				with gr.Row():

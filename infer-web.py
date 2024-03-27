@@ -1361,7 +1361,7 @@ def change_f0_method(f0method8):
     else:
         visible = False
     return {"visible": visible, "__type__": "update"}
-    
+
 def save_to_wav(record_button):
     if record_button is None:
         pass
@@ -1569,7 +1569,6 @@ with gr.Blocks(title="🔊 AX-RVC UI", theme=gr.themes.Base(primary_hue="sky",ne
                             vc_transform0,
                             f0_file,
                             f0method0,
-                            file_index1,
                             file_index2,
                             # file_big_npy1,
                             index_rate1,
