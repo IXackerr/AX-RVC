@@ -1471,10 +1471,6 @@ with gr.Blocks(title="🔊 AX-RVC UI", theme=gr.themes.Base(primary_hue="sky",ne
                         vc_transform0 = gr.Number(
                             label=i18n("变调(整数, 半音数量, 升八度12降八度-12)"), value=0
                         )
-                        input_audio0 = gr.Textbox(
-                            label=i18n("输入待处理音频文件路径(默认是正确格式示例)"),
-                            value="E:\\codes\\py39\\test-20230416b\\todo-songs\\冬之花clip1.wav",
-                        )
                         f0method0 = gr.Radio(
                             label=i18n(
                                 "选择音高提取算法,输入歌声可用pm提速,harvest低音好但巨慢无比,crepe效果好但吃GPU,rmvpe效果最好且微吃GPU"
@@ -1565,7 +1561,7 @@ with gr.Blocks(title="🔊 AX-RVC UI", theme=gr.themes.Base(primary_hue="sky",ne
                         vc_single,
                         [
                             spk_item,
-                            input_audio0,
+                            input_audio1,
                             vc_transform0,
                             f0_file,
                             f0method0,
