@@ -1,208 +1,100 @@
-# 🍏 Applio x Xackerr-RVC-Fork
-AX-RVC is a user-friendly fork of Mangio-RVC-Fork/RVC, designed to provide an intuitive interface, especially for newcomers, and work on kaggle.
-You need AX RVC Shell for run this script on kaggle
+![Ilaria AI Suite](./ilariarvcmainline.png)
+***
+[![Static Badge](https://img.shields.io/badge/GitHub-Source%20Code-s?logo=GitHub)]([https://github.com/TheStingerX/Ilaria-RVC](https://github.com/TheStingerX/Ilaria-RVC-Mainline)) [![Static Badge](https://img.shields.io/badge/AI%20Hub-Discord%20Server-s?logo=Discord&color=%09%237289da)](https://discord.gg/aihub) [![Static Badge](https://img.shields.io/badge/Ko--Fi-s?logo=Ko-Fi&label=Support%20me%20on&labelColor=434b57&color=FF5E5B)](https://ko-fi.com/ilariaowo)
+***
+<p align="center">
+  <h1>Ilaria RVC Mainline 💖</h1>
+</p>
 
-## 📚 Table of Contents
-  1. [Improvements of Applio Over RVC](#-improvements-of-applio-over-rvc)
-  2. [Additional Features of This Repository](#️-additional-features-of-this-repository)
-  3. [Planned Features for Future Development](#️-planned-features-for-future-development)
-  4. [Installation](#-installation)
-  5. [Running the Web GUI (Inference & Train)](#-running-the-web-gui-inference--train)
-  6. [Running the CLI (Inference & Train)](#-running-the-cli-inference--train)
-  7. [Credits](#credits)
-  8. [Thanks to all RVC and Mangio contributors](#thanks-to-all-rvc-and-mangio-contributors)
+🎉 Welcome to Ilaria RVC Mainline! 🎉  
+  
+This project leverages various libraries and modules to create a Graphical User Interface (GUI) for voice conversion.
+Currently the fastest and easiest way to experience RVC!  
+It's primarily designed for local users. 🖥️   
 
-# use dataset for kaggle
-https://kaggle.com/datasets/aaa74fd62e95ad662b09255b9ef1b716829e139836caeab1db2bf6d3da534162
-## 🎯 Improvements of Applio Over RVC
-### f0 Inference Algorithm Overhaul
-- Applio features a comprehensive overhaul of the f0 inference algorithm, including:
-  - Addition of the pyworld dio f0 method.
-  - Alternative method for calculating crepe f0.
-  - Introduction of the torchcrepe crepe-tiny model.
-  - Customizable crepe_hop_length for the crepe algorithm via both the web GUI and CLI.
+Ilaria RVC is part of the Ilaria AI Suite wich includes various easy and powerful tools. 💖
 
-### f0 Crepe Pitch Extraction for Training
-- Works on paperspace machines but not local MacOS/Windows machines (Potential memory leak).
+## 📦 Installation 📦
 
-### Paperspace Integration
-- Applio seamlessly integrates with Paperspace, providing the following features:
-  - Paperspace argument on infer-web.py (--paperspace) for sharing a Gradio link.
-  - A dedicated make file tailored for Paperspace users.
+At the moment, installation is not available as the project is still under development. 🚧
 
-### Access to Tensorboard
-- Applio grants easy access to Tensorboard via a Makefile and a Python script.
+## 🖥️ Usage 🖥️
 
-### CLI Functionality
-- Applio introduces command-line interface (CLI) functionality, with the addition of the --is_cli flag in infer-web.py for CLI system usage.
+Once the project is completed and available for installation, detailed instructions on how to use the application will be provided here.
+This will include steps to configure the application, start the application, and use the various features of the application. 🌐
 
-### f0 Hybrid Estimation Method
-- Applio offers a novel f0 hybrid estimation method by calculating nanmedian for a specified array of f0 methods, ensuring the best results from multiple methods (CLI exclusive).
-- This hybrid estimation method is also available for f0 feature extraction during training.
+## 🌟 Features 🌟
 
-### UI Changes
-#### Inference:
-- A complete interface redesign enhances user experience, with notable features such as:
-  - Audio recording directly from the interface.
-  - Convenient drop-down menus for audio and .index file selection.
-  - An advanced settings section with new features like autotune and formant shifting.
+Ilaria RVC offers a range of features, including:
 
-#### Training:
-- Improved training features include:
-  - A total epoch slider now limited to 10,000.
-  - Increased save frequency limit to 100.
-  - Default recommended options for smoother setup.
-  - Better adaptation to high-resolution screens.
-  - A drop-down menu for dataset selection.
-  - Enhanced saving system options, including Save all files, Save G and D files, and Save model for inference.
+- 🎙️ **Convert audio with a desired voice model**:  
+With Ilaria RVC, you can transform any audio using the voice model you prefer. It’s like having a personal voice-over artist at your fingertips.
 
-#### UVR:
-- Applio ensures compatibility with all VR/MDX models for an extended range of possibilities.
+- ⚡ **Fast Inference and Training**:  
+Thanks to code optimization and the use of advanced hardware, Ilaria RVC will be able to perform model inference and training in record time.
+This will save you precious time and allow you to focus on what really matters.
 
-#### TTS (Text-to-Speech, New):
-- Introducing a new Text-to-Speech (TTS) feature using RVC models.
-- Support for multiple languages and Edge-tts/Bark-tts.
+- 💾 **Download a voice model directly from the interface**:  
+You can directly download models with the download without using any other interface, How convenient is that?
 
-#### Resources (New):
-- Users can now upload models, backups, datasets, and audios from various storage services like Drive, Huggingface, Discord, and more.
-- Download audios from YouTube with the ability to automatically separate instrumental and vocals, offering advanced options and UVR support.
+- 🔄 **Automatic Model Import**:  
+No more manual uploading of your models. With automatic import, Ilaria RVC will be able to detect and import your models as soon as they become available.
 
-#### Extra (New):
-- Combine instrumental and vocals with ease, including independent volume control for each track and the option to add effects like reverb, compressor, and noise gate.
-- Significant improvements in the processing interface, allowing tasks such as merging models, modifying information, obtaining information, or extracting models effortlessly.
+- 🚀 **Advanced and cutting-edge options for conversion**:  
+Ilaria RVC offers conversion options that are at the forefront of AI. You can tailor your experience to your specific needs.
 
-## ⚙️ Additional Features of This Repository
+- 🧠 **Custom Model Training**:  
+With Ilaria RVC, you can train your own custom voice models. This will give you even more control over the quality and characteristics of the generated voice.
 
-In addition to the aforementioned improvements, this repository offers the following features:
+- 🛠️ **Constantly updated by Ilaria and AI Hub engineers**:  
+Ilaria RVC is a product in constant evolution. Ilaria and the team of AI Hub engineers are constantly working to improve and update the system.
 
-### Enhanced Tone Leakage Reduction
-- Implements tone leakage reduction by replacing source features with training-set features using top1 retrieval. This helps in achieving cleaner audio results.
+- 🗣️ **A choice of 3 different TTS models including Ilaria TTS**:  
+You’re spoilt for choice with Ilaria RVC. You can choose from three different voice synthesis models, including Ilaria TTS.
 
-### Efficient Training
-- Provides a seamless and speedy training experience, even on relatively modest graphics cards. The system is optimized for efficient resource utilization.
+- ✔️ **Ease of use for inexperienced users**:  
+Don’t worry if you’re not a tech whiz. Ilaria RVC is designed to be easy to use for everyone, regardless of their level of experience.
 
-### Data Efficiency
-- Supports training with a small dataset, yielding commendable results, especially with audio clips of at least 10 minutes of low-noise speech.
+## 🙏 Credits 🙏
 
-## 🛠️ Planned Features for Future Development
-As part of the ongoing development of this fork, the following features are planned to be added:
+### Developers
 
-- Incorporating an inference batcher script based on user feedback. This enhancement will allow for processing 30-second audio samples at a time, improving output quality and preventing memory errors during inference.
-- Implementing an automatic removal mechanism for old generations to optimize storage space usage. This feature ensures that the repository remains efficient and organized over time.
-- Streamlining the training process for Paperspace machines to further improve efficiency and resource utilization during training tasks.
+- **Ilaria**: Founder, Lead Developer
+- **Yui**: Training feature
+- **GDR-**: Inference feature
+- **Poopmaster**: Model downloader, Model importer
+- **kitlemonfoot**: Ilaria TTS implementation
+- **eddycrack864**: UVR5 implementation
+- **Diablo**: Various fixes
 
-## ✨ Installation
+### Beta Tester
 
-### Automatic installation (Windows):
-To quickly and effortlessly install Applio along with all the necessary models and configurations on Windows, you can use the [install_Applio.bat](https://github.com/IAHispano/Applio-RVC-Fork/releases) script available in the releases section.
+- **Charlotte**: Beta Tester
+- **RME**: Beta Tester
+- **Delik**: Beta Tester
 
-### Manual installation (Windows/MacOS):
-**Note for MacOS Users**: When using `faiss 1.7.2` under MacOS, you may encounter a Segmentation Fault: 11 error. To resolve this issue, install `faiss-cpu 1.7.0` using the following command if you're installing it manually with pip: 
- ```bash
-pip install faiss-cpu==1.7.0
-```
-Additionally, you can install Swig on MacOS using brew:
-```bash
-brew install swig
-```
+### Pretrains Makers
 
-Install requirements:
-*Using pip (Python 3.9.8 is stable with this fork)*
-```bash
-pip install -r requirements.txt
-```
+- **simplcup**: Ov2Super
+- **mustar22**: RIN_E3
+- **mustar22**: Snowie
 
-### Manual installation (Paperspace):
-```bash
-cd Applio-RVC-Fork
-make install # Do this everytime you start your paperspace machine
-```
+### Other
 
-## 🪄 Running the Web GUI (Inference & Train) 
-*Use --paperspace or --colab if on cloud system.*
-```bash
-python infer-web.py --pycmd python --port 3000
-```
+- **RVC Project**: Original Developers
+- **yumereborn**: Ilaria RVC image
+- **Mikus**: Updater
 
-## 💻 Running the CLI (Inference & Train) 
-```bash
-python infer-web.py --pycmd python --is_cli
-```
-
-```bash
-Mangio-RVC-Fork v2 CLI App!
-
-Welcome to the CLI version of RVC. Please read the documentation on https://github.com/Mangio621/Mangio-RVC-Fork (README.MD) to understand how to use this app.
-
-You are currently in 'HOME':
-    go home            : Takes you back to home with a navigation list.
-    go infer           : Takes you to inference command execution.
-
-    go pre-process     : Takes you to training step.1) pre-process command execution.
-    go extract-feature : Takes you to training step.2) extract-feature command execution.
-    go train           : Takes you to training step.3) being or continue training command execution.
-    go train-feature   : Takes you to the train feature index command execution.
-
-    go extract-model   : Takes you to the extract small model command execution.
-
-HOME:
-```
-
-Typing 'go infer' for example will take you to the infer page where you can then enter in your arguments that you wish to use for that specific page. For example typing 'go infer' will take you here:
-
-```bash
-HOME: go infer
-You are currently in 'INFER':
-    arg 1) model name with .pth in ./weights: mi-test.pth
-    arg 2) source audio path: myFolder\MySource.wav
-    arg 3) output file name to be placed in './audio-outputs': MyTest.wav
-    arg 4) feature index file path: logs/mi-test/added_IVF3042_Flat_nprobe_1.index
-    arg 5) speaker id: 0
-    arg 6) transposition: 0
-    arg 7) f0 method: harvest (pm, harvest, crepe, crepe-tiny)
-    arg 8) crepe hop length: 160
-    arg 9) harvest median filter radius: 3 (0-7)
-    arg 10) post resample rate: 0
-    arg 11) mix volume envelope: 1
-    arg 12) feature index ratio: 0.78 (0-1)
-    arg 13) Voiceless Consonant Protection (Less Artifact): 0.33 (Smaller number = more protection. 0.50 means Dont Use.)
-
-Example: mi-test.pth saudio/Sidney.wav myTest.wav logs/mi-test/added_index.index 0 -2 harvest 160 3 0 1 0.95 0.33
-
-INFER: <INSERT ARGUMENTS HERE OR COPY AND PASTE THE EXAMPLE>
-```
-## 🏆 Credits
-Applio owes its existence to the collaborative efforts of various repositories, including Mangio-RVC-Fork, and all the other credited contributors. Without their contributions, Applio would not have been possible. Therefore, we kindly request that if you appreciate the work we've accomplished, you consider exploring the projects mentioned in our credits.
-
-Our goal is not to supplant RVC or Mangio; rather, we aim to provide a contemporary and up-to-date alternative for the entire community.
-
-### Repositories
-+ [Retrieval-based-Voice-Conversion-WebUI](Retrieval-based-Voice-Conversion-WebUI)
-+ [Mangio-RVC-Fork](https://github.com/Mangio621/Mangio-RVC-Fork)
-+ [RVG_tts](https://github.com/Foxify52/RVG_tts)
-+ [ContentVec](https://github.com/auspicious3000/contentvec/)
-+ [VITS](https://github.com/jaywalnut310/vits)
-+ [HIFIGAN](https://github.com/jik876/hifi-gan)
-+ [Gradio](https://github.com/gradio-app/gradio)
-+ [FFmpeg](https://github.com/FFmpeg/FFmpeg)
-+ [Ultimate Vocal Remover](https://github.com/Anjok07/ultimatevocalremovergui)
-+ [audio-slicer](https://github.com/openvpi/audio-slicer)
-
-### Main developers
-+ [Vidal](https://github.com/TheUserNil)
-+ [Aitron](https://github.com/aitronssesin)
-+ [Blaise](https://github.com/blaise-tk)
+### **In loving memory of JLabDX** 🕊️
 
 
-## 🙏 Thanks to all RVC, Mangio and Applio contributors
-<a href="https://github.com/liujing04/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors" target="_blank">
-  <img src="https://contrib.rocks/image?repo=liujing04/Retrieval-based-Voice-Conversion-WebUI" />
-</a>
+## 🤝 Contributing 🤝
 
-<a href="https://github.com/Mangio621/Mangio-RVC-Fork/graphs/contributors" target="_blank">
-  <img src="https://contrib.rocks/image?repo=Mangio621/Mangio-RVC-Fork" />
-</a>
+Interested in contributing to this project? Ilaria is always looking for collaborators.  
+Feel free to open a pull request on Github.
 
-<a href="https://github.com/IAHispano/Applio-RVC-Fork/graphs/contributors" target="_blank">
-  <img src="https://contrib.rocks/image?repo=IAHispano/Applio-RVC-Fork" />
-</a>
+## 📄 License 📄
+
+This project is released under the `INCU` license.  
+For more details, please check the license file.  
+For further questions feel free to contact Ilaria.

@@ -1,153 +1,153 @@
-#!/bin/bash
+#!/bin/sh
 
-# Define common paths for Homebrew
-BREW_PATHS=(
-  "/usr/local/bin"
-  "/opt/homebrew/bin"
-)
-
-if [[ "$(uname)" == "Darwin" ]]; then
-  # macOS specific env:
-  export PYTORCH_ENABLE_MPS_FALLBACK=1
-  export PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0
-elif [[ "$(uname)" != "Linux" ]]; then
-  echo "Unsupported operating system."
-  exit 1
-fi
-
-requirements_file="requirements.txt"
-
-# Function to add a path to PATH
-add_to_path() {
-  echo "Homebrew found in $1, which is not in your PATH."
-  read -p "Do you want to add this path to your PATH? (y/n) " -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Adding $1 to PATH..."
-
-    # Detect the shell and choose the right profile file
-    local shell_profile
-    if [[ $SHELL == *"/bash"* ]]; then
-      shell_profile="$HOME/.bashrc"
-      [[ ! -f "$shell_profile" ]] && shell_profile="$HOME/.bash_profile"
-    elif [[ $SHELL == *"/zsh"* ]]; then
-      shell_profile="$HOME/.zshrc"
-    else
-      echo "Unsupported shell. Please add the following line to your shell profile file manually:"
-      echo "export PATH=\"$PATH:$1\""
-      return
-    fi
-
-    # Add the export line to the shell profile file
-    echo "export PATH=\"$PATH:$1\"" >> "$shell_profile"
-
-    # Source the shell profile file
-    source "$shell_profile"
-
-    # Verify that the new PATH includes Homebrew
-    if ! command -v brew &> /dev/null; then
-      echo "Failed to add Homebrew to the PATH."
-    fi
-  fi
-}
-
-# Check if Homebrew is in PATH
-if command -v brew &> /dev/null; then
-  echo "Homebrew is already in your PATH."
-else
-  # If not, check common paths for Homebrew
-  echo "Homebrew not found in PATH. Checking common paths..."
-  for path in "${BREW_PATHS[@]}"; do
-    if [[ -x "$path/brew" ]]; then
-      add_to_path "$path"
-      break
-    fi
-  done
-fi
-
-# Check again if Homebrew is in PATH
-if ! command -v brew &> /dev/null; then
-  echo "Homebrew still not found. Attempting to install..."
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  
-  # Check again if Homebrew is in PATH
-  if ! command -v brew &> /dev/null; then
-    echo "Homebrew not found in PATH even after installation. Checking common paths again..."
-    for path in "${BREW_PATHS[@]}"; do
-      if [[ -x "$path/brew" ]]; then
-        echo "Found post-install homebrew, adding to PATH...."
-        add_to_path "$path"
-        break
-      fi
-    done
-  fi
-fi
-
-# Verifying if Homebrew has been installed successfully
-if command -v brew &> /dev/null; then
-  echo "Homebrew installed successfully."
-else
-  echo "Homebrew installation failed."
-  exit 1
-fi
-
-# Installing ffmpeg with Homebrew
-if [[ "$(uname)" == "Darwin" ]]; then
-  echo "Installing ffmpeg..."
-  brew install ffmpeg
-fi
-
-# Check if Python 3.8 is installed
-if ! command -v python3.8 &> /dev/null; then
-  echo "Python 3.8 not found. Attempting to install..."
-  if [[ "$(uname)" == "Darwin" ]] && command -v brew &> /dev/null; then
-    brew install python@3.8
-  elif [[ "$(uname)" == "Linux" ]] && command -v apt-get &> /dev/null; then
-    sudo apt-get update
-    sudo apt-get install python3.8
-  else
-    echo "Please install Python 3.8 manually."
+# Function to check and set environment variables
+set_env_vars() {
+  if [ "$(uname)" = "Darwin" ]; then
+    # macOS specific env:
+    export PYTORCH_ENABLE_MPS_FALLBACK=1
+    export PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0
+  elif [ "$(uname)" != "Linux" ]; then
+    echo "Unsupported operating system."
     exit 1
   fi
-fi
+}
 
-# Check if required packages are installed and install them if not
-if [ -f "${requirements_file}" ]; then
-  installed_packages=$(python3.8 -m pip list --format=freeze)
-  while IFS= read -r package; do
-    [[ "${package}" =~ ^#.* ]] && continue
-    package_name=$(echo "${package}" | sed 's/[<>=!].*//')
-    if ! echo "${installed_packages}" | grep -q "${package_name}"; then
-      echo "${package_name} not found. Attempting to install..."
-      python3.8 -m pip install --upgrade "${package}"
-    fi
-  done < "${requirements_file}"
-else
-  echo "${requirements_file} not found. Please ensure the requirements file with required packages exists."
-  exit 1
-fi
-
-# Install onnxruntime package
-echo "Installing onnxruntime..."
-python3.8 -m pip install onnxruntime
-
-download_if_not_exists() {
-  local filename=$1
-  local url=$2
-  if [ ! -f "$filename" ]; then
-    echo "$filename does not exist, downloading..."
-    curl -# -L -o "$filename" "$url"
-    echo "Download finished."
+# Function to activate or create virtual environment
+handle_venv() {
+  printf "Checking for virtual environment..."
+  if [ -d ".venv" ]; then
+    printf " Found.\nActivating venv..."
+    . .venv/bin/activate
+    printf " Done.\n"
   else
-    echo "$filename already exists."
+    printf " Not found.\n"
+    requirements_file="requirements.txt"
+
+    pyenv_exists=0
+    if command -v pyenv >/dev/null 2>&1; then
+      pyenv_exists=1
+    fi
+
+    # Check if pyenv is installed and version 3.8 is available
+    pyenv_v38_installed=0
+    if [ $pyenv_exists -eq 1 ]; then
+      if pyenv versions --bare | grep -q "3.8"; then
+        pyenv_v38_installed=1
+      fi
+    fi
+
+    python_v38_exists=0
+    if command -v python3.8 >/dev/null 2>&1; then
+      python_v38_exists=1
+    fi
+
+
+    # Check if Python 3.8 is installed
+    printf "Checking for Python 3.8..."
+    if ! [ $pyenv_v38_installed -eq 1 ] && ! [ $python_v38_exists -eq 1 ]; then
+      printf " Not found.\nInstalling Python 3.8..."
+      if [ "$(uname)" = "Darwin" ] && command -v brew >/dev/null 2>&1; then
+        echo "Using Homebrew..."
+        brew install python@3.8
+      elif [ "$(uname)" = "Linux" ]; then
+        if command -v apt-get >/dev/null 2>&1; then
+          echo "Using apt..."
+          sudo apt-get update
+          sudo apt-get install python3.8
+        elif command -v pacman >/dev/null 2>&1; then
+          echo "Using pacman..."
+          sudo pacman -Syu python38
+        elif command -v dnf >/dev/null 2>&1; then
+          echo "Using dnf..."
+          sudo dnf install python38
+        else
+          echo "Unsupported package manager for automatic Python 3.8 installation."
+          echo "Please install Python 3.8 manually."
+          exit 1
+        fi
+      else
+        echo "Unsupported operating system for automatic Python 3.8 installation."
+        echo "Please install Python 3.8 manually."
+        exit 1
+      fi
+    fi
+    printf " Found.\n"
+
+    printf "Creating venv..."
+    python3.8 -m venv .venv
+    . .venv/bin/activate
+    printf " Done.\n"
+
+    # update pip
+    printf "Updating pip..."
+    python3.8 -m pip install --upgrade pip > /dev/null 2>> pkgerr.log
+    printf " Done.\n"
+
+    # Check if required packages are installed and install them if not
+    echo "Checking for required packages..."
+    if [ -f "${requirements_file}" ]; then
+      installed_packages=$(python3.8 -m pip freeze)
+      while IFS= read -r package; do
+        expr "${package}" : "^#.*" > /dev/null && continue
+        package_name=$(echo "${package}" | sed 's/[<>=!].*//')
+        if ! echo "${installed_packages}" | grep -q "${package_name}"; then
+          printf "%s not found. Installing..." "${package_name}"
+          python3.8 -m pip install --upgrade "${package}" > /dev/null 2>> pkgerr.log
+          printf " Done.\n"
+        fi
+      done < "${requirements_file}"
+    else
+      echo "${requirements_file} not found. Please ensure the requirements file with required packages exists."
+      exit 1
+    fi
+
+    if [ -s pkgerr.log ]; then
+      echo "Something happened whilst installing packages. Please check pkgerr.log for more details in case of failure."
+    fi
   fi
 }
 
-# Check and download hubert_base.pt
-download_if_not_exists "hubert_base.pt" "https://huggingface.co/lj1995/VoiceConversionWebUI/resolve/main/hubert_base.pt"
+# Function to download models
+download_models() {
+  echo "Checking if models are downloaded..."
+  chmod +x tools/dlmodels.sh
+  ./tools/dlmodels.sh
+  echo "Models downloaded."
 
-# Check and download rmvpe.pt
-download_if_not_exists "rmvpe.pt" "https://huggingface.co/lj1995/VoiceConversionWebUI/resolve/main/rmvpe.pt"
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
+}
 
-# Run the main script
-python3.8 infer-web.py --pycmd python3.8
+# Function to run the main script
+run_main_script() {
+  printf "%0.s=" $(seq 1 "$(tput cols)")
+  message="Running main script with args: $passargs"
+  printf "%*s\n" $(((${#message}+$(tput cols))/2)) "$message"
+  printf "%0.s=" $(seq 1 "$(tput cols)")
+  python3.8 infer-web.py --pycmd python3.8 $passargs
+}
+
+# Parse command-line arguments
+passargs=""
+
+while getopts ":p:" opt; do
+  case ${opt} in
+    p)
+      passargs=$OPTARG
+      ;;
+    \?)
+      echo "Invalid option: $OPTARG" 1>&2
+      ;;
+    :)
+      echo "Invalid option: $OPTARG requires an argument" 1>&2
+      ;;
+  esac
+done
+shift $((OPTIND -1))
+
+# Call functions
+set_env_vars
+handle_venv
+download_models
+run_main_script
