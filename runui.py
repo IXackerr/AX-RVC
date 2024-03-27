@@ -421,7 +421,7 @@ def change_f0_method(f0method8):
 	return{_Q:visible,_E:_F}
 def export_onnx(ModelPath,ExportedPath):D='rnd';C='pitchf';B='pitch';A='phone';global cpt;cpt=torch.load(ModelPath,map_location=_p);cpt[_I][-3]=cpt[_f][_A1].shape[0];vec_channels=256 if cpt.get(_T,_D)==_D else 768;test_phone=torch.rand(1,200,vec_channels);test_phone_lengths=torch.tensor([200]).long();test_pitch=torch.randint(size=(1,200),low=5,high=255);test_pitchf=torch.rand(1,200);test_ds=torch.LongTensor([0]);test_rnd=torch.rand(1,192,200);device=_p;net_g=SynthesizerTrnMsNSFsidM(*cpt[_I],is_half=_B,version=cpt.get(_T,_D));net_g.load_state_dict(cpt[_f],strict=_B);input_names=[A,'phone_lengths',B,C,'ds',D];output_names=['audio'];torch.onnx.export(net_g,(test_phone.to(device),test_phone_lengths.to(device),test_pitch.to(device),test_pitchf.to(device),test_ds.to(device),test_rnd.to(device)),ExportedPath,dynamic_axes={A:[1],B:[1],C:[1],D:[2]},do_constant_folding=_B,opset_version=13,verbose=_B,input_names=input_names,output_names=output_names);return'Finished'
 with gr.Blocks(title='🔊 AX-RVC UI',theme=gr.themes.Base(primary_hue='sky',neutral_hue='zinc'))as app:
-	gr.HTML('<h1> 🍏 AX-RVC </h1><br><h3>Build from 27.03.2024.<h3>')
+	gr.HTML('<h1> 🍏 AX-RVC </h1><h3>Build from 27.03.2024.</h3>')
 	with gr.Tabs():
 		with gr.TabItem(i18n('模型推理')):
 			with gr.Row():sid0=gr.Dropdown(label=i18n('推理音色'),choices=sorted(names));refresh_button=gr.Button(i18n('刷新音色列表和索引路径'),variant=_P);clean_button=gr.Button(i18n('卸载音色省显存'),variant=_P);spk_item=gr.Slider(minimum=0,maximum=2333,step=1,label=i18n('请选择说话人id'),value=0,visible=_B,interactive=_A);clean_button.click(fn=clean,inputs=[],outputs=[sid0],api_name='infer_clean')

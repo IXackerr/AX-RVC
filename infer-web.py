@@ -1388,7 +1388,7 @@ def export_onnx(ModelPath, ExportedPath):
 
 
 with gr.Blocks(title="🔊 AX-RVC UI", theme=gr.themes.Base(primary_hue="sky",neutral_hue="zinc")) as app:
-    gr.HTML("<h1> 🍏 AX-RVC </h1><br><h3>Build from 27.03.2024.<h3>")
+    gr.HTML("<h1> 🍏 AX-RVC </h1><h3>Build from 27.03.2024.</h3>")
     with gr.Tabs():
         with gr.TabItem(i18n("模型推理")):
             with gr.Row():
