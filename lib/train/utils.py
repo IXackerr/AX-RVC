@@ -12,7 +12,9 @@ import torch
 MATPLOTLIB_FLAG = False
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-logger = logging
+logger = logging.getLogger(__name__)
+c_handler = logging.StreamHandler()
+logger.addHandler(c_handler)
 
 
 def load_checkpoint_d(checkpoint_path, combd, sbd, optimizer=None, load_opt=1):
@@ -451,6 +453,8 @@ def get_logger(model_dir, filename="train.log"):
     h = logging.FileHandler(os.path.join(model_dir, filename))
     h.setLevel(logging.DEBUG)
     h.setFormatter(formatter)
+    c_handler = logging.StreamHandler()
+    logger.addHandler(c_handler)
     logger.addHandler(h)
     return logger
 

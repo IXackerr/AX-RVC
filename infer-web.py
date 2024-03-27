@@ -1388,7 +1388,7 @@ def export_onnx(ModelPath, ExportedPath):
 
 
 with gr.Blocks(title="🔊 AX-RVC UI", theme=gr.themes.Base(primary_hue="sky",neutral_hue="zinc")) as app:
-    gr.HTML("<h1> 🍏 AX-RVC </h1><br><h3>Build from 27.03.2024.<h3></br>")
+    gr.HTML("<h1> 🍏 AX-RVC </h1><br><h3>Build from 27.03.2024.<h3>")
     with gr.Tabs():
         with gr.TabItem(i18n("模型推理")):
             with gr.Row():
@@ -1425,7 +1425,7 @@ with gr.Blocks(title="🔊 AX-RVC UI", theme=gr.themes.Base(primary_hue="sky",ne
                                 "选择音高提取算法,输入歌声可用pm提速,harvest低音好但巨慢无比,crepe效果好但吃GPU,rmvpe效果最好且微吃GPU"
                             ),
                             choices=["pm", "harvest", "crepe", "rmvpe"],
-                            value="pm",
+                            value="rmvpe",
                             interactive=True,
                         )
                         filter_radius0 = gr.Slider(
