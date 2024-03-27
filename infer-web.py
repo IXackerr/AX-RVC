@@ -62,6 +62,32 @@ gpu_infos = []
 mem = []
 if_gpu_ok = False
 
+audio_root = "assets/audios"
+weight_root = "weights"
+sup_audioext = {
+    "wav",
+    "mp3",
+    "flac",
+    "ogg",
+    "opus",
+    "m4a",
+    "mp4",
+    "aac",
+    "alac",
+    "wma",
+    "aiff",
+    "webm",
+    "ac3",
+}
+
+audio_paths = [
+    os.path.join(root, name)
+    for root, _, files in os.walk(audio_root, topdown=False)
+    for name in files
+    if name.endswith(tuple(sup_audioext)) and root == audio_root
+]
+
+
 if torch.cuda.is_available() or ngpu != 0:
     for i in range(ngpu):
         gpu_name = torch.cuda.get_device_name(i)
@@ -1336,6 +1362,16 @@ def change_f0_method(f0method8):
         visible = False
     return {"visible": visible, "__type__": "update"}
 
+def save_to_wav2(dropbox):
+    file_path = dropbox.name
+    target_path = os.path.join("assets", "audios", os.path.basename(file_path))
+
+    if os.path.exists(target_path):
+        os.remove(target_path)
+        print("Replacing old dropdown file...")
+
+    shutil.move(file_path, target_path)
+    return target_path
 
 def export_onnx(ModelPath, ExportedPath):
     global cpt
@@ -1388,7 +1424,7 @@ def export_onnx(ModelPath, ExportedPath):
 
 
 with gr.Blocks(title="🔊 AX-RVC UI", theme=gr.themes.Base(primary_hue="sky",neutral_hue="zinc")) as app:
-    gr.HTML("<h1> 🍏 AX-RVC </h1><h3>Build from 27.03.2024.</h3>")
+    gr.HTML("<h1> 🍏 AX-RVC </h1><h3>Custom RVC UI created with 💙</h3>")
     with gr.Tabs():
         with gr.TabItem(i18n("模型推理")):
             with gr.Row():
@@ -1407,11 +1443,19 @@ with gr.Blocks(title="🔊 AX-RVC UI", theme=gr.themes.Base(primary_hue="sky",ne
                 clean_button.click(
                     fn=clean, inputs=[], outputs=[sid0], api_name="infer_clean"
                 )
-            with gr.Group():
+            with gr.TabItem(i18n("Single")):
                 gr.Markdown(
                     value=i18n("男转女推荐+12key, 女转男推荐-12key, 如果音域爆炸导致音色失真也可以自己调整到合适音域. ")
                 )
                 with gr.Row():
+                    with gr.Column():  # First column for audio-related inputs
+                        dropbox = gr.File(label=i18n("Drag your audio here:"))
+                        record_button = gr.Audio(
+                            source="microphone",
+                            label=i18n("Or record an audio:"),
+                            type="filepath",
+                        )
+
                     with gr.Column():
                         vc_transform0 = gr.Number(
                             label=i18n("变调(整数, 半音数量, 升八度12降八度-12)"), value=0
@@ -1437,34 +1481,44 @@ with gr.Blocks(title="🔊 AX-RVC UI", theme=gr.themes.Base(primary_hue="sky",ne
                             interactive=True,
                         )
                     with gr.Column():
-                        file_index1 = gr.Textbox(
-                            label=i18n("特征检索库文件路径,为空则使用下拉的选择结果"),
-                            value="",
-                            interactive=True,
-                        )
                         file_index2 = gr.Dropdown(
                             label=i18n("自动检测index路径,下拉式选择(dropdown)"),
                             choices=sorted(index_paths),
                             interactive=True,
                         )
-                        refresh_button.click(
-                            fn=change_choices,
-                            inputs=[],
-                            outputs=[sid0, file_index2],
-                            api_name="infer_refresh",
-                        )
-                        # file_big_npy1 = gr.Textbox(
-                        #     label=i18n("特征文件路径"),
-                        #     value="E:\\codes\py39\\vits_vc_gpu_train\\logs\\mi-test-1key\\total_fea.npy",
-                        #     interactive=True,
-                        # )
-                        index_rate1 = gr.Slider(
-                            minimum=0,
-                            maximum=1,
-                            label=i18n("检索特征占比"),
-                            value=0.75,
-                            interactive=True,
-                        )
+
+                        with gr.Column():
+                            input_audio1 = gr.Dropdown(
+                                label=i18n(
+                                    "Auto detect audio path and select from the dropdown:"
+                                ),
+                                choices=sorted(audio_paths),
+                                value="",
+                                interactive=True,
+                            )
+                            vc_transform0 = gr.Number(
+                                label=i18n(
+                                    "Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12):"
+                                ),
+                                value=0,
+                            )
+
+                            dropbox.upload(
+                                fn=save_to_wav2,
+                                inputs=[dropbox],
+                                outputs=[input_audio1],
+                            )
+                            record_button.change(
+                                fn=save_to_wav,
+                                inputs=[record_button],
+                                outputs=[input_audio1],
+                            )
+                            refresh_button.click(
+                                fn=change_choices,
+                                inputs=[],
+                                outputs=[sid0, file_index2, input_audio1],
+                                api_name="infer_refresh"
+                            )
                     with gr.Column():
                         resample_sr0 = gr.Slider(
                             minimum=0,
