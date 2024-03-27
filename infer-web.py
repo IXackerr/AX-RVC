@@ -62,7 +62,7 @@ gpu_infos = []
 mem = []
 if_gpu_ok = False
 
-audio_root = "assets/audios"
+audio_root = "/kaggle/working/AX-RVC/assets/audios"
 weight_root = "weights"
 sup_audioext = {
     "wav",
@@ -523,19 +523,30 @@ def get_vc(sid, to_return_protect0, to_return_protect1):
 
 
 def change_choices():
-    names = []
-    for name in os.listdir(weight_root):
-        if name.endswith(".pth"):
-            names.append(name)
-    index_paths = []
-    for root, dirs, files in os.walk(index_root, topdown=False):
-        for name in files:
-            if name.endswith(".index") and "trained" not in name:
-                index_paths.append("%s/%s" % (root, name))
-    return {"choices": sorted(names), "__type__": "update"}, {
-        "choices": sorted(index_paths),
-        "__type__": "update",
-    }
+    names = [
+        os.path.join(root, file)
+        for root, _, files in os.walk(weight_root)
+        for file in files
+        if file.endswith((".pth", ".onnx"))
+    ]
+    indexes_list = [
+        os.path.join(root, name)
+        for root, _, files in os.walk(index_root, topdown=False)
+        for name in files
+        if name.endswith(".index") and "trained" not in name
+    ]
+    audio_paths = [
+        os.path.join(root, name)
+        for root, _, files in os.walk(audio_root, topdown=False)
+        for name in files
+        if name.endswith(tuple(sup_audioext)) and root == audio_root
+    ]
+
+    return (
+        gr.Dropdown.update(choices=sorted(names)),
+        gr.Dropdown.update(choices=sorted(indexes_list)),
+        gr.Dropdown.update(choices=sorted(audio_paths)),
+    )
 
 
 def clean():
