@@ -1856,15 +1856,23 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC WebUI") as 
                         value=i18n("是"),
                         interactive=True,
                     )
+
+                    file_dict = {f: os.path.join("/kaggle/input/ax-rmd/pretrained_v2", f) for f in os.listdir("/kaggle/input/ax-rmd/pretrained_v2")}
+                    file_dict = {k: v for k, v in file_dict.items() if k.endswith(".pth")}
+                    file_dict_g = {k: v for k, v in file_dict.items() if "G" in k and "f0" in k}
+                    file_dict_d = {k: v for k, v in file_dict.items() if "D" in k and "f0" in k}
+                    
                 with gr.Row():
-                    pretrained_G14 = gr.Textbox(
+                    pretrained_G14 = gr.Dropdown(
                         label=i18n("加载预训练底模G路径"),
-                        value="/kaggle/input/ax-rmf/pretrained_v2/f0G40k.pth",
+                        choices=list(file_dict_g.values()),
+                        value=file_dict_g['f0G32k.pth'],
                         interactive=True,
                     )
-                    pretrained_D15 = gr.Textbox(
+                    pretrained_D15 = gr.Dropdown(
                         label=i18n("加载预训练底模D路径"),
-                        value="/kaggle/input/ax-rmf/pretrained_v2/f0D40k.pth",
+                        choices=list(file_dict_d.values()),
+                        value=file_dict_d['f0D32k.pth'],
                         interactive=True,
                     )
                     sr2.change(
@@ -1889,7 +1897,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC WebUI") as 
                     )
                     but3 = gr.Button(i18n("训练模型"), variant="primary")
                     but4 = gr.Button(i18n("训练特征索引"), variant="primary")
-                    but5 = gr.Button(i18n("一键训练"), variant="primary")
+                    #but5 = gr.Button(i18n("一键训练"), variant="primary")
                     info3 = gr.Textbox(label=i18n("输出信息"), value="", max_lines=10)
                     but3.click(
                         click_train,
@@ -1913,31 +1921,31 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC WebUI") as 
                         api_name="train_start",
                     )
                     but4.click(train_index, [exp_dir1, version19], info3)
-                    but5.click(
-                        train1key,
-                        [
-                            exp_dir1,
-                            sr2,
-                            if_f0_3,
-                            trainset_dir4,
-                            spk_id5,
-                            np7,
-                            f0method8,
-                            save_epoch10,
-                            total_epoch11,
-                            batch_size12,
-                            if_save_latest13,
-                            pretrained_G14,
-                            pretrained_D15,
-                            gpus16,
-                            if_cache_gpu17,
-                            if_save_every_weights18,
-                            version19,
-                            gpus_rmvpe,
-                        ],
-                        info3,
-                        api_name="train_start_all",
-                    )
+                    #but5.click(
+                    #    train1key,
+                    #    [
+                    #        exp_dir1,
+                    #        sr2,
+                    #        if_f0_3,
+                    #        trainset_dir4,
+                    #        spk_id5,
+                    #        np7,
+                    #        f0method8,
+                    #        save_epoch10,
+                    #        total_epoch11,
+                    #        batch_size12,
+                    #        if_save_latest13,
+                    #        pretrained_G14,
+                    #        pretrained_D15,
+                    #        gpus16,
+                    #        if_cache_gpu17,
+                    #        if_save_every_weights18,
+                    #        version19,
+                    #        gpus_rmvpe,
+                    #    ],
+                    #    info3,
+                    #    api_name="train_start_all",
+                    #)
 
             try:
                 if tab_faq == "常见问题解答":
