@@ -64,7 +64,7 @@ class Config:
     def load_config_json() -> dict:
         d = {}
         for config_file in version_config_list:
-            with open(f"configs/{config_file}", "r") as f:
+            with open(f"/kaggle/working/AX-RVC/configs/{config_file}", "r") as f:
                 d[config_file] = json.load(f)
         return d
 
