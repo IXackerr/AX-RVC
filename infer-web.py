@@ -1710,7 +1710,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC WebUI") as 
                 exp_dir1 = gr.Textbox(label=i18n("输入实验名"), value="mi-test")
                 sr2 = gr.Radio(
                     label=i18n("目标采样率"),
-                    choices=["40k"],
+                    choices=["40k", "48k"],
                     value="40k",
                     interactive=True,
                 )
