@@ -67,11 +67,11 @@ _P='primary'
 _O=None
 _N='\\\\'
 _M='\\'
-_L='"'
-_K=' '
-_J='config'
-_I='.'
-_H='r'
+_L='r'
+_K='"'
+_J=' '
+_I='config'
+_H='.'
 _G='是'
 _F='update'
 _E='__type__'
@@ -159,13 +159,13 @@ def vc_single(sid,input_audio_path,f0_up_key,f0_file,f0_method,file_index,file_i
 		if audio_max>1:audio/=audio_max
 		times=[0,0,0]
 		if not hubert_model:load_hubert()
-		if_f0=cpt.get(_R,1);file_index=file_index.strip(_K).strip(_L).strip(_C).strip(_L).strip(_K).replace(_m,'added')if file_index!=''else file_index2;audio_opt=vc.pipeline(hubert_model,net_g,sid,audio,input_audio_path,times,f0_up_key,f0_method,file_index,index_rate,if_f0,filter_radius,tgt_sr,resample_sr,rms_mix_rate,version,protect,f0_file=f0_file)
+		if_f0=cpt.get(_R,1);file_index=file_index.strip(_J).strip(_K).strip(_C).strip(_K).strip(_J).replace(_m,'added')if file_index!=''else file_index2;audio_opt=vc.pipeline(hubert_model,net_g,sid,audio,input_audio_path,times,f0_up_key,f0_method,file_index,index_rate,if_f0,filter_radius,tgt_sr,resample_sr,rms_mix_rate,version,protect,f0_file=f0_file)
 		if tgt_sr!=resample_sr>=16000:tgt_sr=resample_sr
 		index_info='Using index:%s.'%file_index if os.path.exists(file_index)else'Index not used.';return'Success.\n %s\nTime:\n npy:%ss, f0:%ss, infer:%ss'%(index_info,times[0],times[1],times[2]),(tgt_sr,audio_opt)
 	except:info=traceback.format_exc();print(info);return info,(_O,_O)
 def vc_multi(sid,dir_path,opt_root,paths,f0_up_key,f0_method,file_index,file_index2,index_rate,filter_radius,resample_sr,rms_mix_rate,protect,format1):
 	try:
-		dir_path=dir_path.strip(_K).strip(_L).strip(_C).strip(_L).strip(_K);opt_root=opt_root.strip(_K).strip(_L).strip(_C).strip(_L).strip(_K);os.makedirs(opt_root,exist_ok=_A)
+		dir_path=dir_path.strip(_J).strip(_K).strip(_C).strip(_K).strip(_J);opt_root=opt_root.strip(_J).strip(_K).strip(_C).strip(_K).strip(_J);os.makedirs(opt_root,exist_ok=_A)
 		try:
 			if dir_path!='':paths=[os.path.join(dir_path,name)for name in os.listdir(dir_path)]
 			else:paths=[path.name for path in paths]
@@ -187,7 +187,7 @@ def vc_multi(sid,dir_path,opt_root,paths,f0_up_key,f0_method,file_index,file_ind
 def uvr(model_name,inp_root,save_root_vocal,paths,save_root_ins,agg,format0):
 	B='streams';A='onnx_dereverb_By_FoxJoy';infos=[]
 	try:
-		inp_root=inp_root.strip(_K).strip(_L).strip(_C).strip(_L).strip(_K);save_root_vocal=save_root_vocal.strip(_K).strip(_L).strip(_C).strip(_L).strip(_K);save_root_ins=save_root_ins.strip(_K).strip(_L).strip(_C).strip(_L).strip(_K)
+		inp_root=inp_root.strip(_J).strip(_K).strip(_C).strip(_K).strip(_J);save_root_vocal=save_root_vocal.strip(_J).strip(_K).strip(_C).strip(_K).strip(_J);save_root_ins=save_root_ins.strip(_J).strip(_K).strip(_C).strip(_K).strip(_J)
 		if model_name==A:from MDXNet import MDXNetDereverb;pre_fun=MDXNetDereverb(15)
 		else:func=_audio_pre_ if'DeEcho'not in model_name else _audio_pre_new;pre_fun=func(agg=int(agg),model_path=os.path.join(weight_uvr5_root,model_name+_S),device=config.device,is_half=config.is_half)
 		if inp_root!='':paths=[os.path.join(inp_root,name)for name in os.listdir(inp_root)]
@@ -213,7 +213,7 @@ def uvr(model_name,inp_root,save_root_vocal,paths,save_root_ins,agg,format0):
 		if torch.cuda.is_available():torch.cuda.empty_cache()
 	yield _C.join(infos)
 def get_index_path_from_model(sid):
-	sel_index_path='';name=os.path.join(_l,sid.split(_I)[0],'')
+	sel_index_path='';name=os.path.join(_l,sid.split(_H)[0],'')
 	for f in index_paths:
 		if name in f:sel_index_path=f;break
 	return sel_index_path
@@ -226,28 +226,28 @@ def get_vc(sid,to_return_protect0,to_return_protect1):
 			if torch.cuda.is_available():torch.cuda.empty_cache()
 			if_f0=cpt.get(_R,1);version=cpt.get(_T,_D)
 			if version==_D:
-				if if_f0==1:net_g=SynthesizerTrnMs256NSFsid(*cpt[_J],is_half=config.is_half)
-				else:net_g=SynthesizerTrnMs256NSFsid_nono(*cpt[_J])
+				if if_f0==1:net_g=SynthesizerTrnMs256NSFsid(*cpt[_I],is_half=config.is_half)
+				else:net_g=SynthesizerTrnMs256NSFsid_nono(*cpt[_I])
 			elif version==_U:
-				if if_f0==1:net_g=SynthesizerTrnMs768NSFsid(*cpt[_J],is_half=config.is_half)
-				else:net_g=SynthesizerTrnMs768NSFsid_nono(*cpt[_J])
+				if if_f0==1:net_g=SynthesizerTrnMs768NSFsid(*cpt[_I],is_half=config.is_half)
+				else:net_g=SynthesizerTrnMs768NSFsid_nono(*cpt[_I])
 			del net_g,cpt
 			if torch.cuda.is_available():torch.cuda.empty_cache()
 		return{_Q:_B,_E:_F}
-	person=_b%(weight_root,sid);print('loading %s'%person);cpt=torch.load(person,map_location=_o);tgt_sr=cpt[_J][-1];cpt[_J][-3]=cpt[_g][_A1].shape[0];if_f0=cpt.get(_R,1)
+	person=_b%(weight_root,sid);print('loading %s'%person);cpt=torch.load(person,map_location=_o);tgt_sr=cpt[_I][-1];cpt[_I][-3]=cpt[_g][_A1].shape[0];if_f0=cpt.get(_R,1)
 	if if_f0==0:to_return_protect0=to_return_protect1={_Q:_B,_V:.5,_E:_F}
 	else:to_return_protect0={_Q:_A,_V:to_return_protect0,_E:_F};to_return_protect1={_Q:_A,_V:to_return_protect1,_E:_F}
 	version=cpt.get(_T,_D)
 	if version==_D:
-		if if_f0==1:net_g=SynthesizerTrnMs256NSFsid(*cpt[_J],is_half=config.is_half)
-		else:net_g=SynthesizerTrnMs256NSFsid_nono(*cpt[_J])
+		if if_f0==1:net_g=SynthesizerTrnMs256NSFsid(*cpt[_I],is_half=config.is_half)
+		else:net_g=SynthesizerTrnMs256NSFsid_nono(*cpt[_I])
 	elif version==_U:
-		if if_f0==1:net_g=SynthesizerTrnMs768NSFsid(*cpt[_J],is_half=config.is_half)
-		else:net_g=SynthesizerTrnMs768NSFsid_nono(*cpt[_J])
+		if if_f0==1:net_g=SynthesizerTrnMs768NSFsid(*cpt[_I],is_half=config.is_half)
+		else:net_g=SynthesizerTrnMs768NSFsid_nono(*cpt[_I])
 	del net_g.enc_q;print(net_g.load_state_dict(cpt[_g],strict=_B));net_g.eval().to(config.device)
 	if config.is_half:net_g=net_g.half()
 	else:net_g=net_g.float()
-	vc=VC(tgt_sr,config);n_spk=cpt[_J][-3];return{_Q:_A,'maximum':n_spk,_E:_F},to_return_protect0,to_return_protect1,get_index_path_from_model(sid)
+	vc=VC(tgt_sr,config);n_spk=cpt[_I][-3];return{_Q:_A,'maximum':n_spk,_E:_F},to_return_protect0,to_return_protect1,get_index_path_from_model(sid)
 def change_choices():
 	names=[]
 	for name in os.listdir(weight_root):
@@ -274,10 +274,10 @@ def if_done_multi(done,ps):
 def preprocess_dataset(trainset_dir,exp_dir,sr,n_p):
 	A='%s/logs/%s/preprocess.log';sr=sr_dict[sr];os.makedirs(_d%(now_dir,exp_dir),exist_ok=_A);f=open(A%(now_dir,exp_dir),'w');f.close();cmd=config.python_cmd+' trainset_preprocess_pipeline_print.py "%s" %s %s "%s/logs/%s" '%(trainset_dir,sr,n_p,now_dir,exp_dir)+str(config.noparallel);print(cmd);p=Popen(cmd,shell=_A);done=[_B];threading.Thread(target=if_done,args=(done,p)).start()
 	while 1:
-		with open(A%(now_dir,exp_dir),_H)as f:yield f.read()
+		with open(A%(now_dir,exp_dir),_L)as f:yield f.read()
 		sleep(1)
 		if done[0]:break
-	with open(A%(now_dir,exp_dir),_H)as f:log=f.read()
+	with open(A%(now_dir,exp_dir),_L)as f:log=f.read()
 	print(log);yield log
 def extract_f0_feature(gpus,n_p,f0method,if_f0,exp_dir,version19,gpus_rmvpe):
 	A='%s/logs/%s/extract_f0_feature.log';gpus=gpus.split('-');os.makedirs(_d%(now_dir,exp_dir),exist_ok=_A);f=open(A%(now_dir,exp_dir),'w');f.close()
@@ -285,29 +285,29 @@ def extract_f0_feature(gpus,n_p,f0method,if_f0,exp_dir,version19,gpus_rmvpe):
 		if f0method!=_e:
 			cmd=config.python_cmd+' extract_f0_print.py "%s/logs/%s" %s %s'%(now_dir,exp_dir,n_p,f0method);print(cmd);p=Popen(cmd,shell=_A,cwd=now_dir);done=[_B];threading.Thread(target=if_done,args=(done,p)).start()
 			while 1:
-				with open(A%(now_dir,exp_dir),_H)as f:yield f.read()
+				with open(A%(now_dir,exp_dir),_L)as f:yield f.read()
 				sleep(1)
 				if done[0]:break
-			with open(A%(now_dir,exp_dir),_H)as f:log=f.read()
+			with open(A%(now_dir,exp_dir),_L)as f:log=f.read()
 			print(log);yield log
 		else:
 			gpus_rmvpe=gpus_rmvpe.split('-');leng=len(gpus_rmvpe);ps=[]
 			for(idx,n_g)in enumerate(gpus_rmvpe):cmd=config.python_cmd+' extract_f0_rmvpe.py %s %s %s "%s/logs/%s" %s '%(leng,idx,n_g,now_dir,exp_dir,config.is_half);print(cmd);p=Popen(cmd,shell=_A,cwd=now_dir);ps.append(p)
 			done=[_B];threading.Thread(target=if_done_multi,args=(done,ps)).start()
 			while 1:
-				with open(A%(now_dir,exp_dir),_H)as f:yield f.read()
+				with open(A%(now_dir,exp_dir),_L)as f:yield f.read()
 				sleep(1)
 				if done[0]:break
-			with open(A%(now_dir,exp_dir),_H)as f:log=f.read()
+			with open(A%(now_dir,exp_dir),_L)as f:log=f.read()
 			print(log);yield log
 	'\n    n_part=int(sys.argv[1])\n    i_part=int(sys.argv[2])\n    i_gpu=sys.argv[3]\n    exp_dir=sys.argv[4]\n    os.environ["CUDA_VISIBLE_DEVICES"]=str(i_gpu)\n    ';leng=len(gpus);ps=[]
 	for(idx,n_g)in enumerate(gpus):cmd=config.python_cmd+' extract_feature_print.py %s %s %s %s "%s/logs/%s" %s'%(config.device,leng,idx,n_g,now_dir,exp_dir,version19);print(cmd);p=Popen(cmd,shell=_A,cwd=now_dir);ps.append(p)
 	done=[_B];threading.Thread(target=if_done_multi,args=(done,ps)).start()
 	while 1:
-		with open(A%(now_dir,exp_dir),_H)as f:yield f.read()
+		with open(A%(now_dir,exp_dir),_L)as f:yield f.read()
 		sleep(1)
 		if done[0]:break
-	with open(A%(now_dir,exp_dir),_H)as f:log=f.read()
+	with open(A%(now_dir,exp_dir),_L)as f:log=f.read()
 	print(log);yield log
 def change_sr2(sr2,if_f0_3,version19):
 	path_str=''if version19==_D else _q;f0_str=_R if if_f0_3 else'';if_pretrained_generator_exist=os.access(_X%(path_str,f0_str,sr2),os.F_OK);if_pretrained_discriminator_exist=os.access(_Y%(path_str,f0_str,sr2),os.F_OK)
@@ -329,8 +329,8 @@ def change_f0(if_f0_3,sr2,version19):
 	return{_Q:_B,_E:_F},'/kaggle/input/ax-rmf/pretrained%s/G%s.pth'%(path_str,sr2)if if_pretrained_generator_exist else'','/kaggle/input/ax-rmf/pretrained%s/D%s.pth'%(path_str,sr2)if if_pretrained_discriminator_exist else''
 def click_train(exp_dir1,sr2,if_f0_3,spk_id5,save_epoch10,total_epoch11,batch_size12,if_save_latest13,pretrained_G14,pretrained_D15,gpus16,if_cache_gpu17,if_save_every_weights18,version19):
 	A='\x08';exp_dir=_d%(now_dir,exp_dir1);os.makedirs(exp_dir,exist_ok=_A);gt_wavs_dir=_A2%exp_dir;feature_dir=_r%exp_dir if version19==_D else _s%exp_dir
-	if if_f0_3:f0_dir='%s/2a_f0'%exp_dir;f0nsf_dir=_A3%exp_dir;names=set([name.split(_I)[0]for name in os.listdir(gt_wavs_dir)])&set([name.split(_I)[0]for name in os.listdir(feature_dir)])&set([name.split(_I)[0]for name in os.listdir(f0_dir)])&set([name.split(_I)[0]for name in os.listdir(f0nsf_dir)])
-	else:names=set([name.split(_I)[0]for name in os.listdir(gt_wavs_dir)])&set([name.split(_I)[0]for name in os.listdir(feature_dir)])
+	if if_f0_3:f0_dir='%s/2a_f0'%exp_dir;f0nsf_dir=_A3%exp_dir;names=set([name.split(_H)[0]for name in os.listdir(gt_wavs_dir)])&set([name.split(_H)[0]for name in os.listdir(feature_dir)])&set([name.split(_H)[0]for name in os.listdir(f0_dir)])&set([name.split(_H)[0]for name in os.listdir(f0nsf_dir)])
+	else:names=set([name.split(_H)[0]for name in os.listdir(gt_wavs_dir)])&set([name.split(_H)[0]for name in os.listdir(feature_dir)])
 	opt=[]
 	for name in names:
 		if if_f0_3:opt.append(_A4%(gt_wavs_dir.replace(_M,_N),name,feature_dir.replace(_M,_N),name,f0_dir.replace(_M,_N),name,f0nsf_dir.replace(_M,_N),name,spk_id5))
@@ -367,7 +367,7 @@ def train1key(exp_dir1,sr2,if_f0_3,trainset_dir4,spk_id5,np7,f0method8,save_epoc
 	infos=[]
 	def get_info_str(strr):infos.append(strr);return _C.join(infos)
 	model_log_dir=_d%(now_dir,exp_dir1);preprocess_log_path='%s/preprocess.log'%model_log_dir;extract_f0_feature_log_path='%s/extract_f0_feature.log'%model_log_dir;gt_wavs_dir=_A2%model_log_dir;feature_dir=_r%model_log_dir if version19==_D else _s%model_log_dir;os.makedirs(model_log_dir,exist_ok=_A);open(preprocess_log_path,'w').close();cmd=config.python_cmd+' trainset_preprocess_pipeline_print.py "%s" %s %s "%s" '%(trainset_dir4,sr_dict[sr2],np7,model_log_dir)+str(config.noparallel);yield get_info_str(i18n('step1:正在处理数据'));yield get_info_str(cmd);p=Popen(cmd,shell=_A);p.wait()
-	with open(preprocess_log_path,_H)as f:print(f.read())
+	with open(preprocess_log_path,_L)as f:print(f.read())
 	open(extract_f0_feature_log_path,'w')
 	if if_f0_3:
 		yield get_info_str('step2a:正在提取音高')
@@ -376,15 +376,15 @@ def train1key(exp_dir1,sr2,if_f0_3,trainset_dir4,spk_id5,np7,f0method8,save_epoc
 			gpus_rmvpe=gpus_rmvpe.split('-');leng=len(gpus_rmvpe);ps=[]
 			for(idx,n_g)in enumerate(gpus_rmvpe):cmd=config.python_cmd+' extract_f0_rmvpe.py %s %s %s "%s" %s '%(leng,idx,n_g,model_log_dir,config.is_half);yield get_info_str(cmd);p=Popen(cmd,shell=_A,cwd=now_dir);ps.append(p)
 			for p in ps:p.wait()
-		with open(extract_f0_feature_log_path,_H)as f:print(f.read())
+		with open(extract_f0_feature_log_path,_L)as f:print(f.read())
 	else:yield get_info_str(i18n('step2a:无需提取音高'))
 	yield get_info_str(i18n('step2b:正在提取特征'));gpus=gpus16.split('-');leng=len(gpus);ps=[]
 	for(idx,n_g)in enumerate(gpus):cmd=config.python_cmd+' extract_feature_print.py %s %s %s %s "%s" %s'%(config.device,leng,idx,n_g,model_log_dir,version19);yield get_info_str(cmd);p=Popen(cmd,shell=_A,cwd=now_dir);ps.append(p)
 	for p in ps:p.wait()
-	with open(extract_f0_feature_log_path,_H)as f:print(f.read())
+	with open(extract_f0_feature_log_path,_L)as f:print(f.read())
 	yield get_info_str(i18n('step3a:正在训练模型'))
-	if if_f0_3:f0_dir='%s/2a_f0'%model_log_dir;f0nsf_dir=_A3%model_log_dir;names=set([name.split(_I)[0]for name in os.listdir(gt_wavs_dir)])&set([name.split(_I)[0]for name in os.listdir(feature_dir)])&set([name.split(_I)[0]for name in os.listdir(f0_dir)])&set([name.split(_I)[0]for name in os.listdir(f0nsf_dir)])
-	else:names=set([name.split(_I)[0]for name in os.listdir(gt_wavs_dir)])&set([name.split(_I)[0]for name in os.listdir(feature_dir)])
+	if if_f0_3:f0_dir='%s/2a_f0'%model_log_dir;f0nsf_dir=_A3%model_log_dir;names=set([name.split(_H)[0]for name in os.listdir(gt_wavs_dir)])&set([name.split(_H)[0]for name in os.listdir(feature_dir)])&set([name.split(_H)[0]for name in os.listdir(f0_dir)])&set([name.split(_H)[0]for name in os.listdir(f0nsf_dir)])
+	else:names=set([name.split(_H)[0]for name in os.listdir(gt_wavs_dir)])&set([name.split(_H)[0]for name in os.listdir(feature_dir)])
 	opt=[]
 	for name in names:
 		if if_f0_3:opt.append(_A4%(gt_wavs_dir.replace(_M,_N),name,feature_dir.replace(_M,_N),name,f0_dir.replace(_M,_N),name,f0nsf_dir.replace(_M,_N),name,spk_id5))
@@ -413,13 +413,13 @@ def change_info_(ckpt_path):
 	A='train.log'
 	if not os.path.exists(ckpt_path.replace(os.path.basename(ckpt_path),A)):return{_E:_F},{_E:_F},{_E:_F}
 	try:
-		with open(ckpt_path.replace(os.path.basename(ckpt_path),A),_H)as f:info=eval(f.read().strip(_C).split(_C)[0].split('\t')[-1]);sr,f0=info[_z],info['if_f0'];version=_U if _T in info and info[_T]==_U else _D;return sr,str(f0),version
+		with open(ckpt_path.replace(os.path.basename(ckpt_path),A),_L)as f:info=eval(f.read().strip(_C).split(_C)[0].split('\t')[-1]);sr,f0=info[_z],info['if_f0'];version=_U if _T in info and info[_T]==_U else _D;return sr,str(f0),version
 	except:traceback.print_exc();return{_E:_F},{_E:_F},{_E:_F}
 def change_f0_method(f0method8):
 	if f0method8==_e:visible=_A
 	else:visible=_B
 	return{_Q:visible,_E:_F}
-def export_onnx(ModelPath,ExportedPath):D='rnd';C='pitchf';B='pitch';A='phone';global cpt;cpt=torch.load(ModelPath,map_location=_o);cpt[_J][-3]=cpt[_g][_A1].shape[0];vec_channels=256 if cpt.get(_T,_D)==_D else 768;test_phone=torch.rand(1,200,vec_channels);test_phone_lengths=torch.tensor([200]).long();test_pitch=torch.randint(size=(1,200),low=5,high=255);test_pitchf=torch.rand(1,200);test_ds=torch.LongTensor([0]);test_rnd=torch.rand(1,192,200);device=_o;net_g=SynthesizerTrnMsNSFsidM(*cpt[_J],is_half=_B,version=cpt.get(_T,_D));net_g.load_state_dict(cpt[_g],strict=_B);input_names=[A,'phone_lengths',B,C,'ds',D];output_names=['audio'];torch.onnx.export(net_g,(test_phone.to(device),test_phone_lengths.to(device),test_pitch.to(device),test_pitchf.to(device),test_ds.to(device),test_rnd.to(device)),ExportedPath,dynamic_axes={A:[1],B:[1],C:[1],D:[2]},do_constant_folding=_B,opset_version=13,verbose=_B,input_names=input_names,output_names=output_names);return'Finished'
+def export_onnx(ModelPath,ExportedPath):D='rnd';C='pitchf';B='pitch';A='phone';global cpt;cpt=torch.load(ModelPath,map_location=_o);cpt[_I][-3]=cpt[_g][_A1].shape[0];vec_channels=256 if cpt.get(_T,_D)==_D else 768;test_phone=torch.rand(1,200,vec_channels);test_phone_lengths=torch.tensor([200]).long();test_pitch=torch.randint(size=(1,200),low=5,high=255);test_pitchf=torch.rand(1,200);test_ds=torch.LongTensor([0]);test_rnd=torch.rand(1,192,200);device=_o;net_g=SynthesizerTrnMsNSFsidM(*cpt[_I],is_half=_B,version=cpt.get(_T,_D));net_g.load_state_dict(cpt[_g],strict=_B);input_names=[A,'phone_lengths',B,C,'ds',D];output_names=['audio'];torch.onnx.export(net_g,(test_phone.to(device),test_phone_lengths.to(device),test_pitch.to(device),test_pitchf.to(device),test_ds.to(device),test_rnd.to(device)),ExportedPath,dynamic_axes={A:[1],B:[1],C:[1],D:[2]},do_constant_folding=_B,opset_version=13,verbose=_B,input_names=input_names,output_names=output_names);return'Finished'
 with gr.Blocks(theme='JohnSmith9982/small_and_pretty',title='AX RVC WebUI')as app:
 	gr.Markdown(value=i18n('本软件以MIT协议开源, 作者不对软件具备任何控制力, 使用软件者、传播软件导出的声音者自负全责. <br>如不认可该条款, 则不能使用或引用软件包内任何代码和文件. 详见根目录<b>LICENSE</b>.'))
 	with gr.Tabs():
@@ -466,12 +466,5 @@ with gr.Blocks(theme='JohnSmith9982/small_and_pretty',title='AX RVC WebUI')as ap
 				gr.Markdown(value=i18n('step3: 填写训练设置, 开始训练模型和索引'))
 				with gr.Row():save_epoch10=gr.Slider(minimum=0,maximum=100,step=1,label=i18n('保存频率save_every_epoch'),value=5,interactive=_A);total_epoch11=gr.Slider(minimum=0,maximum=1000,step=1,label=i18n('总训练轮数total_epoch'),value=300,interactive=_A);batch_size12=gr.Slider(minimum=1,maximum=40,step=1,label=i18n('每张显卡的batch_size'),value=default_batch_size,interactive=_A);if_save_latest13=gr.Radio(label=i18n('是否仅保存最新的ckpt文件以节省硬盘空间'),choices=[i18n(_G),i18n('否')],value=i18n(_G),interactive=_A);if_cache_gpu17=gr.Radio(label=i18n('是否缓存所有训练集至显存. 10min以下小数据可缓存以加速训练, 大数据缓存会炸显存也加不了多少速'),choices=[i18n(_G),i18n('否')],value=i18n('否'),interactive=_A);if_save_every_weights18=gr.Radio(label=i18n('是否在每次保存时间点将最终小模型保存至weights文件夹'),choices=[i18n(_G),i18n('否')],value=i18n(_G),interactive=_A);file_dict={f:os.path.join(_AS,f)for f in os.listdir(_AS)};file_dict={k:v for(k,v)in file_dict.items()if k.endswith(_S)};file_dict_g={k:v for(k,v)in file_dict.items()if'G'in k and _R in k};file_dict_d={k:v for(k,v)in file_dict.items()if'D'in k and _R in k}
 				with gr.Row():pretrained_G14=gr.Dropdown(label=i18n('加载预训练底模G路径'),choices=list(file_dict_g.values()),value=file_dict_g['f0G32k.pth'],interactive=_A);pretrained_D15=gr.Dropdown(label=i18n('加载预训练底模D路径'),choices=list(file_dict_d.values()),value=file_dict_d['f0D32k.pth'],interactive=_A);sr2.change(change_sr2,[sr2,if_f0_3,version19],[pretrained_G14,pretrained_D15]);version19.change(change_version19,[sr2,if_f0_3,version19],[pretrained_G14,pretrained_D15,sr2]);if_f0_3.change(change_f0,[if_f0_3,sr2,version19],[f0method8,pretrained_G14,pretrained_D15]);gpus16=gr.Textbox(label=i18n(_AR),value=gpus,interactive=_A);but3=gr.Button(i18n('训练模型'),variant=_P);but4=gr.Button(i18n('训练特征索引'),variant=_P);info3=gr.Textbox(label=i18n(_a),value='',max_lines=10);but3.click(click_train,[exp_dir1,sr2,if_f0_3,spk_id5,save_epoch10,total_epoch11,batch_size12,if_save_latest13,pretrained_G14,pretrained_D15,gpus16,if_cache_gpu17,if_save_every_weights18,version19],info3,api_name='train_start');but4.click(train_index,[exp_dir1,version19],info3)
-			try:
-				if tab_faq=='常见问题解答':
-					with open('docs/faq.md',_H,encoding='utf8')as f:info=f.read()
-				else:
-					with open('docs/faq_en.md',_H,encoding='utf8')as f:info=f.read()
-				gr.Markdown(value=info)
-			except:gr.Markdown(traceback.format_exc())
 	if config.iscolab:app.queue(concurrency_count=511,max_size=1022).launch(server_port=config.listen_port,share=_B)
 	else:app.queue(concurrency_count=511,max_size=1022).launch(server_name='0.0.0.0',inbrowser=not config.noautoopen,server_port=config.listen_port,quiet=_B,share=_B)

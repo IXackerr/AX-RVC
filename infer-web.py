@@ -1861,7 +1861,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC WebUI") as 
                     file_dict = {k: v for k, v in file_dict.items() if k.endswith(".pth")}
                     file_dict_g = {k: v for k, v in file_dict.items() if "G" in k and "f0" in k}
                     file_dict_d = {k: v for k, v in file_dict.items() if "D" in k and "f0" in k}
-                    
+
                 with gr.Row():
                     pretrained_G14 = gr.Dropdown(
                         label=i18n("加载预训练底模G路径"),
@@ -1947,17 +1947,17 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC WebUI") as 
                     #    api_name="train_start_all",
                     #)
 
-            try:
-                if tab_faq == "常见问题解答":
-                    with open("docs/faq.md", "r", encoding="utf8") as f:
-                        info = f.read()
-                else:
-                    with open("docs/faq_en.md", "r", encoding="utf8") as f:
-                        info = f.read()
-                gr.Markdown(value=info)
-            except:
-                gr.Markdown(traceback.format_exc())
-
+        #    try:
+        #        if tab_faq == "常见问题解答":
+        #            with open("docs/faq.md", "r", encoding="utf8") as f:
+        #                info = f.read()
+        #        else:
+        #            with open("docs/faq_en.md", "r", encoding="utf8") as f:
+        #                info = f.read()
+        #        gr.Markdown(value=info)
+        #    except:
+        #        gr.Markdown(traceback.format_exc())
+        #
         # with gr.TabItem(i18n("招募音高曲线前端编辑器")):
         #     gr.Markdown(value=i18n("加开发群联系我xxxxx"))
         # with gr.TabItem(i18n("点击查看交流、问题反馈群号")):
