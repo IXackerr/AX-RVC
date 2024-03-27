@@ -1701,46 +1701,40 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC WebUI") as 
                         api_name="uvr_convert",
                     )
         with gr.TabItem(i18n("训练")):
-            gr.Markdown(
-                value=i18n(
-                    "step1: 填写实验配置. 实验数据放在logs下, 每个实验一个文件夹, 需手工输入实验名路径, 内含实验配置, 日志, 训练得到的模型文件. "
-                )
-            )
-            with gr.Row():
-                exp_dir1 = gr.Textbox(label=i18n("输入实验名"), value="mi-test")
-                sr2 = gr.Radio(
-                    label=i18n("目标采样率"),
-                    choices=["40k", "48k"],
-                    value="40k",
-                    interactive=True,
-                )
-                if_f0_3 = gr.Radio(
-                    label=i18n("模型是否带音高指导(唱歌一定要, 语音可以不要)"),
-                    choices=[True, False],
-                    value=True,
-                    interactive=True,
-                )
-                version19 = gr.Radio(
-                    label=i18n("版本"),
-                    choices=["v2"],
-                    value="v2",
-                    interactive=True,
-                    visible=True,
-                )
-                np7 = gr.Slider(
-                    minimum=0,
-                    maximum=config.n_cpu,
-                    step=1,
-                    label=i18n("提取音高和处理数据使用的CPU进程数"),
-                    value=int(np.ceil(config.n_cpu / 1.5)),
-                    interactive=True,
-                )
-            with gr.Group():  # 暂时单人的, 后面支持最多4人的#数据处理
-                gr.Markdown(
-                    value=i18n(
+            with gr.Accordion(i18n("step1: 填写实验配置. 实验数据放在logs下, 每个实验一个文件夹, 需手工输入实验名路径, 内含实验配置, 日志, 训练得到的模型文件. ")):
+                with gr.Row():
+                    exp_dir1 = gr.Textbox(label=i18n("输入实验名"), value="mi-test")
+                    sr2 = gr.Radio(
+                        label=i18n("目标采样率"),
+                        choices=["40k", "48k"],
+                        value="40k",
+                        interactive=True,
+                    )
+                    if_f0_3 = gr.Radio(
+                        label=i18n("模型是否带音高指导(唱歌一定要, 语音可以不要)"),
+                        choices=[True, False],
+                        value=True,
+                        interactive=True,
+                    )
+                    version19 = gr.Radio(
+                        label=i18n("版本"),
+                        choices=["v2"],
+                        value="v2",
+                        interactive=True,
+                        visible=True,
+                    )
+                    np7 = gr.Slider(
+                        minimum=0,
+                        maximum=config.n_cpu,
+                        step=1,
+                        label=i18n("提取音高和处理数据使用的CPU进程数"),
+                        value=int(np.ceil(config.n_cpu / 1.5)),
+                        interactive=True,
+                    )
+            with gr.Accordion(i18n(
                         "step2a: 自动遍历训练文件夹下所有可解码成音频的文件并进行切片归一化, 在实验目录下生成2个wav文件夹; 暂时只支持单人训练. "
                     )
-                )
+                ):
                 with gr.Row():
                     trainset_dir4 = gr.Textbox(
                         label=i18n("输入训练文件夹路径"), value="/kaggle/working/dataset"
@@ -1761,8 +1755,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC WebUI") as 
                         [info1],
                         api_name="train_preprocess",
                     )
-            with gr.Group():
-                gr.Markdown(value=i18n("step2b: 使用CPU提取音高(如果模型带音高), 使用GPU提取特征(选择卡号)"))
+            with gr.Accordion(i18n("step2b: 使用CPU提取音高(如果模型带音高), 使用GPU提取特征(选择卡号)")):
                 with gr.Row():
                     with gr.Column():
                         gpus6 = gr.Textbox(
@@ -1809,8 +1802,7 @@ with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC WebUI") as 
                         [info2],
                         api_name="train_extract_f0_feature",
                     )
-            with gr.Group():
-                gr.Markdown(value=i18n("step3: 填写训练设置, 开始训练模型和索引"))
+            with gr.Accordion(i18n("step3: 填写训练设置, 开始训练模型和索引")):
                 with gr.Row():
                     save_epoch10 = gr.Slider(
                         minimum=0,
