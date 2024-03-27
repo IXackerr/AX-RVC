@@ -1361,6 +1361,17 @@ def change_f0_method(f0method8):
     else:
         visible = False
     return {"visible": visible, "__type__": "update"}
+    
+def save_to_wav(record_button):
+    if record_button is None:
+        pass
+    else:
+        path_to_file = record_button
+        new_name = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".wav"
+        target_path = os.path.join("assets", "audios", os.path.basename(new_name))
+
+        shutil.move(path_to_file, target_path)
+        return target_path
 
 def save_to_wav2(dropbox):
     file_path = dropbox.name

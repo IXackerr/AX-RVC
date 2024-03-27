@@ -64,12 +64,12 @@ _S='flac'
 _R='f0'
 _Q='visible'
 _P='primary'
-_O=None
-_N='\\\\'
-_M='\\'
-_L='r'
-_K='"'
-_J=' '
+_O='\\\\'
+_N='\\'
+_M='r'
+_L='"'
+_K=' '
+_J=None
 _I='config'
 _H='.'
 _G='是'
@@ -134,7 +134,7 @@ class ToolButton(gr.Button,gr.components.FormComponent):
 	'Small button with single emoji as text, fits inside gradio forms'
 	def __init__(self,**kwargs):super().__init__(variant='tool',**kwargs)
 	def get_block_name(self):return'button'
-hubert_model=_O
+hubert_model=_J
 def load_hubert():
 	global hubert_model;models,_,_=checkpoint_utils.load_model_ensemble_and_task(['/kaggle/input/ax-rmf/hubert_base.pt'],suffix='');hubert_model=models[0];hubert_model=hubert_model.to(config.device)
 	if config.is_half:hubert_model=hubert_model.half()
@@ -153,30 +153,30 @@ for(root,dirs,files)in os.walk(index_root,topdown=_B):
 uvr5_names=[]
 for name in os.listdir(weight_uvr5_root):
 	if name.endswith(_T)or'onnx'in name:uvr5_names.append(name.replace(_T,''))
-cpt=_O
+cpt=_J
 def vc_single(sid,input_audio_path,f0_up_key,f0_file,f0_method,file_index,file_index2,index_rate,filter_radius,resample_sr,rms_mix_rate,protect):
 	global tgt_sr,net_g,vc,hubert_model,version,cpt
-	if input_audio_path is _O:return'You need to upload an audio',_O
+	if input_audio_path is _J:return'You need to upload an audio',_J
 	f0_up_key=int(f0_up_key)
 	try:
 		audio=load_audio(input_audio_path,16000);audio_max=np.abs(audio).max()/.95
 		if audio_max>1:audio/=audio_max
 		times=[0,0,0]
 		if not hubert_model:load_hubert()
-		if_f0=cpt.get(_R,1);file_index=file_index.strip(_J).strip(_K).strip(_C).strip(_K).strip(_J).replace(_r,'added')if file_index!=''else file_index2;audio_opt=vc.pipeline(hubert_model,net_g,sid,audio,input_audio_path,times,f0_up_key,f0_method,file_index,index_rate,if_f0,filter_radius,tgt_sr,resample_sr,rms_mix_rate,version,protect,f0_file=f0_file)
+		if_f0=cpt.get(_R,1);file_index=file_index.strip(_K).strip(_L).strip(_C).strip(_L).strip(_K).replace(_r,'added')if file_index!=''else file_index2;audio_opt=vc.pipeline(hubert_model,net_g,sid,audio,input_audio_path,times,f0_up_key,f0_method,file_index,index_rate,if_f0,filter_radius,tgt_sr,resample_sr,rms_mix_rate,version,protect,f0_file=f0_file)
 		if tgt_sr!=resample_sr>=16000:tgt_sr=resample_sr
 		index_info='Using index:%s.'%file_index if os.path.exists(file_index)else'Index not used.';return'Success.\n %s\nTime:\n npy:%ss, f0:%ss, infer:%ss'%(index_info,times[0],times[1],times[2]),(tgt_sr,audio_opt)
-	except:info=traceback.format_exc();print(info);return info,(_O,_O)
+	except:info=traceback.format_exc();print(info);return info,(_J,_J)
 def vc_multi(sid,dir_path,opt_root,paths,f0_up_key,f0_method,file_index,file_index2,index_rate,filter_radius,resample_sr,rms_mix_rate,protect,format1):
 	try:
-		dir_path=dir_path.strip(_J).strip(_K).strip(_C).strip(_K).strip(_J);opt_root=opt_root.strip(_J).strip(_K).strip(_C).strip(_K).strip(_J);os.makedirs(opt_root,exist_ok=_A)
+		dir_path=dir_path.strip(_K).strip(_L).strip(_C).strip(_L).strip(_K);opt_root=opt_root.strip(_K).strip(_L).strip(_C).strip(_L).strip(_K);os.makedirs(opt_root,exist_ok=_A)
 		try:
 			if dir_path!='':paths=[os.path.join(dir_path,name)for name in os.listdir(dir_path)]
 			else:paths=[path.name for path in paths]
 		except:traceback.print_exc();paths=[path.name for path in paths]
 		infos=[]
 		for path in paths:
-			info,opt=vc_single(sid,path,f0_up_key,_O,f0_method,file_index,file_index2,index_rate,filter_radius,resample_sr,rms_mix_rate,protect)
+			info,opt=vc_single(sid,path,f0_up_key,_J,f0_method,file_index,file_index2,index_rate,filter_radius,resample_sr,rms_mix_rate,protect)
 			if'Success'in info:
 				try:
 					tgt_sr,audio_opt=opt
@@ -191,7 +191,7 @@ def vc_multi(sid,dir_path,opt_root,paths,f0_up_key,f0_method,file_index,file_ind
 def uvr(model_name,inp_root,save_root_vocal,paths,save_root_ins,agg,format0):
 	B='streams';A='onnx_dereverb_By_FoxJoy';infos=[]
 	try:
-		inp_root=inp_root.strip(_J).strip(_K).strip(_C).strip(_K).strip(_J);save_root_vocal=save_root_vocal.strip(_J).strip(_K).strip(_C).strip(_K).strip(_J);save_root_ins=save_root_ins.strip(_J).strip(_K).strip(_C).strip(_K).strip(_J)
+		inp_root=inp_root.strip(_K).strip(_L).strip(_C).strip(_L).strip(_K);save_root_vocal=save_root_vocal.strip(_K).strip(_L).strip(_C).strip(_L).strip(_K);save_root_ins=save_root_ins.strip(_K).strip(_L).strip(_C).strip(_L).strip(_K)
 		if model_name==A:from MDXNet import MDXNetDereverb;pre_fun=MDXNetDereverb(15)
 		else:func=_audio_pre_ if'DeEcho'not in model_name else _audio_pre_new;pre_fun=func(agg=int(agg),model_path=os.path.join(weight_uvr5_root,model_name+_T),device=config.device,is_half=config.is_half)
 		if inp_root!='':paths=[os.path.join(inp_root,name)for name in os.listdir(inp_root)]
@@ -225,8 +225,8 @@ def get_vc(sid,to_return_protect0,to_return_protect1):
 	global n_spk,tgt_sr,net_g,vc,cpt,version
 	if sid==''or sid==[]:
 		global hubert_model
-		if hubert_model is not _O:
-			print(_A1);del net_g,n_spk,vc,hubert_model,tgt_sr;hubert_model=net_g=n_spk=vc=hubert_model=tgt_sr=_O
+		if hubert_model is not _J:
+			print(_A1);del net_g,n_spk,vc,hubert_model,tgt_sr;hubert_model=net_g=n_spk=vc=hubert_model=tgt_sr=_J
 			if torch.cuda.is_available():torch.cuda.empty_cache()
 			if_f0=cpt.get(_R,1);version=cpt.get(_U,_D)
 			if version==_D:
@@ -265,23 +265,23 @@ def clean():return{_W:'',_E:_F}
 sr_dict={_t:32000,_X:40000,_i:48000}
 def if_done(done,p):
 	while 1:
-		if p.poll()is _O:sleep(.5)
+		if p.poll()is _J:sleep(.5)
 		else:break
 	done[0]=_A
 def if_done_multi(done,ps):
 	while 1:
 		flag=1
 		for p in ps:
-			if p.poll()is _O:flag=0;sleep(.5);break
+			if p.poll()is _J:flag=0;sleep(.5);break
 		if flag==1:break
 	done[0]=_A
 def preprocess_dataset(trainset_dir,exp_dir,sr,n_p):
 	A='%s/logs/%s/preprocess.log';sr=sr_dict[sr];os.makedirs(_d%(now_dir,exp_dir),exist_ok=_A);f=open(A%(now_dir,exp_dir),'w');f.close();cmd=config.python_cmd+' trainset_preprocess_pipeline_print.py "%s" %s %s "%s/logs/%s" '%(trainset_dir,sr,n_p,now_dir,exp_dir)+str(config.noparallel);print(cmd);p=Popen(cmd,shell=_A);done=[_B];threading.Thread(target=if_done,args=(done,p)).start()
 	while 1:
-		with open(A%(now_dir,exp_dir),_L)as f:yield f.read()
+		with open(A%(now_dir,exp_dir),_M)as f:yield f.read()
 		sleep(1)
 		if done[0]:break
-	with open(A%(now_dir,exp_dir),_L)as f:log=f.read()
+	with open(A%(now_dir,exp_dir),_M)as f:log=f.read()
 	print(log);yield log
 def extract_f0_feature(gpus,n_p,f0method,if_f0,exp_dir,version19,gpus_rmvpe):
 	A='%s/logs/%s/extract_f0_feature.log';gpus=gpus.split('-');os.makedirs(_d%(now_dir,exp_dir),exist_ok=_A);f=open(A%(now_dir,exp_dir),'w');f.close()
@@ -289,29 +289,29 @@ def extract_f0_feature(gpus,n_p,f0method,if_f0,exp_dir,version19,gpus_rmvpe):
 		if f0method!=_e:
 			cmd=config.python_cmd+' extract_f0_print.py "%s/logs/%s" %s %s'%(now_dir,exp_dir,n_p,f0method);print(cmd);p=Popen(cmd,shell=_A,cwd=now_dir);done=[_B];threading.Thread(target=if_done,args=(done,p)).start()
 			while 1:
-				with open(A%(now_dir,exp_dir),_L)as f:yield f.read()
+				with open(A%(now_dir,exp_dir),_M)as f:yield f.read()
 				sleep(1)
 				if done[0]:break
-			with open(A%(now_dir,exp_dir),_L)as f:log=f.read()
+			with open(A%(now_dir,exp_dir),_M)as f:log=f.read()
 			print(log);yield log
 		else:
 			gpus_rmvpe=gpus_rmvpe.split('-');leng=len(gpus_rmvpe);ps=[]
 			for(idx,n_g)in enumerate(gpus_rmvpe):cmd=config.python_cmd+' extract_f0_rmvpe.py %s %s %s "%s/logs/%s" %s '%(leng,idx,n_g,now_dir,exp_dir,config.is_half);print(cmd);p=Popen(cmd,shell=_A,cwd=now_dir);ps.append(p)
 			done=[_B];threading.Thread(target=if_done_multi,args=(done,ps)).start()
 			while 1:
-				with open(A%(now_dir,exp_dir),_L)as f:yield f.read()
+				with open(A%(now_dir,exp_dir),_M)as f:yield f.read()
 				sleep(1)
 				if done[0]:break
-			with open(A%(now_dir,exp_dir),_L)as f:log=f.read()
+			with open(A%(now_dir,exp_dir),_M)as f:log=f.read()
 			print(log);yield log
 	'\n    n_part=int(sys.argv[1])\n    i_part=int(sys.argv[2])\n    i_gpu=sys.argv[3]\n    exp_dir=sys.argv[4]\n    os.environ["CUDA_VISIBLE_DEVICES"]=str(i_gpu)\n    ';leng=len(gpus);ps=[]
 	for(idx,n_g)in enumerate(gpus):cmd=config.python_cmd+' extract_feature_print.py %s %s %s %s "%s/logs/%s" %s'%(config.device,leng,idx,n_g,now_dir,exp_dir,version19);print(cmd);p=Popen(cmd,shell=_A,cwd=now_dir);ps.append(p)
 	done=[_B];threading.Thread(target=if_done_multi,args=(done,ps)).start()
 	while 1:
-		with open(A%(now_dir,exp_dir),_L)as f:yield f.read()
+		with open(A%(now_dir,exp_dir),_M)as f:yield f.read()
 		sleep(1)
 		if done[0]:break
-	with open(A%(now_dir,exp_dir),_L)as f:log=f.read()
+	with open(A%(now_dir,exp_dir),_M)as f:log=f.read()
 	print(log);yield log
 def change_sr2(sr2,if_f0_3,version19):
 	path_str=''if version19==_D else _u;f0_str=_R if if_f0_3 else'';if_pretrained_generator_exist=os.access(_Y%(path_str,f0_str,sr2),os.F_OK);if_pretrained_discriminator_exist=os.access(_Z%(path_str,f0_str,sr2),os.F_OK)
@@ -337,8 +337,8 @@ def click_train(exp_dir1,sr2,if_f0_3,spk_id5,save_epoch10,total_epoch11,batch_si
 	else:names=set([name.split(_H)[0]for name in os.listdir(gt_wavs_dir)])&set([name.split(_H)[0]for name in os.listdir(feature_dir)])
 	opt=[]
 	for name in names:
-		if if_f0_3:opt.append(_A5%(gt_wavs_dir.replace(_M,_N),name,feature_dir.replace(_M,_N),name,f0_dir.replace(_M,_N),name,f0nsf_dir.replace(_M,_N),name,spk_id5))
-		else:opt.append(_A6%(gt_wavs_dir.replace(_M,_N),name,feature_dir.replace(_M,_N),name,spk_id5))
+		if if_f0_3:opt.append(_A5%(gt_wavs_dir.replace(_N,_O),name,feature_dir.replace(_N,_O),name,f0_dir.replace(_N,_O),name,f0nsf_dir.replace(_N,_O),name,spk_id5))
+		else:opt.append(_A6%(gt_wavs_dir.replace(_N,_O),name,feature_dir.replace(_N,_O),name,spk_id5))
 	fea_dim=256 if version19==_D else 768
 	if if_f0_3:
 		for _ in range(2):opt.append(_A7%(now_dir,sr2,now_dir,fea_dim,now_dir,now_dir,spk_id5))
@@ -371,7 +371,7 @@ def train1key(exp_dir1,sr2,if_f0_3,trainset_dir4,spk_id5,np7,f0method8,save_epoc
 	infos=[]
 	def get_info_str(strr):infos.append(strr);return _C.join(infos)
 	model_log_dir=_d%(now_dir,exp_dir1);preprocess_log_path='%s/preprocess.log'%model_log_dir;extract_f0_feature_log_path='%s/extract_f0_feature.log'%model_log_dir;gt_wavs_dir=_A3%model_log_dir;feature_dir=_v%model_log_dir if version19==_D else _w%model_log_dir;os.makedirs(model_log_dir,exist_ok=_A);open(preprocess_log_path,'w').close();cmd=config.python_cmd+' trainset_preprocess_pipeline_print.py "%s" %s %s "%s" '%(trainset_dir4,sr_dict[sr2],np7,model_log_dir)+str(config.noparallel);yield get_info_str(i18n('step1:正在处理数据'));yield get_info_str(cmd);p=Popen(cmd,shell=_A);p.wait()
-	with open(preprocess_log_path,_L)as f:print(f.read())
+	with open(preprocess_log_path,_M)as f:print(f.read())
 	open(extract_f0_feature_log_path,'w')
 	if if_f0_3:
 		yield get_info_str('step2a:正在提取音高')
@@ -380,19 +380,19 @@ def train1key(exp_dir1,sr2,if_f0_3,trainset_dir4,spk_id5,np7,f0method8,save_epoc
 			gpus_rmvpe=gpus_rmvpe.split('-');leng=len(gpus_rmvpe);ps=[]
 			for(idx,n_g)in enumerate(gpus_rmvpe):cmd=config.python_cmd+' extract_f0_rmvpe.py %s %s %s "%s" %s '%(leng,idx,n_g,model_log_dir,config.is_half);yield get_info_str(cmd);p=Popen(cmd,shell=_A,cwd=now_dir);ps.append(p)
 			for p in ps:p.wait()
-		with open(extract_f0_feature_log_path,_L)as f:print(f.read())
+		with open(extract_f0_feature_log_path,_M)as f:print(f.read())
 	else:yield get_info_str(i18n('step2a:无需提取音高'))
 	yield get_info_str(i18n('step2b:正在提取特征'));gpus=gpus16.split('-');leng=len(gpus);ps=[]
 	for(idx,n_g)in enumerate(gpus):cmd=config.python_cmd+' extract_feature_print.py %s %s %s %s "%s" %s'%(config.device,leng,idx,n_g,model_log_dir,version19);yield get_info_str(cmd);p=Popen(cmd,shell=_A,cwd=now_dir);ps.append(p)
 	for p in ps:p.wait()
-	with open(extract_f0_feature_log_path,_L)as f:print(f.read())
+	with open(extract_f0_feature_log_path,_M)as f:print(f.read())
 	yield get_info_str(i18n('step3a:正在训练模型'))
 	if if_f0_3:f0_dir='%s/2a_f0'%model_log_dir;f0nsf_dir=_A4%model_log_dir;names=set([name.split(_H)[0]for name in os.listdir(gt_wavs_dir)])&set([name.split(_H)[0]for name in os.listdir(feature_dir)])&set([name.split(_H)[0]for name in os.listdir(f0_dir)])&set([name.split(_H)[0]for name in os.listdir(f0nsf_dir)])
 	else:names=set([name.split(_H)[0]for name in os.listdir(gt_wavs_dir)])&set([name.split(_H)[0]for name in os.listdir(feature_dir)])
 	opt=[]
 	for name in names:
-		if if_f0_3:opt.append(_A5%(gt_wavs_dir.replace(_M,_N),name,feature_dir.replace(_M,_N),name,f0_dir.replace(_M,_N),name,f0nsf_dir.replace(_M,_N),name,spk_id5))
-		else:opt.append(_A6%(gt_wavs_dir.replace(_M,_N),name,feature_dir.replace(_M,_N),name,spk_id5))
+		if if_f0_3:opt.append(_A5%(gt_wavs_dir.replace(_N,_O),name,feature_dir.replace(_N,_O),name,f0_dir.replace(_N,_O),name,f0nsf_dir.replace(_N,_O),name,spk_id5))
+		else:opt.append(_A6%(gt_wavs_dir.replace(_N,_O),name,feature_dir.replace(_N,_O),name,spk_id5))
 	fea_dim=256 if version19==_D else 768
 	if if_f0_3:
 		for _ in range(2):opt.append(_A7%(now_dir,sr2,now_dir,fea_dim,now_dir,now_dir,spk_id5))
@@ -417,12 +417,15 @@ def change_info_(ckpt_path):
 	A='train.log'
 	if not os.path.exists(ckpt_path.replace(os.path.basename(ckpt_path),A)):return{_E:_F},{_E:_F},{_E:_F}
 	try:
-		with open(ckpt_path.replace(os.path.basename(ckpt_path),A),_L)as f:info=eval(f.read().strip(_C).split(_C)[0].split('\t')[-1]);sr,f0=info[_A0],info['if_f0'];version=_V if _U in info and info[_U]==_V else _D;return sr,str(f0),version
+		with open(ckpt_path.replace(os.path.basename(ckpt_path),A),_M)as f:info=eval(f.read().strip(_C).split(_C)[0].split('\t')[-1]);sr,f0=info[_A0],info['if_f0'];version=_V if _U in info and info[_U]==_V else _D;return sr,str(f0),version
 	except:traceback.print_exc();return{_E:_F},{_E:_F},{_E:_F}
 def change_f0_method(f0method8):
 	if f0method8==_e:visible=_A
 	else:visible=_B
 	return{_Q:visible,_E:_F}
+def save_to_wav(record_button):
+	if record_button is _J:0
+	else:path_to_file=record_button;new_name=datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')+'.wav';target_path=os.path.join('assets','audios',os.path.basename(new_name));shutil.move(path_to_file,target_path);return target_path
 def save_to_wav2(dropbox):
 	file_path=dropbox.name;target_path=os.path.join('assets','audios',os.path.basename(file_path))
 	if os.path.exists(target_path):os.remove(target_path);print('Replacing old dropdown file...')
