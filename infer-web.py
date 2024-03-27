@@ -1387,12 +1387,8 @@ def export_onnx(ModelPath, ExportedPath):
     return "Finished"
 
 
-with gr.Blocks(theme="JohnSmith9982/small_and_pretty", title="AX RVC WebUI") as app:
-    gr.Markdown(
-        value=i18n(
-            "AX-RVC. Build from 27.03.2024."
-        )
-    )
+with gr.Blocks(title="🔊 AX-RVC UI", theme=gr.themes.Base(primary_hue="sky",neutral_hue="zinc")) as app:
+    gr.HTML("<h1> 🍏 AX-RVC </h1><br><h3>Build from 27.03.2024.<h3></br>")
     with gr.Tabs():
         with gr.TabItem(i18n("模型推理")):
             with gr.Row():
