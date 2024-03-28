@@ -1587,6 +1587,8 @@ with gr.Blocks(title="🔊 AX-RVC UI", theme=gr.themes.Base(primary_hue="sky",ne
                             f0_file,
                             f0method0,
                             file_index2,
+                            # file_big_npy1,
+                            index_rate1,
                             filter_radius0,
                             resample_sr0,
                             rms_mix_rate0,
