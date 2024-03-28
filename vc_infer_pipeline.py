@@ -223,7 +223,7 @@ class VC(object):
             )
 
         feats = F.interpolate(feats.permute(0, 2, 1), scale_factor=2).permute(0, 2, 1)
-        if protect < 0.5 and pitch != None and pitchf != None:
+        if (protect or 0.0) < 0.5 and pitch is not None and pitchf is not None:
             feats0 = F.interpolate(feats0.permute(0, 2, 1), scale_factor=2).permute(
                 0, 2, 1
             )
