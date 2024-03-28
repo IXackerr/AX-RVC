@@ -449,88 +449,118 @@ def get_index_path_from_model(sid):
 
 
 # 一个选项卡全局只能有一个音色
-def get_vc(sid, to_return_protect0, to_return_protect1):
-    global n_spk, tgt_sr, net_g, vc, cpt, version
-    if sid == "" or sid == []:
-        global hubert_model
-        if hubert_model is not None:  # 考虑到轮询, 需要加个判断看是否 sid 是由有模型切换到无模型的
-            print("clean_empty_cache")
-            del net_g, n_spk, vc, hubert_model, tgt_sr  # ,cpt
-            hubert_model = net_g = n_spk = vc = hubert_model = tgt_sr = None
-            if torch.cuda.is_available():
-                torch.cuda.empty_cache()
-            ###楼下不这么折腾清理不干净
-            if_f0 = cpt.get("f0", 1)
-            version = cpt.get("version", "v1")
-            if version == "v1":
-                if if_f0 == 1:
-                    net_g = SynthesizerTrnMs256NSFsid(
-                        *cpt["config"], is_half=config.is_half
-                    )
-                else:
-                    net_g = SynthesizerTrnMs256NSFsid_nono(*cpt["config"])
-            elif version == "v2":
-                if if_f0 == 1:
-                    net_g = SynthesizerTrnMs768NSFsid(
-                        *cpt["config"], is_half=config.is_half
-                    )
-                else:
-                    net_g = SynthesizerTrnMs768NSFsid_nono(*cpt["config"])
-            del net_g, cpt
-            if torch.cuda.is_available():
-                torch.cuda.empty_cache()
-        return {"visible": False, "__type__": "update"}
-    person = "%s/%s" % (weight_root, sid)
-    print("loading %s" % person)
+def get_vc(self, sid, *to_return_protect):
+        logger.info("Get sid: " + sid)
 
-    cpt = torch.load(person, map_location="cpu")
-    tgt_sr = cpt["config"][-1]
-    cpt["config"][-3] = cpt["weight"]["emb_g.weight"].shape[0]  # n_spk
-    if_f0 = cpt.get("f0", 1)
-    if if_f0 == 0:
-        to_return_protect0 = to_return_protect1 = {
-            "visible": False,
-            "value": 0.5,
-            "__type__": "update",
-        }
-    else:
         to_return_protect0 = {
-            "visible": True,
-            "value": to_return_protect0,
+            "visible": self.if_f0 != 0,
+            "value": to_return_protect[0]
+            if self.if_f0 != 0 and to_return_protect
+            else 0.5,
             "__type__": "update",
         }
         to_return_protect1 = {
-            "visible": True,
-            "value": to_return_protect1,
+            "visible": self.if_f0 != 0,
+            "value": to_return_protect[1]
+            if self.if_f0 != 0 and to_return_protect
+            else 0.33,
             "__type__": "update",
         }
-    version = cpt.get("version", "v1")
-    if version == "v1":
-        if if_f0 == 1:
-            net_g = SynthesizerTrnMs256NSFsid(*cpt["config"], is_half=config.is_half)
-        else:
-            net_g = SynthesizerTrnMs256NSFsid_nono(*cpt["config"])
-    elif version == "v2":
-        if if_f0 == 1:
-            net_g = SynthesizerTrnMs768NSFsid(*cpt["config"], is_half=config.is_half)
-        else:
-            net_g = SynthesizerTrnMs768NSFsid_nono(*cpt["config"])
-    del net_g.enc_q
-    print(net_g.load_state_dict(cpt["weight"], strict=False))
-    net_g.eval().to(config.device)
-    if config.is_half:
-        net_g = net_g.half()
-    else:
-        net_g = net_g.float()
-    vc = VC(tgt_sr, config)
-    n_spk = cpt["config"][-3]
-    return (
-        {"visible": True, "maximum": n_spk, "__type__": "update"},
-        to_return_protect0,
-        to_return_protect1,
-        get_index_path_from_model(sid),
-    )
 
+        if sid == "" or sid == []:
+            if self.hubert_model is not None:  # 考虑到轮询, 需要加个判断看是否 sid 是由有模型切换到无模型的
+                logger.info("Clean model cache")
+                del (
+                    self.net_g,
+                    self.n_spk,
+                    self.vc,
+                    self.hubert_model,
+                    self.tgt_sr,
+                )  # ,cpt
+                self.hubert_model = (
+                    self.net_g
+                ) = self.n_spk = self.vc = self.hubert_model = self.tgt_sr = None
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+                ###楼下不这么折腾清理不干净
+                self.if_f0 = self.cpt.get("f0", 1)
+                self.version = self.cpt.get("version", "v1")
+                if self.version == "v1":
+                    if self.if_f0 == 1:
+                        self.net_g = SynthesizerTrnMs256NSFsid(
+                            *self.cpt["config"], is_half=self.config.is_half
+                        )
+                    else:
+                        self.net_g = SynthesizerTrnMs256NSFsid_nono(*self.cpt["config"])
+                elif self.version == "v2":
+                    if self.if_f0 == 1:
+                        self.net_g = SynthesizerTrnMs768NSFsid(
+                            *self.cpt["config"], is_half=self.config.is_half
+                        )
+                    else:
+                        self.net_g = SynthesizerTrnMs768NSFsid_nono(*self.cpt["config"])
+                del self.net_g, self.cpt
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+            return (
+                {"visible": False, "__type__": "update"},
+                {
+                    "visible": True,
+                    "value": to_return_protect0,
+                    "__type__": "update",
+                },
+                {
+                    "visible": True,
+                    "value": to_return_protect1,
+                    "__type__": "update",
+                },
+                "",
+                "",
+            )
+        #person = f'{os.getenv("weight_root")}/{sid}'
+        person = f'{sid}'
+        #logger.info(f"Loading: {person}")
+        logger.info(f"Loading...")
+        self.cpt = torch.load(person, map_location="cpu")
+        self.tgt_sr = self.cpt["config"][-1]
+        self.cpt["config"][-3] = self.cpt["weight"]["emb_g.weight"].shape[0]  # n_spk
+        self.if_f0 = self.cpt.get("f0", 1)
+        self.version = self.cpt.get("version", "v1")
+
+        synthesizer_class = {
+            ("v1", 1): SynthesizerTrnMs256NSFsid,
+            ("v1", 0): SynthesizerTrnMs256NSFsid_nono,
+            ("v2", 1): SynthesizerTrnMs768NSFsid,
+            ("v2", 0): SynthesizerTrnMs768NSFsid_nono,
+        }
+
+        self.net_g = synthesizer_class.get(
+            (self.version, self.if_f0), SynthesizerTrnMs256NSFsid
+        )(*self.cpt["config"], is_half=self.config.is_half)
+
+        del self.net_g.enc_q
+
+        self.net_g.load_state_dict(self.cpt["weight"], strict=False)
+        self.net_g.eval().to(self.config.device)
+        if self.config.is_half:
+            self.net_g = self.net_g.half()
+        else:
+            self.net_g = self.net_g.float()
+
+        self.pipeline = Pipeline(self.tgt_sr, self.config)
+        n_spk = self.cpt["config"][-3]
+        index = {"value": get_index_path_from_model(sid), "__type__": "update"}
+        logger.info("Select index: " + index["value"])
+
+        return (
+            (
+                {"visible": False, "maximum": n_spk, "__type__": "update"},
+                to_return_protect0,
+                to_return_protect1
+            )
+            if to_return_protect
+            else {"visible": False, "maximum": n_spk, "__type__": "update"}
+        )
 
 def change_choices():
     names = [
