@@ -63,7 +63,7 @@ mem = []
 if_gpu_ok = False
 
 audio_root = "/kaggle/working/AX-RVC/assets/audios"
-weight_root = "weights"
+weight_root = "/kaggle/working/AX-RVC/logs/weights"
 sup_audioext = {
     "wav",
     "mp3",
@@ -151,7 +151,7 @@ hubert_model = None
 def load_hubert():
     global hubert_model
     models, _, _ = checkpoint_utils.load_model_ensemble_and_task(
-        ["/kaggle/input/ax-rmf/hubert_base.pt"],
+        ["/kaggle/input/ax-rmd/hubert_base.pt"],
         suffix="",
     )
     hubert_model = models[0]
@@ -163,18 +163,28 @@ def load_hubert():
     hubert_model.eval()
 
 
-weight_root = "weights"
 weight_uvr5_root = "uvr5_weights"
-index_root = "logs"
-names = []
-for name in os.listdir(weight_root):
-    if name.endswith(".pth"):
-        names.append(name)
-index_paths = []
-for root, dirs, files in os.walk(index_root, topdown=False):
-    for name in files:
-        if name.endswith(".index") and "trained" not in name:
-            index_paths.append("%s/%s" % (root, name))
+index_root = "/kaggle/working/AX-RVC/logs"
+names = [
+    os.path.join(root, file)
+    for root, _, files in os.walk(weight_root)
+    for file in files
+    if file.endswith((".pth", ".onnx"))
+]
+
+indexes_list = [
+    os.path.join(root, name)
+    for root, _, files in os.walk(index_root, topdown=False)
+    for name in files
+    if name.endswith(".index") and "trained" not in name
+]
+
+audio_paths = [
+    os.path.join(root, name)
+    for root, _, files in os.walk(audio_root, topdown=False)
+    for name in files
+    if name.endswith(tuple(sup_audioext)) and root == audio_root
+]
 uvr5_names = []
 for name in os.listdir(weight_uvr5_root):
     if name.endswith(".pth") or "onnx" in name:
@@ -751,26 +761,26 @@ def change_sr2(sr2, if_f0_3, version19):
     path_str = "" if version19 == "v1" else "_v2"
     f0_str = "f0" if if_f0_3 else ""
     if_pretrained_generator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2), os.F_OK
+        "/kaggle/input/ax-rmd/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if_pretrained_discriminator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2), os.F_OK
+        "/kaggle/input/ax-rmd/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if not if_pretrained_generator_exist:
         print(
-            "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2),
+            "/kaggle/input/ax-rmd/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2),
             "not exist, will not use pretrained model",
         )
     if not if_pretrained_discriminator_exist:
         print(
-            "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2),
+            "/kaggle/input/ax-rmd/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2),
             "not exist, will not use pretrained model",
         )
     return (
-        "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2)
+        "/kaggle/input/ax-rmd/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2)
         if if_pretrained_generator_exist
         else "",
-        "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2)
+        "/kaggle/input/ax-rmd/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2)
         if if_pretrained_discriminator_exist
         else "",
     )
@@ -787,26 +797,26 @@ def change_version19(sr2, if_f0_3, version19):
     )
     f0_str = "f0" if if_f0_3 else ""
     if_pretrained_generator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2), os.F_OK
+        "/kaggle/input/ax-rmd/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if_pretrained_discriminator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2), os.F_OK
+        "/kaggle/input/ax-rmd/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if not if_pretrained_generator_exist:
         print(
-            "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2),
+            "/kaggle/input/ax-rmd/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2),
             "not exist, will not use pretrained model",
         )
     if not if_pretrained_discriminator_exist:
         print(
-            "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2),
+            "/kaggle/input/ax-rmd/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2),
             "not exist, will not use pretrained model",
         )
     return (
-        "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2)
+        "/kaggle/input/ax-rmd/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2)
         if if_pretrained_generator_exist
         else "",
-        "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2)
+        "/kaggle/input/ax-rmd/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2)
         if if_pretrained_discriminator_exist
         else "",
         to_return_sr2,
@@ -816,37 +826,37 @@ def change_version19(sr2, if_f0_3, version19):
 def change_f0(if_f0_3, sr2, version19):  # f0method8,pretrained_G14,pretrained_D15
     path_str = "" if version19 == "v1" else "_v2"
     if_pretrained_generator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/f0G%s.pth" % (path_str, sr2), os.F_OK
+        "/kaggle/input/ax-rmd/pretrained%s/f0G%s.pth" % (path_str, sr2), os.F_OK
     )
     if_pretrained_discriminator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/f0D%s.pth" % (path_str, sr2), os.F_OK
+        "/kaggle/input/ax-rmd/pretrained%s/f0D%s.pth" % (path_str, sr2), os.F_OK
     )
     if not if_pretrained_generator_exist:
         print(
-            "/kaggle/input/ax-rmf/pretrained%s/f0G%s.pth" % (path_str, sr2),
+            "/kaggle/input/ax-rmd/pretrained%s/f0G%s.pth" % (path_str, sr2),
             "not exist, will not use pretrained model",
         )
     if not if_pretrained_discriminator_exist:
         print(
-            "/kaggle/input/ax-rmf/pretrained%s/f0D%s.pth" % (path_str, sr2),
+            "/kaggle/input/ax-rmd/pretrained%s/f0D%s.pth" % (path_str, sr2),
             "not exist, will not use pretrained model",
         )
     if if_f0_3:
         return (
             {"visible": True, "__type__": "update"},
-            "/kaggle/input/ax-rmf/pretrained%s/f0G%s.pth" % (path_str, sr2)
+            "/kaggle/input/ax-rmd/pretrained%s/f0G%s.pth" % (path_str, sr2)
             if if_pretrained_generator_exist
             else "",
-            "/kaggle/input/ax-rmf/pretrained%s/f0D%s.pth" % (path_str, sr2)
+            "/kaggle/input/ax-rmd/pretrained%s/f0D%s.pth" % (path_str, sr2)
             if if_pretrained_discriminator_exist
             else "",
         )
     return (
         {"visible": False, "__type__": "update"},
-        ("/kaggle/input/ax-rmf/pretrained%s/G%s.pth" % (path_str, sr2))
+        ("/kaggle/input/ax-rmd/pretrained%s/G%s.pth" % (path_str, sr2))
         if if_pretrained_generator_exist
         else "",
-        ("/kaggle/input/ax-rmf/pretrained%s/D%s.pth" % (path_str, sr2))
+        ("/kaggle/input/ax-rmd/pretrained%s/D%s.pth" % (path_str, sr2))
         if if_pretrained_discriminator_exist
         else "",
     )

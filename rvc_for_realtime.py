@@ -47,7 +47,7 @@ class RVC:
                 print("index search enabled")
             self.index_rate = index_rate
             models, _, _ = checkpoint_utils.load_model_ensemble_and_task(
-                ["/kaggle/input/ax-rmf/hubert_base.pt"],
+                ["/kaggle/input/ax-rmd/hubert_base.pt"],
                 suffix="",
             )
             hubert_model = models[0]
@@ -200,7 +200,7 @@ class RVC:
 
             print("loading rmvpe model")
             self.model_rmvpe = RMVPE(
-                "/kaggle/input/ax-rmf/rmvpe.pt", is_half=self.is_half, device=self.device
+                "/kaggle/input/ax-rmd/rmvpe.pt", is_half=self.is_half, device=self.device
             )
             # self.model_rmvpe = RMVPE("aug2_58000_half.pt", is_half=self.is_half, device=self.device)
         f0 = self.model_rmvpe.infer_from_audio(x, thred=0.03)
