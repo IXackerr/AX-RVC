@@ -63,7 +63,7 @@ mem = []
 if_gpu_ok = False
 
 audio_root = "/kaggle/working/AX-RVC/assets/audios"
-weight_root = "/kaggle/working/AX-RVC/logs/weights"
+weight_root = "/kaggle/working/AX-RVC/weights"
 sup_audioext = {
     "wav",
     "mp3",
@@ -1629,9 +1629,9 @@ with gr.Blocks(title="🔊 AX-RVC UI", theme=gr.themes.Base(primary_hue="sky",ne
                             value="",
                             interactive=True,
                         )
-                        file_index4 = gr.Dropdown
+                        file_index4 = gr.Dropdown(
                             label=i18n("自动检测index路径,下拉式选择(dropdown)"),
-                            choices=sorted(indexes_list),A
+                            choices=sorted(indexes_list),
                             interactive=True,
                         )
                         refresh_button.click(

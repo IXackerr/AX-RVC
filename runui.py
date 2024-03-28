@@ -118,7 +118,7 @@ gpu_infos=[]
 mem=[]
 if_gpu_ok=_B
 audio_root='/kaggle/working/AX-RVC/assets/audios'
-weight_root='/kaggle/working/AX-RVC/logs/weights'
+weight_root='/kaggle/working/AX-RVC/weights'
 sup_audioext={_e,_l,_S,'ogg','opus',_m,'mp4','aac','alac','wma','aiff','webm','ac3'}
 audio_paths=[os.path.join(root,name)for(root,_,files)in os.walk(audio_root,topdown=_B)for name in files if name.endswith(tuple(sup_audioext))and root==audio_root]
 if torch.cuda.is_available()or ngpu!=0:
