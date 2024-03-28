@@ -39,6 +39,7 @@ from vc_infer_pipeline import VC
 from sklearn.cluster import MiniBatchKMeans
 
 logging.getLogger("numba").setLevel(logging.WARNING)
+logger = logging.getLogger(__name__)
 
 now_dir = os.getcwd()
 tmp = os.path.join(now_dir, "TEMP")

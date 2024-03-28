@@ -97,6 +97,7 @@ from lib.train.process_ckpt import change_info,extract_small_model,merge,show_in
 from vc_infer_pipeline import VC
 from sklearn.cluster import MiniBatchKMeans
 logging.getLogger('numba').setLevel(logging.WARNING)
+logger=logging.getLogger(__name__)
 now_dir=os.getcwd()
 tmp=os.path.join(now_dir,'TEMP')
 shutil.rmtree(tmp,ignore_errors=_A)
