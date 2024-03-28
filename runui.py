@@ -211,7 +211,7 @@ def uvr(model_name,inp_root,save_root_vocal,paths,save_root_ins,agg,format0):
 	yield _C.join(infos)
 def get_index_path_from_model(sid):
 	sel_index_path='';name=os.path.join('logs',sid.split(_H)[0],'')
-	for f in index_paths:
+	for f in indexes_list:
 		if name in f:sel_index_path=f;break
 	return sel_index_path
 def get_vc(sid,to_return_protect0,to_return_protect1):
@@ -427,7 +427,7 @@ with gr.Blocks(title='🔊 AX-RVC UI',theme=gr.themes.Base(primary_hue='sky',neu
 					with gr.Column():dropbox=gr.File(label=i18n('Drag your audio here:'));record_button=gr.Audio(source='microphone',label=i18n('Or record an audio:'),type='filepath')
 					with gr.Column():vc_transform0=gr.Number(label=i18n(_AH),value=0);f0method0=gr.Radio(label=i18n(_AI),choices=[_j,_u,'crepe',_k],value=_k,interactive=_A);filter_radius0=gr.Slider(minimum=0,maximum=7,label=i18n(_AJ),value=3,step=1,interactive=_A)
 					with gr.Column():
-						file_index2=gr.Dropdown(label=i18n(_AK),choices=sorted(index_paths),interactive=_A)
+						file_index2=gr.Dropdown(label=i18n(_AK),choices=sorted(indexes_list),interactive=_A)
 						with gr.Column():input_audio1=gr.Dropdown(label=i18n('Auto detect audio path and select from the dropdown:'),choices=sorted(audio_paths),value='',interactive=_A);vc_transform0=gr.Number(label=i18n('Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12):'),value=0);dropbox.upload(fn=save_to_wav2,inputs=[dropbox],outputs=[input_audio1]);record_button.change(fn=save_to_wav,inputs=[record_button],outputs=[input_audio1]);refresh_button.click(fn=change_choices,inputs=[],outputs=[sid0,file_index2,input_audio1],api_name='infer_refresh')
 					with gr.Column():resample_sr0=gr.Slider(minimum=0,maximum=48000,label=i18n(_AL),value=0,step=1,interactive=_A);rms_mix_rate0=gr.Slider(minimum=0,maximum=1,label=i18n(_AM),value=.25,interactive=_A);protect0=gr.Slider(minimum=0,maximum=.5,label=i18n(_AN),value=.33,step=.01,interactive=_A)
 					f0_file=gr.File(label=i18n('F0曲线文件, 可选, 一行一个音高, 代替默认F0及升降调'));but0=gr.Button(i18n('转换'),variant=_P)
@@ -437,7 +437,7 @@ with gr.Blocks(title='🔊 AX-RVC UI',theme=gr.themes.Base(primary_hue='sky',neu
 				gr.Markdown(value=i18n('批量转换, 输入待转换音频文件夹, 或上传多个音频文件, 在指定文件夹(默认opt)下输出转换的音频. '))
 				with gr.Row():
 					with gr.Column():vc_transform1=gr.Number(label=i18n(_AH),value=0);opt_input=gr.Textbox(label=i18n('指定输出文件夹'),value=_v);f0method1=gr.Radio(label=i18n(_AI),choices=[_j,_u,'crepe',_k],value=_j,interactive=_A);filter_radius1=gr.Slider(minimum=0,maximum=7,label=i18n(_AJ),value=3,step=1,interactive=_A)
-					with gr.Column():file_index3=gr.Textbox(label=i18n('特征检索库文件路径,为空则使用下拉的选择结果'),value='',interactive=_A);file_index4=gr.Dropdown(label=i18n(_AK),choices=sorted(index_paths),interactive=_A);refresh_button.click(fn=lambda:change_choices()[1],inputs=[],outputs=file_index4,api_name='infer_refresh_batch');index_rate2=gr.Slider(minimum=0,maximum=1,label=i18n('检索特征占比'),value=1,interactive=_A)
+					with gr.Column():file_index3=gr.Textbox(label=i18n('特征检索库文件路径,为空则使用下拉的选择结果'),value='',interactive=_A);file_index4=gr.Dropdown(label=i18n(_AK),choices=sorted(indexes_list),interactive=_A);refresh_button.click(fn=lambda:change_choices()[1],inputs=[],outputs=file_index4,api_name='infer_refresh_batch');index_rate2=gr.Slider(minimum=0,maximum=1,label=i18n('检索特征占比'),value=1,interactive=_A)
 					with gr.Column():resample_sr1=gr.Slider(minimum=0,maximum=48000,label=i18n(_AL),value=0,step=1,interactive=_A);rms_mix_rate1=gr.Slider(minimum=0,maximum=1,label=i18n(_AM),value=1,interactive=_A);protect1=gr.Slider(minimum=0,maximum=.5,label=i18n(_AN),value=.33,step=.01,interactive=_A)
 					with gr.Column():dir_input=gr.Textbox(label=i18n('输入待处理音频文件夹路径(去文件管理器地址栏拷就行了)'),value='E:\\codes\\py39\\test-20230416b\\todo-songs');inputs=gr.File(file_count='multiple',label=i18n(_AO))
 					with gr.Row():format1=gr.Radio(label=i18n('导出文件格式'),choices=[_e,_S,_l,_m],value=_S,interactive=_A);but1=gr.Button(i18n('转换'),variant=_P);vc_output3=gr.Textbox(label=i18n(_b))

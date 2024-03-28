@@ -440,7 +440,7 @@ def get_index_path_from_model(sid):
     sel_index_path = ""
     name = os.path.join("logs", sid.split(".")[0], "")
     # print(name)
-    for f in index_paths:
+    for f in indexes_list:
         if name in f:
             # print("selected index path:", f)
             sel_index_path = f
@@ -1511,7 +1511,7 @@ with gr.Blocks(title="🔊 AX-RVC UI", theme=gr.themes.Base(primary_hue="sky",ne
                     with gr.Column():
                         file_index2 = gr.Dropdown(
                             label=i18n("自动检测index路径,下拉式选择(dropdown)"),
-                            choices=sorted(index_paths),
+                            choices=sorted(indexes_list),
                             interactive=True,
                         )
 
@@ -1629,9 +1629,9 @@ with gr.Blocks(title="🔊 AX-RVC UI", theme=gr.themes.Base(primary_hue="sky",ne
                             value="",
                             interactive=True,
                         )
-                        file_index4 = gr.Dropdown(
+                        file_index4 = gr.Dropdown
                             label=i18n("自动检测index路径,下拉式选择(dropdown)"),
-                            choices=sorted(index_paths),
+                            choices=sorted(indexes_list),A
                             interactive=True,
                         )
                         refresh_button.click(
