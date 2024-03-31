@@ -102,7 +102,7 @@ gpus='-'.join([i[0]for i in gpu_infos])
 weight_root=_g
 weight_uvr5_root=os.getenv('weight_uvr5_root')
 index_root='logs'
-audio_root='/kaggle/working/AX-RVC/assets/audios'
+audio_root='assets/audios'
 outside_index_root=os.getenv('outside_index_root')
 sup_audioext={_T,_X,_U,'ogg','opus',_Y,'mp4','aac','alac','wma','aiff','webm','ac3'}
 names=[os.path.relpath(os.path.join(root,file),weight_root)for(root,_,files)in os.walk(weight_root)for file in files if file.endswith((_P,'.onnx'))]
@@ -167,9 +167,9 @@ def extract_f0_feature(gpus,n_p,f0method,if_f0,exp_dir,version19,gpus_rmvpe):
 	with open(A%(now_dir,exp_dir),_K)as f:log=f.read()
 	logger.info(log);yield log
 def get_pretrained_models(path_str,f0_str,sr2):
-	B='/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth';A='/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth';if_pretrained_generator_exist=os.access(A%(path_str,f0_str,sr2),os.F_OK);if_pretrained_discriminator_exist=os.access(B%(path_str,f0_str,sr2),os.F_OK)
-	if not if_pretrained_generator_exist:logger.warning('/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth not exist, will not use pretrained model',path_str,f0_str,sr2)
-	if not if_pretrained_discriminator_exist:logger.warning('/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth not exist, will not use pretrained model',path_str,f0_str,sr2)
+	B='/kaggle/input/ax-rmd/pretrained%s/%sD%s.pth';A='/kaggle/input/ax-rmd/pretrained%s/%sG%s.pth';if_pretrained_generator_exist=os.access(A%(path_str,f0_str,sr2),os.F_OK);if_pretrained_discriminator_exist=os.access(B%(path_str,f0_str,sr2),os.F_OK)
+	if not if_pretrained_generator_exist:logger.warning('/kaggle/input/ax-rmd/pretrained%s/%sG%s.pth not exist, will not use pretrained model',path_str,f0_str,sr2)
+	if not if_pretrained_discriminator_exist:logger.warning('/kaggle/input/ax-rmd/pretrained%s/%sD%s.pth not exist, will not use pretrained model',path_str,f0_str,sr2)
 	return A%(path_str,f0_str,sr2)if if_pretrained_generator_exist else'',B%(path_str,f0_str,sr2)if if_pretrained_discriminator_exist else''
 def change_sr2(sr2,if_f0_3,version19):path_str=''if version19==_D else _b;f0_str=_Q if if_f0_3 else'';return get_pretrained_models(path_str,f0_str,sr2)
 def change_version19(sr2,if_f0_3,version19):

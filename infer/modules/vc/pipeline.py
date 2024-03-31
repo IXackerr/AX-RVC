@@ -144,10 +144,10 @@ class Pipeline(object):
                 from infer.lib.rmvpe import RMVPE
 
                 logger.info(
-                    "Loading rmvpe model,%s" % "%s/rmvpe.pt" % os.environ["rmvpe_root"]
+                    "Loading rmvpe model, /kaggle/input/ax-rmd/rmvpe.pt"
                 )
                 self.model_rmvpe = RMVPE(
-                    "%s/rmvpe.pt" % os.environ["rmvpe_root"],
+                    "/kaggle/input/ax-rmd/rmvpe.pt",
                     is_half=self.is_half,
                     device=self.device,
                 )

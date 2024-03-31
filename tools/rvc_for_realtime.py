@@ -100,7 +100,7 @@ class RVC:
 
             if last_rvc is None:
                 models, _, _ = fairseq.checkpoint_utils.load_model_ensemble_and_task(
-                    ["/kaggle/input/ax-rmf/hubert_base.pt"],
+                    ["/kaggle/input/ax-rmd/hubert_base.pt"],
                     suffix="",
                 )
                 hubert_model = models[0]
@@ -316,7 +316,7 @@ class RVC:
 
             printt("Loading rmvpe model")
             self.model_rmvpe = RMVPE(
-                "/kaggle/input/ax-rmf/rmvpe.pt",
+                "/kaggle/input/ax-rmd/rmvpe.pt",
                 is_half=self.is_half,
                 device=self.device,
                 use_jit=self.config.use_jit,

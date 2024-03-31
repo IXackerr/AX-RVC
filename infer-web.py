@@ -123,7 +123,7 @@ gpus = "-".join([i[0] for i in gpu_infos])
 weight_root = "assets/weights"
 weight_uvr5_root = os.getenv("weight_uvr5_root")
 index_root = "logs"
-audio_root = "/kaggle/working/AX-RVC/assets/audios"
+audio_root = "assets/audios"
 outside_index_root = os.getenv("outside_index_root")
 
 sup_audioext = {
@@ -426,33 +426,33 @@ def extract_f0_feature(gpus, n_p, f0method, if_f0, exp_dir, version19, gpus_rmvp
 
 def get_pretrained_models(path_str, f0_str, sr2):
     if_pretrained_generator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2), os.F_OK
+        "/kaggle/input/ax-rmd/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if_pretrained_discriminator_exist = os.access(
-        "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2), os.F_OK
+        "/kaggle/input/ax-rmd/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2), os.F_OK
     )
     if not if_pretrained_generator_exist:
         logger.warning(
-            "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth not exist, will not use pretrained model",
+            "/kaggle/input/ax-rmd/pretrained%s/%sG%s.pth not exist, will not use pretrained model",
             path_str,
             f0_str,
             sr2,
         )
     if not if_pretrained_discriminator_exist:
         logger.warning(
-            "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth not exist, will not use pretrained model",
+            "/kaggle/input/ax-rmd/pretrained%s/%sD%s.pth not exist, will not use pretrained model",
             path_str,
             f0_str,
             sr2,
         )
     return (
         (
-            "/kaggle/input/ax-rmf/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2)
+            "/kaggle/input/ax-rmd/pretrained%s/%sG%s.pth" % (path_str, f0_str, sr2)
             if if_pretrained_generator_exist
             else ""
         ),
         (
-            "/kaggle/input/ax-rmf/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2)
+            "/kaggle/input/ax-rmd/pretrained%s/%sD%s.pth" % (path_str, f0_str, sr2)
             if if_pretrained_discriminator_exist
             else ""
         ),
