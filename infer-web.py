@@ -954,7 +954,7 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                     with gr.Column(
                         visible=False
                     ) as advanced_settings:  # Initially hidden
-                        with gr.Row(i18n("Advanced Settings"), open=False):
+                        with gr.Accordion(i18n("Advanced Settings"), open=False):
                             with gr.Column():
                                 f0method0 = gr.Radio(
                                     label=i18n(

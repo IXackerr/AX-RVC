@@ -258,7 +258,7 @@ with gr.Blocks(title='💙 AX-RVC WebUI 💎',theme=gr.themes.Base(primary_hue='
 						with gr.Column():vc_transform0=gr.Number(label=i18n(_o),value=0);input_audio0=gr.Dropdown(label=i18n('输入待处理音频文件路径(默认是正确格式示例)'),choices=sorted(audio_paths),value='',interactive=_A);file_index2=gr.Dropdown(label=i18n(_p),choices=sorted(index_paths),interactive=_A);dropbox.upload(fn=save_to_wav2,inputs=[dropbox],outputs=[input_audio0]);record_button.change(fn=save_to_wav,inputs=[record_button],outputs=[input_audio0]);refresh_button.click(fn=change_choices,inputs=[],outputs=[sid0,file_index2,input_audio0],api_name='infer_refresh')
 					advanced_settings_checkbox=gr.Checkbox(value=_B,label=i18n(_q),interactive=_A)
 					with gr.Column(visible=_B)as advanced_settings:
-						with gr.Row(i18n(_q),open=_B):
+						with gr.Accordion(i18n(_q),open=_B):
 							with gr.Column():f0method0=gr.Radio(label=i18n(_r),choices=[_R,_S,'crepe',_M]if config.dml==_B else[_R,_S,_M],value=_M,interactive=_A);resample_sr0=gr.Slider(minimum=0,maximum=48000,label=i18n(_s),value=0,step=1,interactive=_A);rms_mix_rate0=gr.Slider(minimum=0,maximum=1,label=i18n(_t),value=.25,interactive=_A);protect0=gr.Slider(minimum=0,maximum=.5,label=i18n(_u),value=.33,step=.01,interactive=_A);filter_radius0=gr.Slider(minimum=0,maximum=7,label=i18n(_v),value=3,step=1,interactive=_A);index_rate1=gr.Slider(minimum=0,maximum=1,label=i18n(_w),value=.75,interactive=_A);f0_file=gr.File(label=i18n('F0曲线文件, 可选, 一行一个音高, 代替默认F0及升降调'),visible=_B)
 				but0=gr.Button(i18n('转换'),variant=_C)
 				with gr.Group():
