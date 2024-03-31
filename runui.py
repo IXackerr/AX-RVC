@@ -117,7 +117,7 @@ lookup_indices(outside_index_root)
 uvr5_names=[]
 for name in os.listdir(weight_uvr5_root):
 	if name.endswith(_P)or'onnx'in name:uvr5_names.append(name.replace(_P,''))
-def change_choices():names=[os.path.join(root,file)for(root,_,files)in os.walk(weight_root)for file in files if file.endswith((_P,'.onnx'))];indexes_list=[os.path.join(root,name)for(root,_,files)in os.walk(index_root,topdown=_B)for name in files if name.endswith(_g)and _h not in name];audio_paths=[os.path.join(root,name)for(root,_,files)in os.walk(audio_root,topdown=_B)for name in files if name.endswith(tuple(sup_audioext))and root==audio_root];return gr.Dropdown.update(choices=sorted(names)),gr.Dropdown.update(choices=sorted(indexes_list)),gr.Dropdown.update(choices=sorted(audio_paths))
+def change_choices():names=[os.path.join(root,file)for(root,_,files)in os.walk(weight_root)for file in files if file.endswith((_P,'.onnx'))];indexes_list=[os.path.join(root,name)for(root,_,files)in os.walk(index_root,topdown=_B)for name in files if name.endswith(_g)and _h not in name];audio_paths=[os.path.join(root,name)for(root,_,files)in os.walk(audio_root,topdown=_B)for name in files if name.endswith(tuple(sup_audioext))and root==audio_root];return gr.Dropdown(choices=sorted(names)),gr.Dropdown(choices=sorted(indexes_list)),gr.Dropdown(choices=sorted(audio_paths))
 def clean():return{_Z:'',_F:_G}
 def export_onnx(ModelPath,ExportedPath):from infer.modules.onnx.export import export_onnx as eo;eo(ModelPath,ExportedPath)
 sr_dict={_V:32000,_I:40000,_N:48000}

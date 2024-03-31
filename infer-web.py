@@ -197,9 +197,9 @@ def change_choices():
     ]
 
     return (
-        gr.Dropdown.update(choices=sorted(names)),
-        gr.Dropdown.update(choices=sorted(indexes_list)),
-        gr.Dropdown.update(choices=sorted(audio_paths)),
+        gr.Dropdown(choices=sorted(names)),
+        gr.Dropdown(choices=sorted(indexes_list)),
+        gr.Dropdown(choices=sorted(audio_paths)),
     )
 
 
