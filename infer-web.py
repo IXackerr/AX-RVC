@@ -123,7 +123,7 @@ gpus = "-".join([i[0] for i in gpu_infos])
 weight_root = "assets/weights"
 weight_uvr5_root = os.getenv("weight_uvr5_root")
 index_root = "logs"
-audio_root = "/kaggle/working/AX-RVC/assets/audios"
+audio_root = "assets/audios"
 outside_index_root = os.getenv("outside_index_root")
 
 sup_audioext = {
@@ -902,12 +902,19 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                                 label=i18n("变调(整数, 半音数量, 升八度12降八度-12)"),
                                 value=0,
                             )
-                            input_audio0 = gr.Dropdown(
+                            input_audio1 = gr.Dropdown(
                                 label=i18n(
                                     "输入待处理音频文件路径(默认是正确格式示例)"
                                 ),
                                 choices=sorted(audio_paths),
                                 value="",
+                                interactive=True,
+                            )
+                            input_audio0 = gr.Textbox(
+                                label=i18n(
+                                    "test audio path"
+                                ),
+                                placeholder="C:\\Users\\Desktop\\model_example.index",
                                 interactive=True,
                             )
                             file_index1 = gr.Textbox(
