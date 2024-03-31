@@ -978,6 +978,7 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                                 value=0.25,
                                 interactive=True,
                             )
+                        with gr.Column():
                             protect0 = gr.Slider(
                                 minimum=0,
                                 maximum=0.5,
