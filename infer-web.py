@@ -120,7 +120,7 @@ else:
     default_batch_size = 1
 gpus = "-".join([i[0] for i in gpu_infos])
 
-weight_root = "logs/weights"
+weight_root = "assets/weights"
 weight_uvr5_root = os.getenv("weight_uvr5_root")
 index_root = "logs"
 audio_root = "assets/audios"
