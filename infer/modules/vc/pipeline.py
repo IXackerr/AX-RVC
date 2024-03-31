@@ -299,7 +299,6 @@ class Pipeline(object):
         protect,
         f0_file=None,
     ):
-        print("try read index")
         if (
             file_index != ""
             # and file_big_npy != ""

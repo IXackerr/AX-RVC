@@ -212,6 +212,7 @@ class VC:
                 if os.path.exists(file_index)
                 else "Index not used."
             )
+            print("final")
             return (
                 "Success.\n%s\nTime:\nnpy: %.2fs, f0: %.2fs, infer: %.2fs."
                 % (index_info, *times),
