@@ -288,7 +288,7 @@ def run(rank, n_gpus, hps):
                 [scheduler_g, scheduler_d],
                 scaler,
                 [train_loader, None],
-                None,
+                logger,
                 None,
                 cache,
             )
