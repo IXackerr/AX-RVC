@@ -143,8 +143,15 @@ sup_audioext = {
 }
 
 
+#names = [
+#    os.path.join(root, file)
+#    for root, _, files in os.walk(weight_root)
+#    for file in files
+#    if file.endswith((".pth", ".onnx"))
+#]
+
 names = [
-    os.path.join(root, file)
+    os.path.relpath(os.path.join(root, file), weight_root)
     for root, _, files in os.walk(weight_root)
     for file in files
     if file.endswith((".pth", ".onnx"))
@@ -178,7 +185,7 @@ for name in os.listdir(weight_uvr5_root):
 
 def change_choices():
     names = [
-        os.path.join(root, file)
+        os.path.relpath(os.path.join(root, file), weight_root)
         for root, _, files in os.walk(weight_root)
         for file in files
         if file.endswith((".pth", ".onnx"))
