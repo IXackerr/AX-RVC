@@ -946,78 +946,71 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                             #     value="E:\\codes\py39\\vits_vc_gpu_train\\logs\\mi-test-1key\\total_fea.npy",
                             #     interactive=True,
                             # )
-                    advanced_settings_checkbox = gr.Checkbox(
-                        value=False,
-                        label=i18n("Advanced Settings"),
-                        interactive=True,
-                    )
-                    with gr.Column(
-                        visible=False
-                    ) as advanced_settings:  # Initially hidden
-                        with gr.Accordion(i18n("Advanced Settings"), open=False):
-                            with gr.Column():
-                                f0method0 = gr.Radio(
-                                    label=i18n(
-                                        "选择音高提取算法,输入歌声可用pm提速,harvest低音好但巨慢无比,crepe效果好但吃GPU,rmvpe效果最好且微吃GPU"
-                                    ),
-                                    choices=(
-                                        ["pm", "harvest", "crepe", "rmvpe"]
-                                        if config.dml == False
-                                        else ["pm", "harvest", "rmvpe"]
-                                    ),
-                                    value="rmvpe",
-                                    interactive=True,
-                                )
-                                resample_sr0 = gr.Slider(
-                                    minimum=0,
-                                    maximum=48000,
-                                    label=i18n("后处理重采样至最终采样率，0为不进行重采样"),
-                                    value=0,
-                                    step=1,
-                                    interactive=True,
-                                )
-                                rms_mix_rate0 = gr.Slider(
-                                    minimum=0,
-                                    maximum=1,
-                                    label=i18n(
-                                        "输入源音量包络替换输出音量包络融合比例，越靠近1越使用输出包络"
-                                    ),
-                                    value=0.25,
-                                    interactive=True,
-                                )
-                                protect0 = gr.Slider(
-                                    minimum=0,
-                                    maximum=0.5,
-                                    label=i18n(
-                                        "保护清辅音和呼吸声，防止电音撕裂等artifact，拉满0.5不开启，调低加大保护力度但可能降低索引效果"
-                                    ),
-                                    value=0.33,
-                                    step=0.01,
-                                    interactive=True,
-                                )
-                                filter_radius0 = gr.Slider(
-                                    minimum=0,
-                                    maximum=7,
-                                    label=i18n(
-                                        ">=3则使用对harvest音高识别的结果使用中值滤波，数值为滤波半径，使用可以削弱哑音"
-                                    ),
-                                    value=3,
-                                    step=1,
-                                    interactive=True,
-                                )
-                                index_rate1 = gr.Slider(
-                                    minimum=0,
-                                    maximum=1,
-                                    label=i18n("检索特征占比"),
-                                    value=0.75,
-                                    interactive=True,
-                                )
-                                f0_file = gr.File(
-                                    label=i18n(
-                                        "F0曲线文件, 可选, 一行一个音高, 代替默认F0及升降调"
-                                    ),
-                                    visible=False,
-                                )
+
+                    with gr.Accordion(i18n("Advanced Settings"), open=False):
+                        with gr.Column():
+                            f0method0 = gr.Radio(
+                                label=i18n(
+                                    "选择音高提取算法,输入歌声可用pm提速,harvest低音好但巨慢无比,crepe效果好但吃GPU,rmvpe效果最好且微吃GPU"
+                                ),
+                                choices=(
+                                    ["pm", "harvest", "crepe", "rmvpe"]
+                                    if config.dml == False
+                                    else ["pm", "harvest", "rmvpe"]
+                                ),
+                                value="rmvpe",
+                                interactive=True,
+                            )
+                            resample_sr0 = gr.Slider(
+                                minimum=0,
+                                maximum=48000,
+                                label=i18n("后处理重采样至最终采样率，0为不进行重采样"),
+                                value=0,
+                                step=1,
+                                interactive=True,
+                            )
+                            rms_mix_rate0 = gr.Slider(
+                                minimum=0,
+                                maximum=1,
+                                label=i18n(
+                                    "输入源音量包络替换输出音量包络融合比例，越靠近1越使用输出包络"
+                                ),
+                                value=0.25,
+                                interactive=True,
+                            )
+                            protect0 = gr.Slider(
+                                minimum=0,
+                                maximum=0.5,
+                                label=i18n(
+                                    "保护清辅音和呼吸声，防止电音撕裂等artifact，拉满0.5不开启，调低加大保护力度但可能降低索引效果"
+                                ),
+                                value=0.33,
+                                step=0.01,
+                                interactive=True,
+                            )
+                            filter_radius0 = gr.Slider(
+                                minimum=0,
+                                maximum=7,
+                                label=i18n(
+                                    ">=3则使用对harvest音高识别的结果使用中值滤波，数值为滤波半径，使用可以削弱哑音"
+                                ),
+                                value=3,
+                                step=1,
+                                interactive=True,
+                            )
+                            index_rate1 = gr.Slider(
+                                minimum=0,
+                                maximum=1,
+                                label=i18n("检索特征占比"),
+                                value=0.75,
+                                interactive=True,
+                            )
+                            f0_file = gr.File(
+                                label=i18n(
+                                    "F0曲线文件, 可选, 一行一个音高, 代替默认F0及升降调"
+                                ),
+                                visible=False,
+                            )
 
                 but0 = gr.Button(i18n("转换"), variant="primary")
                 with gr.Group():
