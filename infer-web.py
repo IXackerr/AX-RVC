@@ -912,13 +912,6 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                                 value="",
                                 interactive=True,
                             )
-                            #file_index1 = gr.Textbox(
-                            #    label=i18n(
-                            #        "特征检索库文件路径,为空则使用下拉的选择结果"
-                            #    ),
-                            #    placeholder="C:\\Users\\Desktop\\model_example.index",
-                            #    interactive=True,
-                            #)
                             file_index2 = gr.Dropdown(
                                 label=i18n("自动检测index路径,下拉式选择(dropdown)"),
                                 choices=sorted(index_paths),
@@ -1012,6 +1005,14 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                                 ),
                                 visible=False,
                             )
+                            file_index1 = gr.Textbox(
+                                label=i18n(
+                                    "特征检索库文件路径,为空则使用下拉的选择结果"
+                                ),
+                                placeholder="C:\\Users\\Desktop\\model_example.index",
+                                interactive=True,
+                                visible=False,
+                            )
 
                 but0 = gr.Button(i18n("转换"), variant="primary")
                 with gr.Group():
@@ -1031,7 +1032,7 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                                 vc_transform0,
                                 f0_file,
                                 f0method0,
-                                #file_index1,
+                                file_index1,
                                 file_index2,
                                 # file_big_npy1,
                                 index_rate1,
