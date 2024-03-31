@@ -954,7 +954,7 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                     with gr.Column(
                         visible=False
                     ) as advanced_settings:  # Initially hidden
-                        with gr.Row(label=i18n("Advanced Settings"), open=False):
+                        with gr.Row(i18n("Advanced Settings"), open=False):
                             with gr.Column():
                                 f0method0 = gr.Radio(
                                     label=i18n(
@@ -1018,10 +1018,11 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                                     ),
                                     visible=False,
                                 )
-                            
+
+                but0 = gr.Button(i18n("转换"), variant="primary")
                 with gr.Group():
                     with gr.Column():
-                        but0 = gr.Button(i18n("转换"), variant="primary")
+                        
                         with gr.Row():
                             vc_output1 = gr.Textbox(label=i18n("输出信息"))
                             vc_output2 = gr.Audio(
@@ -1036,7 +1037,7 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                                 vc_transform0,
                                 f0_file,
                                 f0method0,
-                                file_index1,
+                                #file_index1,
                                 file_index2,
                                 # file_big_npy1,
                                 index_rate1,
