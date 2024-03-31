@@ -120,16 +120,44 @@ else:
     default_batch_size = 1
 gpus = "-".join([i[0] for i in gpu_infos])
 
-weight_root = os.getenv("weight_root")
+weight_root = "logs/weights"
 weight_uvr5_root = os.getenv("weight_uvr5_root")
-index_root = os.getenv("index_root")
+index_root = "logs"
+audio_root = "assets/audios"
 outside_index_root = os.getenv("outside_index_root")
 
-names = []
-for name in os.listdir(weight_root):
-    if name.endswith(".pth"):
-        names.append(name)
+sup_audioext = {
+    "wav",
+    "mp3",
+    "flac",
+    "ogg",
+    "opus",
+    "m4a",
+    "mp4",
+    "aac",
+    "alac",
+    "wma",
+    "aiff",
+    "webm",
+    "ac3",
+}
+
+
+names = [
+    os.path.join(root, file)
+    for root, _, files in os.walk(weight_root)
+    for file in files
+    if file.endswith((".pth", ".onnx"))
+]
+
 index_paths = []
+
+audio_paths = [
+    os.path.join(root, name)
+    for root, _, files in os.walk(audio_root, topdown=False)
+    for name in files
+    if name.endswith(tuple(sup_audioext)) and root == audio_root
+]
 
 
 def lookup_indices(index_root):
@@ -149,19 +177,30 @@ for name in os.listdir(weight_uvr5_root):
 
 
 def change_choices():
-    names = []
-    for name in os.listdir(weight_root):
-        if name.endswith(".pth"):
-            names.append(name)
-    index_paths = []
-    for root, dirs, files in os.walk(index_root, topdown=False):
-        for name in files:
-            if name.endswith(".index") and "trained" not in name:
-                index_paths.append("%s/%s" % (root, name))
-    return {"choices": sorted(names), "__type__": "update"}, {
-        "choices": sorted(index_paths),
-        "__type__": "update",
-    }
+    names = [
+        os.path.join(root, file)
+        for root, _, files in os.walk(weight_root)
+        for file in files
+        if file.endswith((".pth", ".onnx"))
+    ]
+    indexes_list = [
+        os.path.join(root, name)
+        for root, _, files in os.walk(index_root, topdown=False)
+        for name in files
+        if name.endswith(".index") and "trained" not in name
+    ]
+    audio_paths = [
+        os.path.join(root, name)
+        for root, _, files in os.walk(audio_root, topdown=False)
+        for name in files
+        if name.endswith(tuple(sup_audioext)) and root == audio_root
+    ]
+
+    return (
+        gr.Dropdown.update(choices=sorted(names)),
+        gr.Dropdown.update(choices=sorted(indexes_list)),
+        gr.Dropdown.update(choices=sorted(audio_paths)),
+    )
 
 
 def clean():
@@ -852,12 +891,7 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                 with gr.Group():
                     with gr.Row():
                         with gr.Column():  # First column for audio-related inputs
-                            #dropbox = gr.File(label=i18n("Drag your audio here:"))
-                            dropbox = gr.Audio(
-                                sources="upload",
-                                label=i18n("Drag your audio here:"),
-                                type="filepath",
-                            )
+                            dropbox = gr.File(label=i18n("Drag your audio here:"))
                             record_button = gr.Audio(
                                 sources="microphone",
                                 label=i18n("Or record an audio:"),
@@ -868,11 +902,13 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                                 label=i18n("变调(整数, 半音数量, 升八度12降八度-12)"),
                                 value=0,
                             )
-                            input_audio0 = gr.Textbox(
+                            input_audio0 = gr.Dropdown(
                                 label=i18n(
                                     "输入待处理音频文件路径(默认是正确格式示例)"
                                 ),
-                                placeholder="C:\\Users\\Desktop\\audio_example.wav",
+                                choices=sorted(audio_paths),
+                                value="",
+                                interactive=True,
                             )
                             file_index1 = gr.Textbox(
                                 label=i18n(
@@ -964,7 +1000,7 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                             refresh_button.click(
                                 fn=change_choices,
                                 inputs=[],
-                                outputs=[sid0, file_index2],
+                                outputs=[sid0, file_index2, input_audio0],
                                 api_name="infer_refresh",
                             )
                             # file_big_npy1 = gr.Textbox(
