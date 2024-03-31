@@ -123,7 +123,7 @@ gpus = "-".join([i[0] for i in gpu_infos])
 weight_root = "assets/weights"
 weight_uvr5_root = os.getenv("weight_uvr5_root")
 index_root = "logs"
-audio_root = "assets/audios"
+audio_root = "/kaggle/working/AX-RVC/assets/audios"
 outside_index_root = os.getenv("outside_index_root")
 
 sup_audioext = {
@@ -142,13 +142,6 @@ sup_audioext = {
     "ac3",
 }
 
-
-#names = [
-#    os.path.join(root, file)
-#    for root, _, files in os.walk(weight_root)
-#    for file in files
-#    if file.endswith((".pth", ".onnx"))
-#]
 
 names = [
     os.path.relpath(os.path.join(root, file), weight_root)
