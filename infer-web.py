@@ -795,13 +795,13 @@ def change_f0_method(f0method8):
     return {"visible": visible, "__type__": "update"}
 
 
-with gr.Blocks(title="RVC WebUI") as app:
-    gr.Markdown("## RVC WebUI")
-    gr.Markdown(
-        value=i18n(
-            "本软件以MIT协议开源, 作者不对软件具备任何控制力, 使用软件者、传播软件导出的声音者自负全责. <br>如不认可该条款, 则不能使用或引用软件包内任何代码和文件. 详见根目录<b>LICENSE</b>."
-        )
-    )
+with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue="sky",neutral_hue="zinc")) as app:
+    gr.Markdown("## 💙 AX-RVC WebUI")
+    #gr.Markdown(
+    #    value=i18n(
+    #        "本软件以MIT协议开源, 作者不对软件具备任何控制力, 使用软件者、传播软件导出的声音者自负全责. <br>如不认可该条款, 则不能使用或引用软件包内任何代码和文件. 详见根目录<b>LICENSE</b>."
+    #    )
+    #)
     with gr.Tabs():
         with gr.TabItem(i18n("模型推理")):
             with gr.Row():
@@ -1158,46 +1158,43 @@ with gr.Blocks(title="RVC WebUI") as app:
                         api_name="uvr_convert",
                     )
         with gr.TabItem(i18n("训练")):
-            gr.Markdown(
-                value=i18n(
-                    "step1: 填写实验配置. 实验数据放在logs下, 每个实验一个文件夹, 需手工输入实验名路径, 内含实验配置, 日志, 训练得到的模型文件. "
-                )
-            )
-            with gr.Row():
-                exp_dir1 = gr.Textbox(label=i18n("输入实验名"), value="mi-test")
-                sr2 = gr.Radio(
-                    label=i18n("目标采样率"),
-                    choices=["40k", "48k"],
-                    value="40k",
-                    interactive=True,
-                )
-                if_f0_3 = gr.Radio(
-                    label=i18n("模型是否带音高指导(唱歌一定要, 语音可以不要)"),
-                    choices=[True, False],
-                    value=True,
-                    interactive=True,
-                )
-                version19 = gr.Radio(
-                    label=i18n("版本"),
-                    choices=["v2"],
-                    value="v2",
-                    interactive=True,
-                    visible=True,
-                )
-                np7 = gr.Slider(
-                    minimum=0,
-                    maximum=config.n_cpu,
-                    step=1,
-                    label=i18n("提取音高和处理数据使用的CPU进程数"),
-                    value=int(np.ceil(config.n_cpu / 1.5)),
-                    interactive=True,
-                )
-            with gr.Group():  # 暂时单人的, 后面支持最多4人的#数据处理
-                gr.Markdown(
-                    value=i18n(
-                        "step2a: 自动遍历训练文件夹下所有可解码成音频的文件并进行切片归一化, 在实验目录下生成2个wav文件夹; 暂时只支持单人训练. "
+            with gr.Accordion(
+                    i18n(
+                        "step1: 填写实验配置. 实验数据放在logs下, 每个实验一个文件夹, 需手工输入实验名路径, 内含实验配置, 日志, 训练得到的模型文件. "
+                    )):
+                with gr.Row():
+                    exp_dir1 = gr.Textbox(label=i18n("输入实验名"), value="mi-test")
+                    sr2 = gr.Radio(
+                        label=i18n("目标采样率"),
+                        choices=["40k", "48k"],
+                        value="40k",
+                        interactive=True,
                     )
-                )
+                    if_f0_3 = gr.Radio(
+                        label=i18n("模型是否带音高指导(唱歌一定要, 语音可以不要)"),
+                        choices=[True, False],
+                        value=True,
+                        interactive=True,
+                    )
+                    version19 = gr.Radio(
+                        label=i18n("版本"),
+                        choices=["v2"],
+                        value="v2",
+                        interactive=True,
+                        visible=True,
+                    )
+                    np7 = gr.Slider(
+                        minimum=0,
+                        maximum=config.n_cpu,
+                        step=1,
+                        label=i18n("提取音高和处理数据使用的CPU进程数"),
+                        value=int(np.ceil(config.n_cpu / 1.5)),
+                        interactive=True,
+                    )
+            with gr.Accordion(
+                    i18n(
+                        "step2a: 自动遍历训练文件夹下所有可解码成音频的文件并进行切片归一化, 在实验目录下生成2个wav文件夹; 暂时只支持单人训练. "
+                    )):
                 with gr.Row():
                     trainset_dir4 = gr.Textbox(
                         label=i18n("输入训练文件夹路径"),
@@ -1219,12 +1216,11 @@ with gr.Blocks(title="RVC WebUI") as app:
                         [info1],
                         api_name="train_preprocess",
                     )
-            with gr.Group():
-                gr.Markdown(
-                    value=i18n(
+            with gr.Accordion(
+                    i18n(
                         "step2b: 使用CPU提取音高(如果模型带音高), 使用GPU提取特征(选择卡号)"
                     )
-                )
+                ):
                 with gr.Row():
                     with gr.Column():
                         gpus6 = gr.Textbox(
@@ -1276,8 +1272,7 @@ with gr.Blocks(title="RVC WebUI") as app:
                         [info2],
                         api_name="train_extract_f0_feature",
                     )
-            with gr.Group():
-                gr.Markdown(value=i18n("step3: 填写训练设置, 开始训练模型和索引"))
+            with gr.Accordion(i18n("step3: 填写训练设置, 开始训练模型和索引")):
                 with gr.Row():
                     save_epoch10 = gr.Slider(
                         minimum=1,
@@ -1326,14 +1321,21 @@ with gr.Blocks(title="RVC WebUI") as app:
                         interactive=True,
                     )
                 with gr.Row():
-                    pretrained_G14 = gr.Textbox(
+                    file_dict = {f: os.path.join("/kaggle/input/ax-rmd/pretrained_v2", f) for f in os.listdir("/kaggle/input/ax-rmd/pretrained_v2")}
+                    file_dict = {k: v for k, v in file_dict.items() if k.endswith(".pth")}
+                    file_dict_g = {k: v for k, v in file_dict.items() if "G" in k and "f0" in k}
+                    file_dict_d = {k: v for k, v in file_dict.items() if "D" in k and "f0" in k}
+
+                    pretrained_G14 = gr.Dropdown(
                         label=i18n("加载预训练底模G路径"),
-                        value="/kaggle/input/ax-rmf/pretrained_v2/f0G40k.pth",
+                        choices=list(file_dict_g.values()),
+                        value=file_dict_g['f0G32k.pth'],
                         interactive=True,
                     )
-                    pretrained_D15 = gr.Textbox(
+                    pretrained_D15 = gr.Dropdown(
                         label=i18n("加载预训练底模D路径"),
-                        value="/kaggle/input/ax-rmf/pretrained_v2/f0D40k.pth",
+                        choices=list(file_dict_d.values()),
+                        value=file_dict_d['f0D32k.pth'],
                         interactive=True,
                     )
                     sr2.change(
@@ -1360,7 +1362,6 @@ with gr.Blocks(title="RVC WebUI") as app:
                     )
                     but3 = gr.Button(i18n("训练模型"), variant="primary")
                     but4 = gr.Button(i18n("训练特征索引"), variant="primary")
-                    but5 = gr.Button(i18n("一键训练"), variant="primary")
                     info3 = gr.Textbox(label=i18n("输出信息"), value="", max_lines=10)
                     but3.click(
                         click_train,
@@ -1384,31 +1385,6 @@ with gr.Blocks(title="RVC WebUI") as app:
                         api_name="train_start",
                     )
                     but4.click(train_index, [exp_dir1, version19], info3)
-                    but5.click(
-                        train1key,
-                        [
-                            exp_dir1,
-                            sr2,
-                            if_f0_3,
-                            trainset_dir4,
-                            spk_id5,
-                            np7,
-                            f0method8,
-                            save_epoch10,
-                            total_epoch11,
-                            batch_size12,
-                            if_save_latest13,
-                            pretrained_G14,
-                            pretrained_D15,
-                            gpus16,
-                            if_cache_gpu17,
-                            if_save_every_weights18,
-                            version19,
-                            gpus_rmvpe,
-                        ],
-                        info3,
-                        api_name="train_start_all",
-                    )
 
         with gr.TabItem(i18n("ckpt处理")):
             with gr.Group():
