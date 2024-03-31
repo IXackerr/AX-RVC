@@ -307,6 +307,7 @@ class Pipeline(object):
             and index_rate != 0
         ):
             try:
+                print("try read index")
                 index = faiss.read_index(file_index)
                 # big_npy = np.load(file_big_npy)
                 big_npy = index.reconstruct_n(0, index.ntotal)
@@ -315,6 +316,7 @@ class Pipeline(object):
                 index = big_npy = None
         else:
             index = big_npy = None
+        print("try somesing 1")
         audio = signal.filtfilt(bh, ah, audio)
         audio_pad = np.pad(audio, (self.window // 2, self.window // 2), mode="reflect")
         opt_ts = []

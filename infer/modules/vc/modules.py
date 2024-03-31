@@ -162,13 +162,11 @@ class VC:
             return "You need to upload an audio", None
         f0_up_key = int(f0_up_key)
         try:
-            print("Try to load audio")
             audio = load_audio(input_audio_path, 16000)
             audio_max = np.abs(audio).max() / 0.95
             if audio_max > 1:
                 audio /= audio_max
             times = [0, 0, 0]
-            print("audio loaded")
             if self.hubert_model is None:
                 self.hubert_model = load_hubert(self.config)
 
@@ -185,7 +183,6 @@ class VC:
                 file_index = file_index2
             else:
                 file_index = ""  # 防止小白写错，自动帮他替换掉
-            print("Start inference")
             audio_opt = self.pipeline.pipeline(
                 self.hubert_model,
                 self.net_g,
