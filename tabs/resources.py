@@ -337,7 +337,7 @@ def load_downloaded_model(url):
         infos = []
         zips_path = os.path.join(parent_path, "assets", "zips")
         unzips_path = os.path.join(parent_path, "assets", "unzips")
-        weights_path = os.path.join(parent_path, "logs", "weights")
+        weights_path = os.path.join(parent_path, "weights")
         logs_dir = ""
 
         if os.path.exists(zips_path):
@@ -626,7 +626,7 @@ def save_model(modelname, save_action):
     try:
         # Define paths
         parent_path = find_folder_parent(now_dir, "assets")
-        weight_path = os.path.join(parent_path, "assets", "weights", f"{modelname}.pth")
+        weight_path = os.path.join(parent_path, "weights", f"{modelname}.pth")
         logs_path = os.path.join(parent_path, "logs", modelname)
         save_folder = SAVE_ACTION_CONFIG[save_action]['destination_folder']
         save_path = os.path.join(parent_path, "logs", save_folder, modelname + ".zip")
@@ -865,7 +865,7 @@ class error_message(Exception):
 def save_drop_model_pth(dropbox):
     file_path = dropbox.name 
     file_name = os.path.basename(file_path)
-    target_path = os.path.join("logs", "weights", os.path.basename(file_path))
+    target_path = os.path.join("weights", os.path.basename(file_path))
     
     if not file_name.endswith('.pth'):
         print(i18n("The file does not have the .pth extension. Please upload the correct file."))
