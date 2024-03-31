@@ -105,10 +105,11 @@ def main():
     os.environ["MASTER_PORT"] = str(randint(20000, 55555))
     children = []
     logger = utils.get_logger(hps.model_dir)
+    print(hps.model_dir)
     for i in range(n_gpus):
         subproc = mp.Process(
             target=run,
-            args=(i, n_gpus, hps, logger),
+            args=(i, n_gpus, hps),
         )
         children.append(subproc)
         subproc.start()
@@ -117,10 +118,10 @@ def main():
         children[i].join()
 
 
-def run(rank, n_gpus, hps, logger: logging.Logger):
+def run(rank, n_gpus, hps):
     global global_step
     if rank == 0:
-        # logger = utils.get_logger(hps.model_dir)
+        logger = utils.get_logger(hps.model_dir)
         logger.info(hps)
         # utils.check_git_hash(hps.model_dir)
         writer = SummaryWriter(log_dir=hps.model_dir)
