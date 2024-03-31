@@ -105,7 +105,6 @@ def main():
     os.environ["MASTER_PORT"] = str(randint(20000, 55555))
     children = []
     logger = utils.get_logger(hps.model_dir)
-    print(hps.model_dir)
     for i in range(n_gpus):
         subproc = mp.Process(
             target=run,
