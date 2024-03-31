@@ -31,6 +31,7 @@ import traceback
 import threading
 import shutil
 import logging
+import datetime
 
 
 logging.getLogger("numba").setLevel(logging.WARNING)
@@ -795,6 +796,30 @@ def change_f0_method(f0method8):
     return {"visible": visible, "__type__": "update"}
 
 
+def save_to_wav(record_button):
+    if record_button is None:
+        pass
+    else:
+        path_to_file = record_button
+        new_name = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".wav"
+        target_path = os.path.join("assets", "audios", os.path.basename(new_name))
+
+        shutil.move(path_to_file, target_path)
+        return target_path
+    
+
+def save_to_wav2(dropbox):
+    file_path = dropbox.name
+    target_path = os.path.join("assets", "audios", os.path.basename(file_path))
+
+    if os.path.exists(target_path):
+        os.remove(target_path)
+        print("Replacing old dropdown file...")
+
+    shutil.move(file_path, target_path)
+    return target_path
+
+
 with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue="sky",neutral_hue="zinc")) as app:
     gr.Markdown("## 💙 AX-RVC WebUI")
     #gr.Markdown(
@@ -826,6 +851,13 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
             with gr.TabItem(i18n("单次推理")):
                 with gr.Group():
                     with gr.Row():
+                        with gr.Column():  # First column for audio-related inputs
+                            dropbox = gr.File(label=i18n("Drag your audio here:"))
+                            record_button = gr.Audio(
+                                source="microphone",
+                                label=i18n("Or record an audio:"),
+                                type="filepath",
+                            )
                         with gr.Column():
                             vc_transform0 = gr.Number(
                                 label=i18n("变调(整数, 半音数量, 升八度12降八度-12)"),
@@ -914,6 +946,16 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                                 visible=False,
                             )
 
+                            dropbox.upload(
+                                fn=save_to_wav2,
+                                inputs=[dropbox],
+                                outputs=[input_audio0],
+                            )
+                            record_button.change(
+                                fn=save_to_wav,
+                                inputs=[record_button],
+                                outputs=[input_audio0],
+                            )
                             refresh_button.click(
                                 fn=change_choices,
                                 inputs=[],
