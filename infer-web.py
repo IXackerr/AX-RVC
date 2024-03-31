@@ -1276,18 +1276,18 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                 with gr.Row():
                     save_epoch10 = gr.Slider(
                         minimum=1,
-                        maximum=50,
+                        maximum=500,
                         step=1,
                         label=i18n("保存频率save_every_epoch"),
-                        value=5,
+                        value=25,
                         interactive=True,
                     )
                     total_epoch11 = gr.Slider(
                         minimum=2,
-                        maximum=1000,
+                        maximum=10000,
                         step=1,
                         label=i18n("总训练轮数total_epoch"),
-                        value=20,
+                        value=200,
                         interactive=True,
                     )
                     batch_size12 = gr.Slider(
@@ -1301,7 +1301,7 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                     if_save_latest13 = gr.Radio(
                         label=i18n("是否仅保存最新的ckpt文件以节省硬盘空间"),
                         choices=[i18n("是"), i18n("否")],
-                        value=i18n("否"),
+                        value=i18n("是"),
                         interactive=True,
                     )
                     if_cache_gpu17 = gr.Radio(
