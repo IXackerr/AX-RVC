@@ -67,7 +67,7 @@ import torch,platform,numpy as np,gradio as gr,faiss,fairseq,pathlib,json
 from time import sleep
 from subprocess import Popen
 from random import shuffle
-import warnings,traceback,threading,shutil,logging,datetime
+import warnings,traceback,threading,shutil,logging,datetime,tabs.resources as resources
 logging.getLogger('numba').setLevel(logging.WARNING)
 logging.getLogger('httpx').setLevel(logging.WARNING)
 logger=logging.getLogger(__name__)
@@ -290,6 +290,7 @@ with gr.Blocks(title='💙 AX-RVC WebUI 💎',theme=gr.themes.Base(primary_hue='
 			with gr.Accordion(i18n('step3: 填写训练设置, 开始训练模型和索引')):
 				with gr.Row():save_epoch10=gr.Slider(minimum=1,maximum=500,step=1,label=i18n('保存频率save_every_epoch'),value=25,interactive=_A);total_epoch11=gr.Slider(minimum=2,maximum=10000,step=1,label=i18n('总训练轮数total_epoch'),value=200,interactive=_A);batch_size12=gr.Slider(minimum=1,maximum=40,step=1,label=i18n('每张显卡的batch_size'),value=default_batch_size,interactive=_A);if_save_latest13=gr.Radio(label=i18n('是否仅保存最新的ckpt文件以节省硬盘空间'),choices=[i18n(_H),i18n('否')],value=i18n(_H),interactive=_A);if_cache_gpu17=gr.Radio(label=i18n('是否缓存所有训练集至显存. 10min以下小数据可缓存以加速训练, 大数据缓存会炸显存也加不了多少速'),choices=[i18n(_H),i18n('否')],value=i18n('否'),interactive=_A);if_save_every_weights18=gr.Radio(label=i18n('是否在每次保存时间点将最终小模型保存至weights文件夹'),choices=[i18n(_H),i18n('否')],value=i18n('否'),interactive=_A)
 				with gr.Row():file_dict={f:os.path.join(_A1,f)for f in os.listdir(_A1)};file_dict={k:v for(k,v)in file_dict.items()if k.endswith(_P)};file_dict_g={k:v for(k,v)in file_dict.items()if'G'in k and _Q in k};file_dict_d={k:v for(k,v)in file_dict.items()if'D'in k and _Q in k};pretrained_G14=gr.Dropdown(label=i18n('加载预训练底模G路径'),choices=list(file_dict_g.values()),value=file_dict_g['f0G32k.pth'],interactive=_A);pretrained_D15=gr.Dropdown(label=i18n('加载预训练底模D路径'),choices=list(file_dict_d.values()),value=file_dict_d['f0D32k.pth'],interactive=_A);sr2.change(change_sr2,[sr2,if_f0_3,version19],[pretrained_G14,pretrained_D15]);version19.change(change_version19,[sr2,if_f0_3,version19],[pretrained_G14,pretrained_D15,sr2]);if_f0_3.change(change_f0,[if_f0_3,sr2,version19],[f0method8,gpus_rmvpe,pretrained_G14,pretrained_D15]);gpus16=gr.Textbox(label=i18n(_A0),value=gpus,interactive=_A);but3=gr.Button(i18n('训练模型'),variant=_C);but4=gr.Button(i18n('训练特征索引'),variant=_C);info3=gr.Textbox(label=i18n(_J),value='',max_lines=10);but3.click(click_train,[exp_dir1,sr2,if_f0_3,spk_id5,save_epoch10,total_epoch11,batch_size12,if_save_latest13,pretrained_G14,pretrained_D15,gpus16,if_cache_gpu17,if_save_every_weights18,version19],info3,api_name='train_start');but4.click(train_index,[exp_dir1,version19],info3)
+		with gr.TabItem(i18n('Resources')):resources.download_model();resources.download_backup();resources.download_dataset(trainset_dir4);resources.download_audio()
 		with gr.TabItem(i18n('ckpt处理')):
 			with gr.Group():
 				gr.Markdown(value=i18n('模型融合, 可用于测试音色融合'))

@@ -33,6 +33,8 @@ import shutil
 import logging
 import datetime
 
+import tabs.resources as resources
+
 
 logging.getLogger("numba").setLevel(logging.WARNING)
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -1468,6 +1470,12 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                         api_name="train_start",
                     )
                     but4.click(train_index, [exp_dir1, version19], info3)
+
+        with gr.TabItem(i18n("Resources")):
+            resources.download_model()
+            resources.download_backup()
+            resources.download_dataset(trainset_dir4)
+            resources.download_audio()
 
         with gr.TabItem(i18n("ckpt处理")):
             with gr.Group():
