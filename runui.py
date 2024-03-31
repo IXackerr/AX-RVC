@@ -9,8 +9,8 @@ _u='保护清辅音和呼吸声，防止电音撕裂等artifact，拉满0.5不�
 _t='输入源音量包络替换输出音量包络融合比例，越靠近1越使用输出包络'
 _s='后处理重采样至最终采样率，0为不进行重采样'
 _r='选择音高提取算法,输入歌声可用pm提速,harvest低音好但巨慢无比,crepe效果好但吃GPU,rmvpe效果最好且微吃GPU'
-_q='自动检测index路径,下拉式选择(dropdown)'
-_p='特征检索库文件路径,为空则使用下拉的选择结果'
+_q='Advanced Settings'
+_p='自动检测index路径,下拉式选择(dropdown)'
 _o='变调(整数, 半音数量, 升八度12降八度-12)'
 _n='audios'
 _m='assets'
@@ -255,8 +255,11 @@ with gr.Blocks(title='💙 AX-RVC WebUI 💎',theme=gr.themes.Base(primary_hue='
 				with gr.Group():
 					with gr.Row():
 						with gr.Column():dropbox=gr.File(label=i18n('Drag your audio here:'));record_button=gr.Audio(sources='microphone',label=i18n('Or record an audio:'),type='filepath')
-						with gr.Column():vc_transform0=gr.Number(label=i18n(_o),value=0);input_audio0=gr.Dropdown(label=i18n('输入待处理音频文件路径(默认是正确格式示例)'),choices=sorted(audio_paths),value='',interactive=_A);file_index1=gr.Textbox(label=i18n(_p),placeholder='C:\\Users\\Desktop\\model_example.index',interactive=_A);file_index2=gr.Dropdown(label=i18n(_q),choices=sorted(index_paths),interactive=_A);f0method0=gr.Radio(label=i18n(_r),choices=[_R,_S,'crepe',_M]if config.dml==_B else[_R,_S,_M],value=_M,interactive=_A)
-						with gr.Column():resample_sr0=gr.Slider(minimum=0,maximum=48000,label=i18n(_s),value=0,step=1,interactive=_A);rms_mix_rate0=gr.Slider(minimum=0,maximum=1,label=i18n(_t),value=.25,interactive=_A);protect0=gr.Slider(minimum=0,maximum=.5,label=i18n(_u),value=.33,step=.01,interactive=_A);filter_radius0=gr.Slider(minimum=0,maximum=7,label=i18n(_v),value=3,step=1,interactive=_A);index_rate1=gr.Slider(minimum=0,maximum=1,label=i18n(_w),value=.75,interactive=_A);f0_file=gr.File(label=i18n('F0曲线文件, 可选, 一行一个音高, 代替默认F0及升降调'),visible=_B);dropbox.upload(fn=save_to_wav2,inputs=[dropbox],outputs=[input_audio0]);record_button.change(fn=save_to_wav,inputs=[record_button],outputs=[input_audio0]);refresh_button.click(fn=change_choices,inputs=[],outputs=[sid0,file_index2,input_audio0],api_name='infer_refresh')
+						with gr.Column():vc_transform0=gr.Number(label=i18n(_o),value=0);input_audio0=gr.Dropdown(label=i18n('输入待处理音频文件路径(默认是正确格式示例)'),choices=sorted(audio_paths),value='',interactive=_A);file_index2=gr.Dropdown(label=i18n(_p),choices=sorted(index_paths),interactive=_A);dropbox.upload(fn=save_to_wav2,inputs=[dropbox],outputs=[input_audio0]);record_button.change(fn=save_to_wav,inputs=[record_button],outputs=[input_audio0]);refresh_button.click(fn=change_choices,inputs=[],outputs=[sid0,file_index2,input_audio0],api_name='infer_refresh')
+					advanced_settings_checkbox=gr.Checkbox(value=_B,label=i18n(_q),interactive=_A)
+					with gr.Column(visible=_B)as advanced_settings:
+						with gr.Row(label=i18n(_q),open=_B):
+							with gr.Column():f0method0=gr.Radio(label=i18n(_r),choices=[_R,_S,'crepe',_M]if config.dml==_B else[_R,_S,_M],value=_M,interactive=_A);resample_sr0=gr.Slider(minimum=0,maximum=48000,label=i18n(_s),value=0,step=1,interactive=_A);rms_mix_rate0=gr.Slider(minimum=0,maximum=1,label=i18n(_t),value=.25,interactive=_A);protect0=gr.Slider(minimum=0,maximum=.5,label=i18n(_u),value=.33,step=.01,interactive=_A);filter_radius0=gr.Slider(minimum=0,maximum=7,label=i18n(_v),value=3,step=1,interactive=_A);index_rate1=gr.Slider(minimum=0,maximum=1,label=i18n(_w),value=.75,interactive=_A);f0_file=gr.File(label=i18n('F0曲线文件, 可选, 一行一个音高, 代替默认F0及升降调'),visible=_B)
 				with gr.Group():
 					with gr.Column():
 						but0=gr.Button(i18n('转换'),variant=_C)
@@ -265,7 +268,7 @@ with gr.Blocks(title='💙 AX-RVC WebUI 💎',theme=gr.themes.Base(primary_hue='
 			with gr.TabItem(i18n('批量推理')):
 				gr.Markdown(value=i18n('批量转换, 输入待转换音频文件夹, 或上传多个音频文件, 在指定文件夹(默认opt)下输出转换的音频. '))
 				with gr.Row():
-					with gr.Column():vc_transform1=gr.Number(label=i18n(_o),value=0);opt_input=gr.Textbox(label=i18n('指定输出文件夹'),value=_d);file_index3=gr.Textbox(label=i18n(_p),value='',interactive=_A);file_index4=gr.Dropdown(label=i18n(_q),choices=sorted(index_paths),interactive=_A);f0method1=gr.Radio(label=i18n(_r),choices=[_R,_S,'crepe',_M]if config.dml==_B else[_R,_S,_M],value=_M,interactive=_A);format1=gr.Radio(label=i18n(_x),choices=[_T,_U,_X,_Y],value=_T,interactive=_A);refresh_button.click(fn=lambda:change_choices()[1],inputs=[],outputs=file_index4,api_name='infer_refresh_batch')
+					with gr.Column():vc_transform1=gr.Number(label=i18n(_o),value=0);opt_input=gr.Textbox(label=i18n('指定输出文件夹'),value=_d);file_index3=gr.Textbox(label=i18n('特征检索库文件路径,为空则使用下拉的选择结果'),value='',interactive=_A);file_index4=gr.Dropdown(label=i18n(_p),choices=sorted(index_paths),interactive=_A);f0method1=gr.Radio(label=i18n(_r),choices=[_R,_S,'crepe',_M]if config.dml==_B else[_R,_S,_M],value=_M,interactive=_A);format1=gr.Radio(label=i18n(_x),choices=[_T,_U,_X,_Y],value=_T,interactive=_A);refresh_button.click(fn=lambda:change_choices()[1],inputs=[],outputs=file_index4,api_name='infer_refresh_batch')
 					with gr.Column():resample_sr1=gr.Slider(minimum=0,maximum=48000,label=i18n(_s),value=0,step=1,interactive=_A);rms_mix_rate1=gr.Slider(minimum=0,maximum=1,label=i18n(_t),value=1,interactive=_A);protect1=gr.Slider(minimum=0,maximum=.5,label=i18n(_u),value=.33,step=.01,interactive=_A);filter_radius1=gr.Slider(minimum=0,maximum=7,label=i18n(_v),value=3,step=1,interactive=_A);index_rate2=gr.Slider(minimum=0,maximum=1,label=i18n(_w),value=1,interactive=_A)
 				with gr.Row():dir_input=gr.Textbox(label=i18n('输入待处理音频文件夹路径(去文件管理器地址栏拷就行了)'),placeholder='C:\\Users\\Desktop\\input_vocal_dir');inputs=gr.File(file_count=_y,label=i18n(_z))
 				with gr.Row():but1=gr.Button(i18n('转换'),variant=_C);vc_output3=gr.Textbox(label=i18n(_J));but1.click(vc.vc_multi,[spk_item,dir_input,opt_input,inputs,vc_transform1,f0method1,file_index3,file_index4,index_rate2,filter_radius1,resample_sr1,rms_mix_rate1,protect1,format1],[vc_output3],api_name='infer_convert_batch')
