@@ -920,7 +920,6 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
 
                             dropbox.upload(
                                 fn=save_to_wav2,
-                                show_progress="full",
                                 inputs=[dropbox],
                                 outputs=[input_audio0],
                             )
