@@ -119,9 +119,10 @@ def main():
 
 def run(rank, n_gpus, hps):
     global global_step
+    logger = utils.get_logger(hps.model_dir)
+    logger.info(hps)
+    
     if rank == 0:
-        logger = utils.get_logger(hps.model_dir)
-        logger.info(hps)
         # utils.check_git_hash(hps.model_dir)
         writer = SummaryWriter(log_dir=hps.model_dir)
         writer_eval = SummaryWriter(log_dir=os.path.join(hps.model_dir, "eval"))
@@ -220,7 +221,6 @@ def run(rank, n_gpus, hps):
         # global_step = 0
     except:  # 如果首次不能加载，加载pretrain
         # traceback.print_exc()
-        logger = utils.get_logger(hps.model_dir)
         epoch_str = 1
         global_step = 0
         if hps.pretrainG != "":
