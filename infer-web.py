@@ -921,7 +921,7 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                             fn=save_to_wav2,
                             inputs=[dropbox],
                             outputs=[input_audio0],
-                            show_progress=True,
+                            show_progress='full',
 
                         )
                         record_button.change(
