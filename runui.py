@@ -253,7 +253,7 @@ with gr.Blocks(title='💙 AX-RVC WebUI 💎',theme=gr.themes.Base(primary_hue='
 				spk_item=gr.Slider(minimum=0,maximum=2333,step=1,label=i18n('请选择说话人id'),value=0,visible=_B,interactive=_A);clean_button.click(fn=clean,inputs=[],outputs=[sid0],api_name='infer_clean')
 			with gr.TabItem(i18n('单次推理')):
 				with gr.Row():
-					with gr.Column():dropbox=gr.File(label=i18n('Drag your audio here:'));gr.File(label=i18n('Test'));record_button=gr.Audio(sources='microphone',label=i18n('Or record an audio:'),type='filepath')
+					with gr.Column():dropbox=gr.File(label=i18n('Drag your audio here:'));record_button=gr.Audio(sources='microphone',label=i18n('Or record an audio:'),type='filepath')
 					with gr.Column():vc_transform0=gr.Number(label=i18n(_o),value=0);input_audio0=gr.Dropdown(label=i18n('输入待处理音频文件路径(默认是正确格式示例)'),choices=sorted(audio_paths),value='',interactive=_A);file_index2=gr.Dropdown(label=i18n(_p),choices=sorted(index_paths),interactive=_A);dropbox.upload(fn=save_to_wav2,inputs=[dropbox],outputs=[input_audio0],show_progress='full');record_button.change(fn=save_to_wav,inputs=[record_button],outputs=[input_audio0]);refresh_button.click(fn=change_choices,inputs=[],outputs=[sid0,file_index2,input_audio0],api_name='infer_refresh')
 				with gr.Accordion(i18n('Advanced Settings'),open=_B):
 					with gr.Row():
