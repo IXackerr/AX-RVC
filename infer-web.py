@@ -1673,7 +1673,6 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
 
     if config.iscolab or config.paperspace:
         app.queue(max_size=1022).launch(
-            max_threads=511,
             server_name="0.0.0.0",
             inbrowser=not config.noautoopen,
             server_port=config.listen_port,
@@ -1682,7 +1681,6 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
         )
     else:
         app.queue(max_size=1022).launch(
-            max_threads=511,
             server_name="0.0.0.0",
             inbrowser=not config.noautoopen,
             server_port=config.listen_port,

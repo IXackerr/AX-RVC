@@ -329,5 +329,5 @@ with gr.Blocks(title='💙 AX-RVC WebUI 💎',theme=gr.themes.Base(primary_hue='
 					with open('docs/en/faq_en.md',_K,encoding='utf8')as f:info=f.read()
 				gr.Markdown(value=info)
 			except:gr.Markdown(traceback.format_exc())
-	if config.iscolab or config.paperspace:app.queue(max_size=1022).launch(max_threads=511,server_name='0.0.0.0',inbrowser=not config.noautoopen,server_port=config.listen_port,quiet=_A,share=_B)
-	else:app.queue(max_size=1022).launch(max_threads=511,server_name='0.0.0.0',inbrowser=not config.noautoopen,server_port=config.listen_port,quiet=_A)
+	if config.iscolab or config.paperspace:app.queue(max_size=1022).launch(server_name='0.0.0.0',inbrowser=not config.noautoopen,server_port=config.listen_port,quiet=_A,share=_B)
+	else:app.queue(max_size=1022).launch(server_name='0.0.0.0',inbrowser=not config.noautoopen,server_port=config.listen_port,quiet=_A)
