@@ -893,7 +893,7 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                 with gr.Group():
                     with gr.Row():
                         with gr.Column():  # First column for audio-related inputs
-                            dropbox = gr.File(label=i18n("Drag your audio here:"))
+                            dropbox = gr.File(label=i18n("Drag your audio here:"),show_progress=True,)
                             record_button = gr.Audio(
                                 sources="microphone",
                                 label=i18n("Or record an audio:"),
@@ -922,6 +922,7 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                                 fn=save_to_wav2,
                                 inputs=[dropbox],
                                 outputs=[input_audio0],
+                                show_progress="full",
                             )
                             record_button.change(
                                 fn=save_to_wav,
