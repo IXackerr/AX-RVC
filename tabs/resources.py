@@ -955,7 +955,7 @@ def update_dataset_list(name):
                     file_path, "datasets", foldername
                 )
             )
-    return gr.Dropdown.update(choices=new_datasets)
+    return gr.Dropdown(choices=new_datasets)
 
 
 def download_dataset(trainset_dir4):

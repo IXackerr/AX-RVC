@@ -127,6 +127,7 @@ weight_uvr5_root = os.getenv("weight_uvr5_root")
 index_root = "logs"
 audio_root = "assets/audios"
 outside_index_root = os.getenv("outside_index_root")
+datasets_root = "datasets"
 
 sup_audioext = {
     "wav",
@@ -160,6 +161,11 @@ audio_paths = [
     for name in files
     if name.endswith(tuple(sup_audioext)) and root == audio_root
 ]
+
+datasets = []
+for foldername in os.listdir(os.path.join(now_dir, datasets_root)):
+    if "." not in foldername:
+        datasets.append(os.path.join(now_dir, "datasets", foldername))
 
 
 def lookup_indices(index_root):
@@ -860,6 +866,25 @@ def save_to_wav2(dropbox):
     shutil.move(file_path, target_path)
     return target_path
 
+def get_dataset():
+    if len(datasets) > 0:
+        return sorted(datasets)[0]
+    else:
+        return ""
+    
+def update_dataset_list(name):
+    new_datasets = []
+    for foldername in os.listdir(os.path.join(now_dir, datasets_root)):
+        if "." not in foldername:
+            new_datasets.append(
+                os.path.join(
+                    now_dir,
+                    "datasets",
+                    foldername,
+                )
+            )
+    return gr.Dropdown(choices=new_datasets)
+
 
 with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue="sky",neutral_hue="zinc")) as app:
     gr.Markdown("## 💙 AX-RVC WebUI")
@@ -1286,9 +1311,15 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                         "step2a: 自动遍历训练文件夹下所有可解码成音频的文件并进行切片归一化, 在实验目录下生成2个wav文件夹; 暂时只支持单人训练. "
                     )):
                 with gr.Row():
-                    trainset_dir4 = gr.Textbox(
+                    trainset_dir4 = gr.Dropdown(
+                        choices=sorted(datasets),
+                        label=i18n("Select your dataset:"),
+                        value=get_dataset(),
+                    )
+                    dataset_path = gr.Textbox(
                         label=i18n("输入训练文件夹路径"),
-                        value=i18n("E:\\语音音频+标注\\米津玄师\\src"),
+                        placeholder=i18n("E:\\语音音频+标注\\米津玄师\\src"),
+                        value="",
                     )
                     spk_id5 = gr.Slider(
                         minimum=0,
