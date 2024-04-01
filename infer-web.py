@@ -918,11 +918,11 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                                 interactive=True,
                             )
 
-                            dropbox.upload(
-                                fn=save_to_wav2,
-                                inputs=[dropbox],
-                                outputs=[input_audio0],
-                            )
+                            #dropbox.upload(
+                            #    fn=save_to_wav2,
+                            #    inputs=[dropbox],
+                            #    outputs=[input_audio0],
+                            #)
                             record_button.change(
                                 fn=save_to_wav,
                                 inputs=[record_button],
