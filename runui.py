@@ -252,14 +252,13 @@ with gr.Blocks(title='💙 AX-RVC WebUI 💎',theme=gr.themes.Base(primary_hue='
 				with gr.Column():refresh_button=gr.Button(i18n('刷新音色列表和索引路径'),variant=_C);clean_button=gr.Button(i18n('卸载音色省显存'),variant=_C)
 				spk_item=gr.Slider(minimum=0,maximum=2333,step=1,label=i18n('请选择说话人id'),value=0,visible=_B,interactive=_A);clean_button.click(fn=clean,inputs=[],outputs=[sid0],api_name='infer_clean')
 			with gr.TabItem(i18n('单次推理')):
-				with gr.Group():
+				with gr.Row():
+					with gr.Column():dropbox=gr.File(label=i18n('Drag your audio here:'));filedrop=gr.File();record_button=gr.Audio(sources='microphone',label=i18n('Or record an audio:'),type='filepath')
+					with gr.Column():vc_transform0=gr.Number(label=i18n(_o),value=0);input_audio0=gr.Dropdown(label=i18n('输入待处理音频文件路径(默认是正确格式示例)'),choices=sorted(audio_paths),value='',interactive=_A);file_index2=gr.Dropdown(label=i18n(_p),choices=sorted(index_paths),interactive=_A);dropbox.upload(fn=save_to_wav2,inputs=[dropbox],outputs=[input_audio0]);record_button.change(fn=save_to_wav,inputs=[record_button],outputs=[input_audio0]);refresh_button.click(fn=change_choices,inputs=[],outputs=[sid0,file_index2,input_audio0],api_name='infer_refresh')
+				with gr.Accordion(i18n('Advanced Settings'),open=_B):
 					with gr.Row():
-						with gr.Column():dropbox=gr.File(label=i18n('Drag your audio here:'));filedrop=gr.File();record_button=gr.Audio(sources='microphone',label=i18n('Or record an audio:'),type='filepath')
-						with gr.Column():vc_transform0=gr.Number(label=i18n(_o),value=0);input_audio0=gr.Dropdown(label=i18n('输入待处理音频文件路径(默认是正确格式示例)'),choices=sorted(audio_paths),value='',interactive=_A);file_index2=gr.Dropdown(label=i18n(_p),choices=sorted(index_paths),interactive=_A);dropbox.upload(fn=save_to_wav2,inputs=[dropbox],outputs=[input_audio0]);record_button.change(fn=save_to_wav,inputs=[record_button],outputs=[input_audio0]);refresh_button.click(fn=change_choices,inputs=[],outputs=[sid0,file_index2,input_audio0],api_name='infer_refresh')
-					with gr.Accordion(i18n('Advanced Settings'),open=_B):
-						with gr.Row():
-							with gr.Column():f0method0=gr.Radio(label=i18n(_q),choices=[_R,_S,'crepe',_M]if config.dml==_B else[_R,_S,_M],value=_M,interactive=_A);resample_sr0=gr.Slider(minimum=0,maximum=48000,label=i18n(_r),value=0,step=1,interactive=_A);rms_mix_rate0=gr.Slider(minimum=0,maximum=1,label=i18n(_s),value=.25,interactive=_A)
-							with gr.Column():protect0=gr.Slider(minimum=0,maximum=.5,label=i18n(_t),value=.33,step=.01,interactive=_A);filter_radius0=gr.Slider(minimum=0,maximum=7,label=i18n(_u),value=3,step=1,interactive=_A);index_rate1=gr.Slider(minimum=0,maximum=1,label=i18n(_v),value=.75,interactive=_A);f0_file=gr.File(label=i18n('F0曲线文件, 可选, 一行一个音高, 代替默认F0及升降调'),visible=_B);file_index1=gr.Textbox(label=i18n(_w),placeholder='C:\\Users\\Desktop\\model_example.index',interactive=_A,visible=_B)
+						with gr.Column():f0method0=gr.Radio(label=i18n(_q),choices=[_R,_S,'crepe',_M]if config.dml==_B else[_R,_S,_M],value=_M,interactive=_A);resample_sr0=gr.Slider(minimum=0,maximum=48000,label=i18n(_r),value=0,step=1,interactive=_A);rms_mix_rate0=gr.Slider(minimum=0,maximum=1,label=i18n(_s),value=.25,interactive=_A)
+						with gr.Column():protect0=gr.Slider(minimum=0,maximum=.5,label=i18n(_t),value=.33,step=.01,interactive=_A);filter_radius0=gr.Slider(minimum=0,maximum=7,label=i18n(_u),value=3,step=1,interactive=_A);index_rate1=gr.Slider(minimum=0,maximum=1,label=i18n(_v),value=.75,interactive=_A);f0_file=gr.File(label=i18n('F0曲线文件, 可选, 一行一个音高, 代替默认F0及升降调'),visible=_B);file_index1=gr.Textbox(label=i18n(_w),placeholder='C:\\Users\\Desktop\\model_example.index',interactive=_A,visible=_B)
 				but0=gr.Button(i18n('转换'),variant=_C)
 				with gr.Group():
 					with gr.Column():
