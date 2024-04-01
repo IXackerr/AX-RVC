@@ -220,6 +220,7 @@ def run(rank, n_gpus, hps):
         # global_step = 0
     except:  # 如果首次不能加载，加载pretrain
         # traceback.print_exc()
+        logger = utils.get_logger(hps.model_dir)
         epoch_str = 1
         global_step = 0
         if hps.pretrainG != "":
