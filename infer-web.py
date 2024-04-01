@@ -252,7 +252,9 @@ def if_done_multi(done, ps):
     done[0] = True
 
 
-def preprocess_dataset(trainset_dir, exp_dir, sr, n_p):
+def preprocess_dataset(trainset_dir, exp_dir, sr, n_p, dataset_path):
+    if not dataset_path.strip() == "":
+        trainset_dir = dataset_path
     sr = sr_dict[sr]
     os.makedirs("%s/logs/%s" % (now_dir, exp_dir), exist_ok=True)
     f = open("%s/logs/%s/preprocess.log" % (now_dir, exp_dir), "w")
@@ -1311,16 +1313,20 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                         "step2a: 自动遍历训练文件夹下所有可解码成音频的文件并进行切片归一化, 在实验目录下生成2个wav文件夹; 暂时只支持单人训练. "
                     )):
                 with gr.Row():
-                    trainset_dir4 = gr.Dropdown(
-                        choices=sorted(datasets),
-                        label=i18n("Select your dataset:"),
-                        value=get_dataset(),
-                    )
-                    dataset_path = gr.Textbox(
-                        label=i18n("输入训练文件夹路径"),
-                        placeholder=i18n("E:\\语音音频+标注\\米津玄师\\src"),
-                        value="",
-                    )
+                    with gr.Column():
+                        trainset_dir4 = gr.Dropdown(
+                            choices=sorted(datasets),
+                            label=i18n("Select your dataset:"),
+                            value=get_dataset(),
+                        )
+                        dataset_path = gr.Textbox(
+                            label=i18n("输入训练文件夹路径"),
+                            placeholder=i18n("E:\\语音音频+标注\\米津玄师\\src"),
+                            value="",
+                        )
+                        btn_update_dataset_list = gr.Button(
+                            i18n("Update list"), variant="primary"
+                        )
                     spk_id5 = gr.Slider(
                         minimum=0,
                         maximum=4,
@@ -1331,9 +1337,13 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                     )
                     but1 = gr.Button(i18n("处理数据"), variant="primary")
                     info1 = gr.Textbox(label=i18n("输出信息"), value="")
+
+                    btn_update_dataset_list.click(
+                        resources.update_dataset_list, [spk_id5], trainset_dir4
+                    )
                     but1.click(
                         preprocess_dataset,
-                        [trainset_dir4, exp_dir1, sr2, np7],
+                        [trainset_dir4, exp_dir1, sr2, np7, dataset_path],
                         [info1],
                         api_name="train_preprocess",
                     )

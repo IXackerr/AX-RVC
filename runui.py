@@ -139,8 +139,10 @@ def if_done_multi(done,ps):
 			if p.poll()is None:flag=0;sleep(.5);break
 		if flag==1:break
 	done[0]=_A
-def preprocess_dataset(trainset_dir,exp_dir,sr,n_p):
-	A='%s/logs/%s/preprocess.log';sr=sr_dict[sr];os.makedirs(_c%(now_dir,exp_dir),exist_ok=_A);f=open(A%(now_dir,exp_dir),'w');f.close();cmd='"%s" infer/modules/train/preprocess.py "%s" %s %s "%s/logs/%s" %s %.1f'%(config.python_cmd,trainset_dir,sr,n_p,now_dir,exp_dir,config.noparallel,config.preprocess_per);logger.info(_P+cmd);p=Popen(cmd,shell=_A);done=[_B];threading.Thread(target=if_done,args=(done,p)).start()
+def preprocess_dataset(trainset_dir,exp_dir,sr,n_p,dataset_path):
+	A='%s/logs/%s/preprocess.log'
+	if not dataset_path.strip()=='':trainset_dir=dataset_path
+	sr=sr_dict[sr];os.makedirs(_c%(now_dir,exp_dir),exist_ok=_A);f=open(A%(now_dir,exp_dir),'w');f.close();cmd='"%s" infer/modules/train/preprocess.py "%s" %s %s "%s/logs/%s" %s %.1f'%(config.python_cmd,trainset_dir,sr,n_p,now_dir,exp_dir,config.noparallel,config.preprocess_per);logger.info(_P+cmd);p=Popen(cmd,shell=_A);done=[_B];threading.Thread(target=if_done,args=(done,p)).start()
 	while 1:
 		with open(A%(now_dir,exp_dir),_K)as f:yield f.read()
 		sleep(1)
@@ -296,7 +298,9 @@ with gr.Blocks(title='💙 AX-RVC WebUI 💎',theme=gr.themes.Base(primary_hue='
 			with gr.Accordion(i18n('step1: 填写实验配置. 实验数据放在logs下, 每个实验一个文件夹, 需手工输入实验名路径, 内含实验配置, 日志, 训练得到的模型文件. ')):
 				with gr.Row():exp_dir1=gr.Textbox(label=i18n('输入实验名'),value='mi-test');sr2=gr.Radio(label=i18n(_g),choices=[_I,_O],value=_I,interactive=_A);if_f0_3=gr.Radio(label=i18n('模型是否带音高指导(唱歌一定要, 语音可以不要)'),choices=[_A,_B],value=_A,interactive=_A);version19=gr.Radio(label=i18n('版本'),choices=[_M],value=_M,interactive=_A,visible=_A);np7=gr.Slider(minimum=0,maximum=config.n_cpu,step=1,label=i18n('提取音高和处理数据使用的CPU进程数'),value=int(np.ceil(config.n_cpu/1.5)),interactive=_A)
 			with gr.Accordion(i18n('step2a: 自动遍历训练文件夹下所有可解码成音频的文件并进行切片归一化, 在实验目录下生成2个wav文件夹; 暂时只支持单人训练. ')):
-				with gr.Row():trainset_dir4=gr.Dropdown(choices=sorted(datasets),label=i18n('Select your dataset:'),value=get_dataset());dataset_path=gr.Textbox(label=i18n('输入训练文件夹路径'),placeholder=i18n('E:\\语音音频+标注\\米津玄师\\src'),value='');spk_id5=gr.Slider(minimum=0,maximum=4,step=1,label=i18n('请指定说话人id'),value=0,interactive=_A);but1=gr.Button(i18n('处理数据'),variant=_C);info1=gr.Textbox(label=i18n(_J),value='');but1.click(preprocess_dataset,[trainset_dir4,exp_dir1,sr2,np7],[info1],api_name='train_preprocess')
+				with gr.Row():
+					with gr.Column():trainset_dir4=gr.Dropdown(choices=sorted(datasets),label=i18n('Select your dataset:'),value=get_dataset());dataset_path=gr.Textbox(label=i18n('输入训练文件夹路径'),placeholder=i18n('E:\\语音音频+标注\\米津玄师\\src'),value='');btn_update_dataset_list=gr.Button(i18n('Update list'),variant=_C)
+					spk_id5=gr.Slider(minimum=0,maximum=4,step=1,label=i18n('请指定说话人id'),value=0,interactive=_A);but1=gr.Button(i18n('处理数据'),variant=_C);info1=gr.Textbox(label=i18n(_J),value='');btn_update_dataset_list.click(resources.update_dataset_list,[spk_id5],trainset_dir4);but1.click(preprocess_dataset,[trainset_dir4,exp_dir1,sr2,np7,dataset_path],[info1],api_name='train_preprocess')
 			with gr.Accordion(i18n('step2b: 使用CPU提取音高(如果模型带音高), 使用GPU提取特征(选择卡号)')):
 				with gr.Row():
 					with gr.Column():gpus6=gr.Textbox(label=i18n(_A1),value=gpus,interactive=_A,visible=F0GPUVisible);gpu_info9=gr.Textbox(label=i18n('显卡信息'),value=gpu_info,visible=F0GPUVisible)
