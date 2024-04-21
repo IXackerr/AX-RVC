@@ -79,7 +79,7 @@ import warnings,traceback,threading,shutil,logging,datetime,tabs.resources as re
 from huggingface_hub import HfApi
 from huggingface_hub import login
 from huggingface_hub import hf_hub_download
-import time
+import time,zipfile,requests
 logging.getLogger('numba').setLevel(logging.WARNING)
 logging.getLogger('httpx').setLevel(logging.WARNING)
 logger=logging.getLogger(__name__)
