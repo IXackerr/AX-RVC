@@ -897,11 +897,11 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
         new_session = True,
     )
 
-    hug_file_path = "/kaggle/working/AX-RVC/hugupload"
+    hug_file_path = "/root/hugupload"
     hug_file_name = f'{zip_name_gr}.zip'
 
     if (what_upload_gr == "Model Only"):
-        os.system(f'cp /kaggle/working/AX-RVC/logs/weights/{model_name_gr}.pth {hug_file_path}')
+        os.system(f'cp /kaggle/working/AX-RVC/assets/weights/{model_name_gr}.pth {hug_file_path}')
         os.system(f'cp /kaggle/working/AX-RVC/logs/{model_name_gr}/added*.index {hug_file_path}')
         time.sleep(2)
         os.chdir(hug_file_path)
@@ -918,9 +918,9 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
             repo_type="model",
         )
 
-        os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}')
-        os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/{model_name_gr}.pth')
-        os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/added*.index')
+        os.system(f'rm -rf /root/hugupload/{hug_file_name}')
+        os.system(f'rm -rf /root/hugupload/{model_name_gr}.pth')
+        os.system(f'rm -rf /root/hugupload/added*.index')
 
         return "Succesful upload Model to Hugging Face"
     if (what_upload_gr == "Model Log Folder"):
@@ -928,7 +928,7 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
         os.system(f'cp -r /kaggle/working/AX-RVC/logs/{model_name_gr} {hug_file_path}')
         time.sleep(2)
         os.chdir(hug_file_path)
-        os.system(f'zip -r /kaggle/working/AX-RVC/hugupload/{hug_file_name} {model_name_gr}')
+        os.system(f'zip -r /root/hugupload/{hug_file_name} {model_name_gr}')
         os.chdir("/kaggle/working/AX-RVC/")
 
         api = HfApi(
@@ -942,14 +942,14 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
         )
         time.sleep(2)
 
-        os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}')
-        os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/{model_name_gr}')
+        os.system(f'rm -rf /root/hugupload/{hug_file_name}')
+        os.system(f'rm -rf /root/hugupload/{model_name_gr}')
 
         return "Succesful upload Logs to Hugging Face"
 
 def start_download_from_huggingface(hgf_token_gr_d, hgf_name_gr_d, hgf_repo_gr_d, zip_name_gr_d):
 
-    hug_file_path = "/kaggle/working/AX-RVC/hugupload"
+    hug_file_path = "/root/hugupload"
     hug_file_name = f'{zip_name_gr_d}.zip'
     hug_repo_id = f"{hgf_name_gr_d}/{hgf_repo_gr_d}"
     destination_folder = "/kaggle/working/AX-RVC/logs"
@@ -963,7 +963,7 @@ def start_download_from_huggingface(hgf_token_gr_d, hgf_name_gr_d, hgf_repo_gr_d
     os.chdir("/kaggle/working/AX-RVC/")
     time.sleep(2)
 
-    os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}')
+    os.system(f'rm -rf /root/hugupload/{hug_file_name}')
 
     return "Succesful download Logs from Hugging Face"
 
