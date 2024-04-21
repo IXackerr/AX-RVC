@@ -28,4 +28,3 @@ gradio
 noisereduce
 onnxruntime-directml
 torchfcpe
-huggingface-hub
