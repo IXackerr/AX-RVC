@@ -34,6 +34,9 @@ import logging
 import datetime
 
 import tabs.resources as resources
+from huggingface_hub import HfApi
+from huggingface_hub import login
+from huggingface_hub import hf_hub_download
 
 
 logging.getLogger("numba").setLevel(logging.WARNING)
@@ -887,6 +890,83 @@ def update_dataset_list(name):
             )
     return gr.Dropdown(choices=new_datasets)
 
+def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_name_gr, zip_name_gr, what_upload_gr):
+    login(
+        token=hgf_token_gr,
+        add_to_git_credential=True,
+        new_session = True,
+    )
+
+    hug_file_path = "/kaggle/working/AX-RVC/hugupload"
+    hug_file_name = f'{zip_name_gr}.zip'
+
+    if (what_upload_gr == "Model Only"):
+        os.system(f'cp /kaggle/working/AX-RVC/logs/weights/{model_name_gr}.pth {hug_file_path}')
+        os.system(f'cp /kaggle/working/AX-RVC/logs/{model_name_gr}/added*.index {hug_file_path}')
+        time.sleep(2)
+        os.chdir(hug_file_path)
+        os.system(f'zip -r /kaggle/working/AX-RVC/hugupload/{hug_file_name} {model_name_gr}.pth added*.index')
+        os.chdir("/kaggle/working/AX-RVC/")
+
+        api = HfApi(
+            token=hgf_token_gr,
+        )
+        api.upload_file(
+            path_or_fileobj=f"{hug_file_path}/{hug_file_name}",
+            path_in_repo=hug_file_name,
+            repo_id=f"{hgf_name_gr}/{hgf_repo_gr}",
+            repo_type="model",
+        )
+
+        os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}')
+        os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/{model_name_gr}.pth')
+        os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/added*.index')
+
+        return "Succesful upload Model to Hugging Face"
+    if (what_upload_gr == "Model Log Folder"):
+        hug_file_name = f'{zip_name_gr}_logs.zip'
+        os.system(f'cp -r /kaggle/working/AX-RVC/logs/{model_name_gr} {hug_file_path}')
+        time.sleep(2)
+        os.chdir(hug_file_path)
+        os.system(f'zip -r /kaggle/working/AX-RVC/hugupload/{hug_file_name} {model_name_gr}')
+        os.chdir("/kaggle/working/AX-RVC/")
+
+        api = HfApi(
+            token=hgf_token_gr,
+        )
+        api.upload_file(
+            path_or_fileobj=f"{hug_file_path}/{hug_file_name}",
+            path_in_repo=hug_file_name,
+            repo_id=f"{hgf_name_gr}/{hgf_repo_gr}",
+            repo_type="model",
+        )
+        time.sleep(2)
+
+        os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}')
+        os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/{model_name_gr}')
+
+        return "Succesful upload Logs to Hugging Face"
+
+def start_download_from_huggingface(hgf_token_gr_d, hgf_name_gr_d, hgf_repo_gr_d, zip_name_gr_d):
+
+    hug_file_path = "/kaggle/working/AX-RVC/hugupload"
+    hug_file_name = f'{zip_name_gr_d}.zip'
+    hug_repo_id = f"{hgf_name_gr_d}/{hgf_repo_gr_d}"
+    destination_folder = "/kaggle/working/AX-RVC/logs"
+
+    os.chdir(hug_file_path)
+    hf_hub_download(repo_id=hug_repo_id, filename=hug_file_name, token=hgf_token_gr_d, local_dir=hug_file_path)
+    time.sleep(2)
+    with zipfile.ZipFile(f"{hug_file_path}/{hug_file_name}", 'r') as zip_ref:
+        zip_ref.extractall(destination_folder)
+
+    os.chdir("/kaggle/working/AX-RVC/")
+    time.sleep(2)
+
+    os.system(f'rm -rf /kaggle/working/AX-RVC/hugupload/{hug_file_name}')
+
+    return "Succesful download Logs from Hugging Face"
+
 
 with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue="sky",neutral_hue="zinc")) as app:
     gr.Markdown("## 💙 AX-RVC WebUI")
@@ -1516,7 +1596,71 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                         api_name="train_start",
                     )
                     but4.click(train_index, [exp_dir1, version19], info3)
+        with gr.TabItem("HuggingFace 🤗"):
+            with gr.Accordion(label=i18n("Upload Model and Logs")):
+                with gr.Row():
+                    with gr.Column():
+                        hgf_token_gr = gr.Textbox(
+                            label="Enter HuggingFace Write Token:",
+                        )
+                        hgf_name_gr = gr.Textbox(
+                            label="Enter HuggingFace Username:",
+                        )
+                        hgf_repo_gr = gr.Textbox(
+                            label="Enter HuggingFace Model-Repo name:",
+                        )
+                    with gr.Column():
+                        model_name_gr = gr.Textbox(
+                            label="Trained model name:",
+                        )
+                        zip_name_gr = gr.Textbox(
+                            label="Name of Zip file:",
+                        )
+                        what_upload_gr = gr.Radio(
+                            label="Upload files:",
+                            choices=["Model Only", "Model Log Folder"],
+                            value="Model Only",
+                            interactive=True,
+                            visible=True,
+                        )
+                with gr.Row():
+                    uploadbut1 = gr.Button("Start upload", variant="primary")
 
+                    uploadinfo1 = gr.Textbox(
+                        label="Output information:", value=""
+                    )
+                    uploadbut1.click(
+                        start_upload_to_huggingface,
+                        [hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_name_gr, zip_name_gr, what_upload_gr],
+                        [uploadinfo1],
+                    )
+            with gr.Accordion(label=i18n("Download Logs files for training")):
+                with gr.Row():
+                    with gr.Column():
+                        hgf_token_gr_d = gr.Textbox(
+                            label="Enter HuggingFace Write Token:",
+                        )
+                        hgf_name_gr_d = gr.Textbox(
+                            label="Enter HuggingFace Username:",
+                        )
+                    with gr.Column():
+                        hgf_repo_gr_d = gr.Textbox(
+                            label="Enter HuggingFace Model-Repo name:",
+                        )
+                        zip_name_gr_d = gr.Textbox(
+                            label="Name of Zip file:",
+                        )
+                with gr.Row():
+                    downloadlogsbut1 = gr.Button("Start download", variant="primary")
+
+                    downloadlogsinfo1 = gr.Textbox(
+                        label="Output information:", value=""
+                    )
+                    downloadlogsbut1.click(
+                        start_download_from_huggingface,
+                        [hgf_token_gr_d, hgf_name_gr_d, hgf_repo_gr_d, zip_name_gr_d],
+                        [downloadlogsinfo1],
+                    )
         with gr.TabItem(i18n("Resources")):
             resources.download_model()
             resources.download_backup()
