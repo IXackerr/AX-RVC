@@ -955,6 +955,7 @@ def start_download_from_huggingface(hgf_token_gr_d, hgf_name_gr_d, hgf_repo_gr_d
     hug_repo_id = f"{hgf_name_gr_d}/{hgf_repo_gr_d}"
     destination_folder = "/kaggle/working/AX-RVC/logs"
 
+    os.makedirs(hug_file_path)
     os.chdir(hug_file_path)
     hf_hub_download(repo_id=hug_repo_id, filename=hug_file_name, token=hgf_token_gr_d, local_dir=hug_file_path)
     time.sleep(2)
