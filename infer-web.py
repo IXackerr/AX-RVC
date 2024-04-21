@@ -38,6 +38,8 @@ from huggingface_hub import HfApi
 from huggingface_hub import login
 from huggingface_hub import hf_hub_download
 import time
+import zipfile
+import requests
 
 
 logging.getLogger("numba").setLevel(logging.WARNING)
