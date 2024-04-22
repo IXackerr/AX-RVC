@@ -908,7 +908,7 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
         os.system(f'cp /kaggle/working/AX-RVC/logs/{model_name_gr}/added*.index {hug_file_path}')
         time.sleep(2)
         os.chdir(hug_file_path)
-        os.system(f'zip -r /kaggle/working/AX-RVC/hugupload/{hug_file_name} {model_name_gr}.pth added*.index')
+        os.system(f'zip -r {hug_file_path}/{hug_file_name} {model_name_gr}.pth added*.index')
         os.chdir("/kaggle/working/AX-RVC/")
 
         api = HfApi(
@@ -931,7 +931,7 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
         os.system(f'cp -r /kaggle/working/AX-RVC/logs/{model_name_gr} {hug_file_path}')
         time.sleep(2)
         os.chdir(hug_file_path)
-        os.system(f'zip -r /root/hugupload/{hug_file_name} {model_name_gr}')
+        os.system(f'zip -r {hug_file_path}/{hug_file_name} {model_name_gr}')
         os.chdir("/kaggle/working/AX-RVC/")
 
         api = HfApi(
