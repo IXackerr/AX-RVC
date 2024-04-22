@@ -1872,7 +1872,7 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
             with gr.Row():
                 butGitRestart = gr.Button(i18n("Git pull + Restart"), variant="primary")
             butGitRestart.click(
-                update_restart_app, None, None, api_name="export_onnx", _js="window.location.reload()"
+                update_restart_app, None, None, api_name="restart_ui"
             )
 
     if config.iscolab or config.paperspace:
