@@ -973,11 +973,35 @@ def start_download_from_huggingface(hgf_token_gr_d, hgf_name_gr_d, hgf_repo_gr_d
     os.system(f'rm -rf /root/hugupload/{hug_file_name}')
 
     return "Succesful download Logs from Hugging Face"
-
+    
+def show_restart_screen():
+    interface.close()
+    gr.HTML(
+        """
+        <div style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+        ">
+            RESTART
+        </div>
+        """
+    )
 
 def update_restart_app():
     # Выполнить git pull
     subprocess.run(["git", "pull"])
+
+    # Экран перезапуска
+    show_restart_screen()
     
     # Перезапустить текущий скрипт Python
     os.execl(sys.executable, sys.executable, *sys.argv)
