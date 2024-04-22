@@ -281,7 +281,7 @@ def start_download_from_huggingface(hgf_token_gr_d,hgf_name_gr_d,hgf_repo_gr_d,z
 	os.chdir(hug_file_path);hf_hub_download(repo_id=hug_repo_id,filename=hug_file_name,token=hgf_token_gr_d,local_dir=hug_file_path);time.sleep(2)
 	with zipfile.ZipFile(f"{hug_file_path}/{hug_file_name}",_J)as zip_ref:zip_ref.extractall(destination_folder)
 	os.chdir(_h);time.sleep(2);os.system(f"rm -rf /root/hugupload/{hug_file_name}");return'Succesful download Logs from Hugging Face'
-def show_restart_screen():interface.close();gr.HTML('\n        <div style="\n            position: fixed;\n            top: 0;\n            left: 0;\n            width: 100%;\n            height: 100%;\n            background-color: black;\n            color: white;\n            display: flex;\n            justify-content: center;\n            align-items: center;\n            font-size: 48px;\n        ">\n            RESTART\n        </div>\n        ')
+def show_restart_screen():app.close();gr.HTML('\n        <div style="\n            position: fixed;\n            top: 0;\n            left: 0;\n            width: 100%;\n            height: 100%;\n            background-color: black;\n            color: white;\n            display: flex;\n            justify-content: center;\n            align-items: center;\n            font-size: 48px;\n        ">\n            RESTART\n        </div>\n        ')
 def update_restart_app():subprocess.run(['git','pull']);show_restart_screen();os.execl(sys.executable,sys.executable,*sys.argv)
 with gr.Blocks(title='💙 AX-RVC WebUI 💎',theme=gr.themes.Base(primary_hue='sky',neutral_hue='zinc'))as app:
 	gr.Markdown('## 💙 AX-RVC WebUI')
