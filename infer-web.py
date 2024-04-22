@@ -25,6 +25,7 @@ import pathlib
 import json
 from time import sleep
 from subprocess import Popen
+import subprocess
 from random import shuffle
 import warnings
 import traceback
@@ -974,6 +975,13 @@ def start_download_from_huggingface(hgf_token_gr_d, hgf_name_gr_d, hgf_repo_gr_d
     return "Succesful download Logs from Hugging Face"
 
 
+def update_restart_app():
+    # Выполнить git pull
+    subprocess.run(["git", "pull"])
+    
+    # Перезапустить текущий скрипт Python
+    os.execl(sys.executable, sys.executable, *sys.argv)
+
 with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue="sky",neutral_hue="zinc")) as app:
     gr.Markdown("## 💙 AX-RVC WebUI")
     #gr.Markdown(
@@ -1859,6 +1867,13 @@ with gr.Blocks(title="💙 AX-RVC WebUI 💎", theme=gr.themes.Base(primary_hue=
                 gr.Markdown(value=info)
             except:
                 gr.Markdown(traceback.format_exc())
+                
+        with gr.TabItem(i18n("System Commands")):
+            with gr.Row():
+                butGitRestart = gr.Button(i18n("Git pull + Restart"), variant="primary")
+            butGitRestart.click(
+                update_restart_app, None, None, api_name="export_onnx", _js="window.location.reload()"
+            )
 
     if config.iscolab or config.paperspace:
         app.queue(max_size=1022).launch(
