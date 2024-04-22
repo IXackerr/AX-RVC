@@ -975,7 +975,7 @@ def start_download_from_huggingface(hgf_token_gr_d, hgf_name_gr_d, hgf_repo_gr_d
     return "Succesful download Logs from Hugging Face"
     
 def show_restart_screen():
-    interface.close()
+    app.close()
     gr.HTML(
         """
         <div style="
