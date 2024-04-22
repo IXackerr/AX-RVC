@@ -1,4 +1,3 @@
-_AB='export_onnx'
 _AA='Output information:'
 _A9='Name of Zip file:'
 _A8='Enter HuggingFace Model-Repo name:'
@@ -371,7 +370,7 @@ with gr.Blocks(title='💙 AX-RVC WebUI 💎',theme=gr.themes.Base(primary_hue='
 			with gr.Row():onnx_dir=gr.Textbox(label=i18n('Onnx输出路径'),value='',interactive=_A)
 			with gr.Row():infoOnnx=gr.Label(label='info')
 			with gr.Row():butOnnx=gr.Button(i18n('导出Onnx模型'),variant=_C)
-			butOnnx.click(export_onnx,[ckpt_dir,onnx_dir],infoOnnx,api_name=_AB)
+			butOnnx.click(export_onnx,[ckpt_dir,onnx_dir],infoOnnx,api_name='export_onnx')
 		tab_faq=i18n('常见问题解答')
 		with gr.TabItem(tab_faq):
 			try:
@@ -383,6 +382,6 @@ with gr.Blocks(title='💙 AX-RVC WebUI 💎',theme=gr.themes.Base(primary_hue='
 			except:gr.Markdown(traceback.format_exc())
 		with gr.TabItem(i18n('System Commands')):
 			with gr.Row():butGitRestart=gr.Button(i18n('Git pull + Restart'),variant=_C)
-			butGitRestart.click(update_restart_app,_R,_R,api_name=_AB,_js='window.location.reload()')
+			butGitRestart.click(update_restart_app,_R,_R,api_name='restart_ui')
 	if config.iscolab or config.paperspace:app.queue(max_size=1022).launch(max_threads=511,server_name='0.0.0.0',inbrowser=not config.noautoopen,server_port=config.listen_port,quiet=_A,share=_B)
 	else:app.queue(max_size=1022).launch(max_threads=511,server_name='0.0.0.0',inbrowser=not config.noautoopen,server_port=config.listen_port,quiet=_A)
