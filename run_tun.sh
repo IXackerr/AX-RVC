@@ -59,5 +59,7 @@ get_tunnel_info() {
 NGROK_PUBLIC_URL_1=$(get_tunnel_info "$TUNNEL_NAME_1")
 NGROK_PUBLIC_URL_2=$(get_tunnel_info "$TUNNEL_NAME_2")
 
+echo ""
 echo "AX RVC => [ $NGROK_PUBLIC_URL_1 ]"
 echo "Tensonboard => [ $NGROK_PUBLIC_URL_2 ]"
+echo ""
