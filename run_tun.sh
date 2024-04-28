@@ -5,7 +5,8 @@ LOCAL_PORT_1=3745
 LOCAL_PORT_2=6006
 
 echo "Start ngrok in background on ports [ $LOCAL_PORT_1 ] and [ $LOCAL_PORT_2 ]"
-nohup ngrok http $LOCAL_PORT_1 $LOCAL_PORT_2 &>/dev/null &
+nohup ngrok http $LOCAL_PORT_1 &>/dev/null &
+nohup ngrok http $LOCAL_PORT_2 &>/dev/null &
 
 echo -n "Extracting ngrok public URLs ."
 NGROK_PUBLIC_URL_1=""
