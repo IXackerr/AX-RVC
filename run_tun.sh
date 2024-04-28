@@ -44,27 +44,20 @@ add_tunnel_if_not_exists "$TUNNEL_NAME_2" "http" "$LOCAL_PORT_2"
 
 echo "Start ngrok in background with all tunnels"
 ngrok start --all >/dev/null
-sleep 4
+
+echo "Waiting for 5 seconds for tunnels to initialize..."
+sleep 5 
 
 echo "Extracting ngrok public URLs..."
 
 # Get the tunnel information for each tunnel name
 get_tunnel_info() {
   local tunnel_name="$1"
-  curl --silent http://127.0.0.1:4040/api/tunnels | grep -E '"'$tunnel_name'":\{'
+  curl --silent http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[] | select(.name=="'$tunnel_name'") | .public_url'
 }
 
-# Extract the public URL for each tunnel
-extract_public_url() {
-  echo "$1" | grep '"public_url"' | cut -d '"' -f 4
-}
+NGROK_PUBLIC_URL_1=$(get_tunnel_info "$TUNNEL_NAME_1")
+NGROK_PUBLIC_URL_2=$(get_tunnel_info "$TUNNEL_NAME_2")
 
-NGROK_PUBLIC_URL_1=$(extract_public_url "$(get_tunnel_info "$TUNNEL_NAME_1")")
-NGROK_PUBLIC_URL_2=$(extract_public_url "$(get_tunnel_info "$TUNNEL_NAME_2")")
-
-echo "NGROK_PUBLIC_URL_1 => [ $NGROK_PUBLIC_URL_1 ]"
-echo "NGROK_PUBLIC_URL_2 => [ $NGROK_PUBLIC_URL_2 ]"
-
-echo
 echo "NGROK_PUBLIC_URL_1 => [ $NGROK_PUBLIC_URL_1 ]"
 echo "NGROK_PUBLIC_URL_2 => [ $NGROK_PUBLIC_URL_2 ]"
