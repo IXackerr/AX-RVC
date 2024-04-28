@@ -28,12 +28,13 @@ add_tunnel_if_not_exists() {
 }
 
 # Find the line number where we want to insert "tunnels:"
-insert_line_num=$(grep -n "^authtoken:" "$NGROK_CONFIG_FILE" | cut -d: -f1)
+# Look for the line *after* "authtoken:"
+insert_line_num=$(grep -n "^authtoken:" "$NGROK_CONFIG_FILE" | tail -1 | cut -d: -f1)
 # Increment the line number to insert after the "authtoken" line
 insert_line_num=$((insert_line_num + 1))
 
-# Check if "tunnels:" already exists
-if ! grep -q "^tunnels:" "$NGROK_CONFIG_FILE"; then
+# Check if "tunnels:" already exists at the target location
+if ! sed -n "${insert_line_num}p" "$NGROK_CONFIG_FILE" | grep -q "^tunnels:"; then
   # Insert "tunnels:" at the calculated line number
   sed -i "${insert_line_num}i tunnels:" "$NGROK_CONFIG_FILE"
 fi
