@@ -12,17 +12,14 @@ if [ ! -f "$NGROK_CONFIG_FILE" ]; then
 fi
 
 # Check if the specified tunnels exist in ngrok.yml
-TUNNEL_1_EXISTS=$(grep -c "tunnels:\s*\ntensorboard:\s*\n\s*proto: http\s*\n\s*addr: $LOCAL_PORT_2" "$NGROK_CONFIG_FILE")
-TUNNEL_2_EXISTS=$(grep -c "tunnels:\s*\nax:\s*\n\s*proto: http\s*\n\s*addr: $LOCAL_PORT_1" "$NGROK_CONFIG_FILE")
+TUNNELS_EXIST=$(grep -c "tunnels:\s*\ntensorboard:\s*\n\s*proto: http\s*\n\s*addr: $LOCAL_PORT_2\s*\nax:\s*\n\s*proto: http\s*\n\s*addr: $LOCAL_PORT_1" "$NGROK_CONFIG_FILE")
 
-# Add missing tunnels to ngrok.yml
-if [ "$TUNNEL_1_EXISTS" -eq 0 ]; then
+# Add missing tunnels configuration to ngrok.yml
+if [ "$TUNNELS_EXIST" -eq 0 ]; then
     echo "tunnels:" >> "$NGROK_CONFIG_FILE"
     echo "  tensorboard:" >> "$NGROK_CONFIG_FILE"
     echo "    proto: http" >> "$NGROK_CONFIG_FILE"
     echo "    addr: $LOCAL_PORT_2" >> "$NGROK_CONFIG_FILE"
-fi
-if [ "$TUNNEL_2_EXISTS" -eq 0 ]; then
     echo "  ax:" >> "$NGROK_CONFIG_FILE"
     echo "    proto: http" >> "$NGROK_CONFIG_FILE"
     echo "    addr: $LOCAL_PORT_1" >> "$NGROK_CONFIG_FILE"
