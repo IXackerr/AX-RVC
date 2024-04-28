@@ -8,6 +8,13 @@ LOCAL_PORT_2=6006
 TUNNEL_NAME_1="ax"
 TUNNEL_NAME_2="tensorboard"
 
+# Check if ngrok.yml exists and create it if not
+NGROK_CONFIG_FILE="/root/.config/ngrok/ngrok.yml"
+if [ ! -f "$NGROK_CONFIG_FILE" ]; then
+    mkdir -p "$(dirname "$NGROK_CONFIG_FILE")"
+    touch "$NGROK_CONFIG_FILE"
+fi
+
 # Function to check and add a tunnel if it doesn't exist
 add_tunnel_if_not_exists() {
   local name="$1"
