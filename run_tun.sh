@@ -20,17 +20,16 @@ add_tunnel_if_not_exists() {
   fi
 }
 
-# Process the ngrok.yml file with awk
-awk '
-  /^tunnels:/ { found_tunnels=1; print; next }  # Print existing "tunnels:" line
-  found_tunnels { print }                       # Print lines after "tunnels:"
-  { buffer=(buffer ? buffer ORS : "") $0 }      # Store other lines in buffer
-  END { 
-    if (!found_tunnels) {                       # If "tunnels:" not found
-      print buffer ORS "tunnels:"               # Print buffered lines and add "tunnels:"
-    }
-  }
-' "$NGROK_CONFIG_FILE" > "$NGROK_CONFIG_FILE.tmp" && mv "$NGROK_CONFIG_FILE.tmp" "$NGROK_CONFIG_FILE"
+# Find the line number where we want to insert "tunnels:"
+insert_line_num=$(grep -n "^authtoken:" "$NGROK_CONFIG_FILE" | cut -d: -f1)
+# Increment the line number to insert after the "authtoken" line
+insert_line_num=$((insert_line_num + 1))
+
+# Check if "tunnels:" already exists
+if ! grep -q "^tunnels:" "$NGROK_CONFIG_FILE"; then
+  # Insert "tunnels:" at the calculated line number
+  sed -i "${insert_line_num}i tunnels:" "$NGROK_CONFIG_FILE"
+fi
 
 # Add tunnels only if they don't already exist
 add_tunnel_if_not_exists "$TUNNEL_NAME_1" "http" "$LOCAL_PORT_1"
