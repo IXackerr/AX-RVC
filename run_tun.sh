@@ -20,7 +20,7 @@ add_tunnel_if_not_exists() {
   local name="$1"
   local proto="$2"
   local addr="$3"
-  if ! grep -q "\[tunnels.$name\]" "$NGROK_CONFIG_FILE"; then
+  if ! grep -q "^  $name:" "$NGROK_CONFIG_FILE"; then
     echo "  $name:" >> "$NGROK_CONFIG_FILE"
     echo "    proto: $proto" >> "$NGROK_CONFIG_FILE"
     echo "    addr: $addr" >> "$NGROK_CONFIG_FILE"
