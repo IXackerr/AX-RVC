@@ -12,7 +12,7 @@ TUNNEL_NAME_2="tensorboard"
 NGROK_CONFIG_FILE="/root/.config/ngrok/ngrok.yml"
 if [ ! -f "$NGROK_CONFIG_FILE" ]; then
     mkdir -p "$(dirname "$NGROK_CONFIG_FILE")"
-    touch "$NGROK_CONFIG_FILE"
+    echo "tunnels:" > "$NGROK_CONFIG_FILE"  # Add "tunnels:" header initially
 fi
 
 # Function to check and add a tunnel if it doesn't exist
@@ -26,6 +26,11 @@ add_tunnel_if_not_exists() {
     echo "    addr: $addr" >> "$NGROK_CONFIG_FILE"
   fi
 }
+
+# Add "tunnels:" header if it's missing
+if ! grep -q "^tunnels:" "$NGROK_CONFIG_FILE"; then
+  sed -i '1s/^/tunnels:\n/' "$NGROK_CONFIG_FILE"  # Insert "tunnels:" at the beginning
+fi
 
 # Add tunnels only if they don't already exist
 add_tunnel_if_not_exists "$TUNNEL_NAME_1" "http" "$LOCAL_PORT_1"
