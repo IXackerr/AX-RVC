@@ -43,7 +43,8 @@ add_tunnel_if_not_exists "$TUNNEL_NAME_1" "http" "$LOCAL_PORT_1"
 add_tunnel_if_not_exists "$TUNNEL_NAME_2" "http" "$LOCAL_PORT_2"
 
 echo "Start ngrok in background with all tunnels"
-ngrok start --all &>/dev/null &
+ngrok start --all >/dev/null &
+curl http://127.0.0.1:4040/api/tunnels 
 
 echo -n "Extracting ngrok public URLs ."
 NGROK_PUBLIC_URL_1=""
