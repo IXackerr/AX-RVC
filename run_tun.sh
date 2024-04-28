@@ -43,7 +43,7 @@ add_tunnel_if_not_exists "$TUNNEL_NAME_1" "http" "$LOCAL_PORT_1"
 add_tunnel_if_not_exists "$TUNNEL_NAME_2" "http" "$LOCAL_PORT_2"
 
 echo "Start ngrok in background with all tunnels"
-ngrok start --all >/dev/null
+ngrok start --all >/dev/null &
 
 echo "Waiting for 5 seconds for tunnels to initialize..."
 sleep 5 
