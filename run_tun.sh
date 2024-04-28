@@ -4,9 +4,31 @@
 LOCAL_PORT_1=3745
 LOCAL_PORT_2=6006
 
-echo "Start ngrok in background on ports [ $LOCAL_PORT_1 ] and [ $LOCAL_PORT_2 ]"
-ngrok http $LOCAL_PORT_1 &>/dev/null &
-ngrok http $LOCAL_PORT_2 &>/dev/null &
+# Check if ngrok.yml exists and create it if not
+NGROK_CONFIG_FILE="/root/.config/ngrok/ngrok.yml"
+if [ ! -f "$NGROK_CONFIG_FILE" ]; then
+    mkdir -p "$(dirname "$NGROK_CONFIG_FILE")"
+    touch "$NGROK_CONFIG_FILE"
+fi
+
+# Check if the specified tunnels exist in ngrok.yml
+TUNNEL_1_EXISTS=$(grep -c "proto: http\s*\n\s*addr: $LOCAL_PORT_1" "$NGROK_CONFIG_FILE")
+TUNNEL_2_EXISTS=$(grep -c "proto: http\s*\n\s*addr: $LOCAL_PORT_2" "$NGROK_CONFIG_FILE")
+
+# Add missing tunnels to ngrok.yml
+if [ "$TUNNEL_1_EXISTS" -eq 0 ]; then
+    echo "tensorboard:" >> "$NGROK_CONFIG_FILE"
+    echo "  proto: http" >> "$NGROK_CONFIG_FILE"
+    echo "  addr: $LOCAL_PORT_1" >> "$NGROK_CONFIG_FILE"
+fi
+if [ "$TUNNEL_2_EXISTS" -eq 0 ]; then
+    echo "ax:" >> "$NGROK_CONFIG_FILE"
+    echo "  proto: http" >> "$NGROK_CONFIG_FILE"
+    echo "  addr: $LOCAL_PORT_2" >> "$NGROK_CONFIG_FILE"
+fi
+
+echo "Start ngrok in background with all tunnels"
+nohup ngrok start --all &>/dev/null &
 
 echo -n "Extracting ngrok public URLs ."
 NGROK_PUBLIC_URL_1=""
