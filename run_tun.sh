@@ -43,22 +43,26 @@ add_tunnel_if_not_exists "$TUNNEL_NAME_1" "http" "$LOCAL_PORT_1"
 add_tunnel_if_not_exists "$TUNNEL_NAME_2" "http" "$LOCAL_PORT_2"
 
 echo "Start ngrok in background with all tunnels"
-ngrok start --all >/dev/null &
-curl http://127.0.0.1:4040/api/tunnels 
+ngrok start --all >/dev/null
 
-echo -n "Extracting ngrok public URLs ."
-NGROK_PUBLIC_URL_1=""
-NGROK_PUBLIC_URL_2=""
-while [ -z "$NGROK_PUBLIC_URL_1" ] || [ -z "$NGROK_PUBLIC_URL_2" ]; do
-  # Run 'curl' against ngrok API and extract public URLs
-  RESPONSE=$(curl --silent --max-time 10 --connect-timeout 5 \
-                  --show-error http://127.0.0.1:4040/api/tunnels)
-  # Extract URLs using tunnel names in sed (final correction)
-  NGROK_PUBLIC_URL_1=$(echo "$RESPONSE" | sed -nE 's/.*"'$TUNNEL_NAME_1'":\{.*"public_url":"(https:..[^"]*)".*/\1/p')
-  NGROK_PUBLIC_URL_2=$(echo "$RESPONSE" | sed -nE 's/.*"'$TUNNEL_NAME_2'":\{.*"public_url":"(https:..[^"]*)".*/\1/p')
-  sleep 1
-  echo -n "."
-done
+echo "Extracting ngrok public URLs..."
+
+# Get the tunnel information for each tunnel name
+get_tunnel_info() {
+  local tunnel_name="$1"
+  curl --silent http://127.0.0.1:4040/api/tunnels | grep -E '"'$tunnel_name'":\{'
+}
+
+# Extract the public URL for each tunnel
+extract_public_url() {
+  echo "$1" | grep '"public_url"' | cut -d '"' -f 4
+}
+
+NGROK_PUBLIC_URL_1=$(extract_public_url "$(get_tunnel_info "$TUNNEL_NAME_1")")
+NGROK_PUBLIC_URL_2=$(extract_public_url "$(get_tunnel_info "$TUNNEL_NAME_2")")
+
+echo "NGROK_PUBLIC_URL_1 => [ $NGROK_PUBLIC_URL_1 ]"
+echo "NGROK_PUBLIC_URL_2 => [ $NGROK_PUBLIC_URL_2 ]"
 
 echo
 echo "NGROK_PUBLIC_URL_1 => [ $NGROK_PUBLIC_URL_1 ]"
