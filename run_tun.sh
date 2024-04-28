@@ -53,9 +53,9 @@ while [ -z "$NGROK_PUBLIC_URL_1" ] || [ -z "$NGROK_PUBLIC_URL_2" ]; do
   # Run 'curl' against ngrok API and extract public URLs
   RESPONSE=$(curl --silent --max-time 10 --connect-timeout 5 \
                   --show-error http://127.0.0.1:4040/api/tunnels)
-  # Extract URLs using tunnel names in sed (corrected)
-  NGROK_PUBLIC_URL_1=$(echo "$RESPONSE" | sed -nE 's/.*"'"$TUNNEL_NAME_1"':{"public_url":"https:..([^"]*).*/\1/p')
-  NGROK_PUBLIC_URL_2=$(echo "$RESPONSE" | sed -nE 's/.*"'"$TUNNEL_NAME_2"':{"public_url":"https:..([^"]*).*/\1/p')
+  # Extract URLs using tunnel names in sed (final correction)
+  NGROK_PUBLIC_URL_1=$(echo "$RESPONSE" | sed -nE 's/.*"'$TUNNEL_NAME_1'":\{.*"public_url":"(https:..[^"]*)".*/\1/p')
+  NGROK_PUBLIC_URL_2=$(echo "$RESPONSE" | sed -nE 's/.*"'$TUNNEL_NAME_2'":\{.*"public_url":"(https:..[^"]*)".*/\1/p')
   sleep 1
   echo -n "."
 done
