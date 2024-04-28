@@ -8,13 +8,6 @@ LOCAL_PORT_2=6006
 TUNNEL_NAME_1="ax"
 TUNNEL_NAME_2="tensorboard"
 
-# Check if ngrok.yml exists and create it if not
-NGROK_CONFIG_FILE="/root/.config/ngrok/ngrok.yml"
-if [ ! -f "$NGROK_CONFIG_FILE" ]; then
-    mkdir -p "$(dirname "$NGROK_CONFIG_FILE")"
-    echo "tunnels:" > "$NGROK_CONFIG_FILE"  # Add "tunnels:" header initially
-fi
-
 # Function to check and add a tunnel if it doesn't exist
 add_tunnel_if_not_exists() {
   local name="$1"
@@ -27,10 +20,17 @@ add_tunnel_if_not_exists() {
   fi
 }
 
-# Add "tunnels:" header if it's missing
-if ! grep -q "^tunnels:" "$NGROK_CONFIG_FILE"; then
-  sed -i '1s/^/tunnels:\n/' "$NGROK_CONFIG_FILE"  # Insert "tunnels:" at the beginning
-fi
+# Process the ngrok.yml file with awk
+awk '
+  /^tunnels:/ { found_tunnels=1; print; next }  # Print existing "tunnels:" line
+  found_tunnels { print }                       # Print lines after "tunnels:"
+  { buffer=(buffer ? buffer ORS : "") $0 }      # Store other lines in buffer
+  END { 
+    if (!found_tunnels) {                       # If "tunnels:" not found
+      print buffer ORS "tunnels:"               # Print buffered lines and add "tunnels:"
+    }
+  }
+' "$NGROK_CONFIG_FILE" > "$NGROK_CONFIG_FILE.tmp" && mv "$NGROK_CONFIG_FILE.tmp" "$NGROK_CONFIG_FILE"
 
 # Add tunnels only if they don't already exist
 add_tunnel_if_not_exists "$TUNNEL_NAME_1" "http" "$LOCAL_PORT_1"
