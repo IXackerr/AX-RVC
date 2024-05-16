@@ -905,6 +905,9 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
     hug_file_name = f'{zip_name_gr}.zip'
 
     if (what_upload_gr == "Model Only"):
+        if not os.path.exists(hug_file_path):
+            os.makedirs(hug_file_path)
+
         os.system(f'cp /kaggle/working/AX-RVC/assets/weights/{model_name_gr}.pth {hug_file_path}')
         os.system(f'cp /kaggle/working/AX-RVC/logs/{model_name_gr}/added*.index {hug_file_path}')
         time.sleep(2)
@@ -928,9 +931,13 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
 
         return "Succesful upload Model to Hugging Face"
     if (what_upload_gr == "Model Log Folder"):
+        if not os.path.exists(hug_file_path):
+            os.makedirs(hug_file_path)
+
         hug_file_name = f'{zip_name_gr}_logs.zip'
         os.system(f'cp -r /kaggle/working/AX-RVC/logs/{model_name_gr} {hug_file_path}')
         time.sleep(2)
+
         os.chdir(hug_file_path)
         os.system(f'zip -r {hug_file_path}/{hug_file_name} {model_name_gr}')
         os.chdir("/kaggle/working/AX-RVC/")
