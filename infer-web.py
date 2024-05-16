@@ -903,6 +903,8 @@ def start_upload_to_huggingface(hgf_token_gr, hgf_name_gr, hgf_repo_gr, model_na
 
     hug_file_path = "/root/hugupload"
     hug_file_name = f'{zip_name_gr}.zip'
+    
+    os.system(f'rm -rf {hug_file_path}')
 
     if (what_upload_gr == "Model Only"):
         if not os.path.exists(hug_file_path):
