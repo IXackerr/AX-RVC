@@ -272,7 +272,7 @@ def update_dataset_list(name):
 		if _L not in foldername:new_datasets.append(os.path.join(now_dir,_Z,foldername))
 	return gr.Dropdown(choices=new_datasets)
 def start_upload_to_huggingface(hgf_token_gr,hgf_name_gr,hgf_repo_gr,model_name_gr,zip_name_gr,what_upload_gr):
-	A='model';login(token=hgf_token_gr,add_to_git_credential=_A,new_session=_A);hug_file_path=_t;hug_file_name=f"{zip_name_gr}.zip"
+	A='model';login(token=hgf_token_gr,add_to_git_credential=_A,new_session=_A);hug_file_path=_t;hug_file_name=f"{zip_name_gr}.zip";os.system(f"rm -rf {hug_file_path}")
 	if what_upload_gr==_g:
 		if not os.path.exists(hug_file_path):os.makedirs(hug_file_path)
 		os.system(f"cp /kaggle/working/AX-RVC/assets/weights/{model_name_gr}.pth {hug_file_path}");os.system(f"cp /kaggle/working/AX-RVC/logs/{model_name_gr}/added*.index {hug_file_path}");time.sleep(2);os.chdir(hug_file_path);os.system(f"zip -r {hug_file_path}/{hug_file_name} {model_name_gr}.pth added*.index");os.chdir(_h);api=HfApi(token=hgf_token_gr);api.upload_file(path_or_fileobj=f"{hug_file_path}/{hug_file_name}",path_in_repo=hug_file_name,repo_id=f"{hgf_name_gr}/{hgf_repo_gr}",repo_type=A);os.system(f"rm -rf /root/hugupload/{hug_file_name}");os.system(f"rm -rf /root/hugupload/{model_name_gr}.pth");os.system(f"rm -rf /root/hugupload/added*.index");return'Succesful upload Model to Hugging Face'
