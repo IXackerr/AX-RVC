@@ -64,19 +64,20 @@ if load_config_flask():
 # Load theme
 import assets.themes.loadThemes as loadThemes
 
-my_applio = loadThemes.load_json() or "ParityError/Interstellar"
+#my_applio = loadThemes.load_json() or "ParityError/Interstellar"
+my_applio = gr.themes.Base(primary_hue="sky",neutral_hue="zinc")
 
 # Define Gradio interface
-with gr.Blocks(theme=my_applio, title="Applio") as Applio:
-    gr.Markdown("# Applio")
+with gr.Blocks(theme=my_applio, title="💙 AX-RVC WebUI v3 💎") as Applio:
+    gr.Markdown("# AX-RVC WebUI v3")
+    # gr.Markdown(
+    #     i18n(
+    #         "VITS-based Voice Conversion focused on simplicity, quality and performance."
+    #     )
+    # )
     gr.Markdown(
         i18n(
-            "VITS-based Voice Conversion focused on simplicity, quality and performance."
-        )
-    )
-    gr.Markdown(
-        i18n(
-            "[Support](https://discord.gg/IAHispano) — [Discord Bot](https://discord.com/oauth2/authorize?client_id=1144714449563955302&permissions=1376674695271&scope=bot%20applications.commands) — [Find Voices](https://applio.org/models) — [GitHub](https://github.com/IAHispano/Applio)"
+            "[Made by Xackerr](https://github.com/IXackerr)"
         )
     )
     with gr.Tab(i18n("Inference")):
