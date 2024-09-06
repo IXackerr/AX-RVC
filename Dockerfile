@@ -2,12 +2,18 @@
 
 FROM python:3.10-bullseye
 
-EXPOSE 7865
+EXPOSE 6969
 
 WORKDIR /app
 
+RUN apt update && apt install -y -qq ffmpeg aria2 && apt clean
+
 COPY . .
 
-RUN pip3 install -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-CMD ["python3", "infer-web.py"]
+VOLUME [ "/app/logs/weights", "/app/opt" ]
+
+ENTRYPOINT [ "python3" ]
+
+CMD ["app.py"]
