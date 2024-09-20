@@ -370,7 +370,7 @@ def download_tab():
                 inputs=[dataset_url],
                 outputs=[load_dataset_status_bar],
             )
-            load_dataset_status_bar.change(update_dataset_list, dataset_url, trainset_dir4)
+            load_dataset_status_bar.change(update_dataset_list, dataset_url)
         gr.Markdown(value=i18n("## Download Pretrained Models"))
         pretrained_model = gr.Dropdown(
             label=i18n("Pretrained"),
