@@ -317,25 +317,34 @@ def load_dowloaded_dataset(url):
 
         zip_path = os.listdir(zips_path)
         foldername = ""
-        for file in zip_path:
+for file in zip_path:
             if file.endswith(".zip"):
                 file_path = os.path.join(zips_path, file)
-                print("....")
+                print(f"Найден zip файл: {file_path}")
                 foldername = file.replace(".zip", "").replace(" ", "").replace("-", "_")
-                print("Dataset Path:", foldername)
+                print(f"Имя папки датасета: {foldername}")
                 dataset_path = os.path.join(datasets_path, foldername)
                 print(i18n("Proceeding with the extraction..."))
                 infos.append(i18n("Proceeding with the extraction..."))
                 yield "\n".join(infos)
-                shutil.unpack_archive(file_path, unzips_path, "zip")
+                try:
+                    shutil.unpack_archive(file_path, unzips_path, "zip")
+                    print(f"Архив распакован в: {unzips_path}")
+                except Exception as e:
+                    print(f"Ошибка при распаковке архива: {e}")
+                    raise
+
                 if os.path.exists(dataset_path):
+                    print(f"Папка {dataset_path} уже существует, удаляем её.")
                     shutil.rmtree(dataset_path)
 
                 os.mkdir(dataset_path)
+                print(f"Создана папка датасета: {dataset_path}")
 
                 for root, subfolders, songs in os.walk(unzips_path):
                     for song in songs:
                         song_path = os.path.join(root, song)
+                        print(f"Найден файл: {song_path}")
                         if song.endswith(tuple(audio_extenions)):
                             formatted_song_name = format_title(
                                 os.path.splitext(song)[0]
