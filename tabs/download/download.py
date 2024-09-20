@@ -7,6 +7,7 @@ import tempfile
 import subprocess
 import gradio as gr
 import pandas as pd
+from rvc.lib.tools import gdown
 
 from concurrent.futures import ThreadPoolExecutor
 from tqdm import tqdm
