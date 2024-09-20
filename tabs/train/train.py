@@ -1013,11 +1013,11 @@ def train_tab():
                 outputs=[g_pretrained_path, d_pretrained_path],
             )
 
-            upload_pretrained.upload(
-                fn=save_drop_model,
-                inputs=[upload_pretrained],
-                outputs=[upload_pretrained],
-            )
+            # upload_pretrained.upload(
+            #     fn=save_drop_model,
+            #     inputs=[upload_pretrained],
+            #     outputs=[upload_pretrained],
+            # )
 
             overtraining_detector.change(
                 fn=toggle_visible,
