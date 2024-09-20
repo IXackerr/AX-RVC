@@ -269,7 +269,7 @@ def load_dowloaded_dataset(url):
     try:
         zips_path = os.path.join(parent_path, "assets", "zips")
         unzips_path = os.path.join(parent_path, "assets", "unzips")
-        datasets_path = os.path.join(parent_path, "datasets")
+        datasets_path = os.path.join(parent_path, "assets", "datasets")
         audio_extenions = [
             "wav",
             "mp3",
@@ -344,7 +344,7 @@ def load_dowloaded_dataset(url):
                 for root, subfolders, songs in os.walk(unzips_path):
                     for song in songs:
                         song_path = os.path.join(root, song)
-                        print(f"Найден файл: {song_path}")
+                        # print(f"Найден файл: {song_path}")
                         if song.endswith(tuple(audio_extenions)):
                             formatted_song_name = format_title(
                                 os.path.splitext(song)[0]
