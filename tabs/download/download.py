@@ -163,6 +163,18 @@ def load_dowloaded_dataset(url):
     finally:
         os.chdir(parent_path)
 
+def update_dataset_list(name):
+    new_datasets = []
+    file_path = find_folder_parent(now_dir, "assets")
+    for foldername in os.listdir("./datasets"):
+        if "." not in foldername:
+            new_datasets.append(
+                os.path.join(
+                    file_path, "datasets", foldername
+                )
+            )
+    return gr.Dropdown(choices=new_datasets)
+
 def search_models(name):
     url = f"https://cjtfqzjfdimgpvpwhzlv.supabase.co/rest/v1/models?name=ilike.%25{name}%25&order=created_at.desc&limit=15"
     headers = {
