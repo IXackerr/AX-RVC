@@ -586,30 +586,30 @@ def download_tab():
                 outputs=[load_dataset_status_bar],
             )
             load_dataset_status_bar.change(update_dataset_list, dataset_url)
-        gr.Markdown(value=i18n("## Download Pretrained Models"))
-        pretrained_model = gr.Dropdown(
-            label=i18n("Pretrained"),
-            info=i18n("Select the pretrained model you want to download."),
-            choices=get_pretrained_list(),
-            value="Titan",
-            interactive=True,
-        )
-        pretrained_sample_rate = gr.Dropdown(
-            label=i18n("Sampling Rate"),
-            info=i18n("And select the sampling rate."),
-            choices=get_pretrained_sample_rates(pretrained_model.value),
-            value="40k",
-            interactive=True,
-            allow_custom_value=True,
-        )
-        pretrained_model.change(
-            update_sample_rate_dropdown,
-            inputs=[pretrained_model],
-            outputs=[pretrained_sample_rate],
-        )
-        download_pretrained = gr.Button(i18n("Download"))
-        download_pretrained.click(
-            fn=download_pretrained_model,
-            inputs=[pretrained_model, pretrained_sample_rate],
-            outputs=[],
-        )
+        # gr.Markdown(value=i18n("## Download Pretrained Models"))
+        # pretrained_model = gr.Dropdown(
+        #     label=i18n("Pretrained"),
+        #     info=i18n("Select the pretrained model you want to download."),
+        #     choices=get_pretrained_list(),
+        #     value="Titan",
+        #     interactive=True,
+        # )
+        # pretrained_sample_rate = gr.Dropdown(
+        #     label=i18n("Sampling Rate"),
+        #     info=i18n("And select the sampling rate."),
+        #     choices=get_pretrained_sample_rates(pretrained_model.value),
+        #     value="40k",
+        #     interactive=True,
+        #     allow_custom_value=True,
+        # )
+        # pretrained_model.change(
+        #     update_sample_rate_dropdown,
+        #     inputs=[pretrained_model],
+        #     outputs=[pretrained_sample_rate],
+        # )
+        # download_pretrained = gr.Button(i18n("Download"))
+        # download_pretrained.click(
+        #     fn=download_pretrained_model,
+        #     inputs=[pretrained_model, pretrained_sample_rate],
+        #     outputs=[],
+        # )
