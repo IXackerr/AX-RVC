@@ -384,7 +384,7 @@ def load_dowloaded_dataset(url):
 def update_dataset_list(name):
     new_datasets = []
     file_path = find_folder_parent(now_dir, "assets")
-    for foldername in os.listdir("./datasets"):
+    for foldername in os.listdir("./assets/datasets"):
         if "." not in foldername:
             new_datasets.append(
                 os.path.join(
