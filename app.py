@@ -29,14 +29,21 @@ from tabs.settings.lang import lang_tab
 from tabs.settings.restart import restart_tab
 from tabs.settings.presence import presence_tab, load_config_presence
 from tabs.settings.flask_server import flask_server_tab
-from tabs.settings.fake_gpu import fake_gpu_tab, gpu_available, load_fake_gpu
 from tabs.settings.themes import theme_tab
 from tabs.settings.precision import precision_tab
+from tabs.settings.model_author import model_author_tab
 
 # Run prerequisites
 from core import run_prerequisites_script
 
-run_prerequisites_script(False, True, True, True)
+run_prerequisites_script(
+    pretraineds_v1_f0=False,
+    pretraineds_v1_nof0=False,
+    pretraineds_v2_f0=True,
+    pretraineds_v2_nof0=False,
+    models=True,
+    exe=True,
+)
 
 # Initialize i18n
 from assets.i18n.i18n import I18nAuto
@@ -68,7 +75,9 @@ import assets.themes.loadThemes as loadThemes
 my_applio = gr.themes.Base(primary_hue="sky",neutral_hue="zinc")
 
 # Define Gradio interface
-with gr.Blocks(theme=my_applio, title="💙 AX-RVC WebUI v3 💎") as Applio:
+with gr.Blocks(
+    theme=my_applio, title="💙 AX-RVC WebUI v3 💎", css="footer{display:none !important}"
+) as Applio:
     gr.Markdown("# AX-RVC WebUI v3")
     # gr.Markdown(
     #     i18n(
@@ -84,14 +93,7 @@ with gr.Blocks(theme=my_applio, title="💙 AX-RVC WebUI v3 💎") as Applio:
         inference_tab()
 
     with gr.Tab(i18n("Train")):
-        if gpu_available() or load_fake_gpu():
-            train_tab()
-        else:
-            gr.Markdown(
-                i18n(
-                    "Training is currently unsupported due to the absence of a GPU. To activate the training tab, navigate to the settings tab and enable the 'Fake GPU' option."
-                )
-            )
+        train_tab()
 
     with gr.Tab(i18n("TTS")):
         tts_tab()
@@ -115,12 +117,11 @@ with gr.Blocks(theme=my_applio, title="💙 AX-RVC WebUI v3 💎") as Applio:
         presence_tab()
         flask_server_tab()
         precision_tab()
-        if not gpu_available():
-            fake_gpu_tab()
         theme_tab()
         version_tab()
         lang_tab()
         restart_tab()
+        model_author_tab()
 
 
 def launch_gradio(port):
