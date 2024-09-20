@@ -317,7 +317,7 @@ def load_dowloaded_dataset(url):
 
         zip_path = os.listdir(zips_path)
         foldername = ""
-for file in zip_path:
+        for file in zip_path:
             if file.endswith(".zip"):
                 file_path = os.path.join(zips_path, file)
                 print(f"Найден zip файл: {file_path}")
