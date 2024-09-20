@@ -55,6 +55,113 @@ def save_drop_model(dropbox):
         gr.Info(f"{file_name} saved in {model_path}")
     return None
 
+def load_dowloaded_dataset(url):
+    parent_path = find_folder_parent(now_dir, "assets")
+    infos = []
+    try:
+        zips_path = os.path.join(parent_path, "assets", "zips")
+        unzips_path = os.path.join(parent_path, "assets", "unzips")
+        datasets_path = os.path.join(parent_path, "datasets")
+        audio_extenions = [
+            "wav",
+            "mp3",
+            "flac",
+            "ogg",
+            "opus",
+            "m4a",
+            "mp4",
+            "aac",
+            "alac",
+            "wma",
+            "aiff",
+            "webm",
+            "ac3",
+        ]
+
+        if os.path.exists(zips_path):
+            shutil.rmtree(zips_path)
+        if os.path.exists(unzips_path):
+            shutil.rmtree(unzips_path)
+
+        if not os.path.exists(datasets_path):
+            os.mkdir(datasets_path)
+
+        os.mkdir(zips_path)
+        os.mkdir(unzips_path)
+
+        download_file = download_from_url(url)
+
+        if not download_file:
+            print(i18n("An error occurred downloading"))
+            infos.append(i18n("An error occurred downloading"))
+            yield "\n".join(infos)
+            raise Exception(i18n("An error occurred downloading"))
+        elif download_file == "downloaded":
+            print(i18n("It has been downloaded successfully."))
+            infos.append(i18n("It has been downloaded successfully."))
+            yield "\n".join(infos)
+        elif download_file == "too much use":
+            raise Exception(
+                i18n("Too many users have recently viewed or downloaded this file")
+            )
+        elif download_file == "private link":
+            raise Exception(i18n("Cannot get file from this private link"))
+
+        zip_path = os.listdir(zips_path)
+        foldername = ""
+        for file in zip_path:
+            if file.endswith(".zip"):
+                file_path = os.path.join(zips_path, file)
+                print("....")
+                foldername = file.replace(".zip", "").replace(" ", "").replace("-", "_")
+                dataset_path = os.path.join(datasets_path, foldername)
+                print(i18n("Proceeding with the extraction..."))
+                infos.append(i18n("Proceeding with the extraction..."))
+                yield "\n".join(infos)
+                shutil.unpack_archive(file_path, unzips_path, "zip")
+                if os.path.exists(dataset_path):
+                    shutil.rmtree(dataset_path)
+
+                os.mkdir(dataset_path)
+
+                for root, subfolders, songs in os.walk(unzips_path):
+                    for song in songs:
+                        song_path = os.path.join(root, song)
+                        if song.endswith(tuple(audio_extenions)):
+                            formatted_song_name = format_title(
+                                os.path.splitext(song)[0]
+                            )
+                            extension = os.path.splitext(song)[1]
+                            new_song_path = os.path.join(
+                                dataset_path, f"{formatted_song_name}{extension}"
+                            )
+                            shutil.move(song_path, new_song_path)
+            else:
+                print(i18n("Unzip error."))
+                infos.append(i18n("Unzip error."))
+                yield "\n".join(infos)
+
+        if os.path.exists(zips_path):
+            shutil.rmtree(zips_path)
+        if os.path.exists(unzips_path):
+            shutil.rmtree(unzips_path)
+
+        print(i18n("The Dataset has been loaded successfully."))
+        infos.append(i18n("The Dataset has been loaded successfully."))
+        yield "\n".join(infos)
+    except Exception as e:
+        os.chdir(parent_path)
+        if "too much use" in str(e):
+            print(i18n("Too many users have recently viewed or downloaded this file"))
+            yield i18n("Too many users have recently viewed or downloaded this file")
+        elif "private link" in str(e):
+            print(i18n("Cannot get file from this private link"))
+            yield i18n("Cannot get file from this private link")
+        else:
+            print(e)
+            yield i18n("An error occurred downloading")
+    finally:
+        os.chdir(parent_path)
 
 def search_models(name):
     url = f"https://cjtfqzjfdimgpvpwhzlv.supabase.co/rest/v1/models?name=ilike.%25{name}%25&order=created_at.desc&limit=15"
@@ -234,6 +341,24 @@ def download_tab():
             outputs=[search_table],
         )
         search_name.submit(search_models, [search_name], search_table)
+        gr.Markdown(value=i18n("## Download Dataset"))
+        gr.Markdown(
+            value=i18n(
+                "Download the dataset with the audios in a compatible format (.wav/.flac) to train your model."
+            )
+        )
+        with gr.Row():
+            dataset_url = gr.Textbox(label=i18n("Url:"))
+        with gr.Row():
+            load_dataset_status_bar = gr.Textbox(label=i18n("Status:"))
+        with gr.Row():
+            load_dataset_button = gr.Button(i18n("Download"))
+            load_dataset_button.click(
+                fn=load_dowloaded_dataset,
+                inputs=[dataset_url],
+                outputs=[load_dataset_status_bar],
+            )
+            load_dataset_status_bar.change(update_dataset_list, dataset_url, trainset_dir4)
         gr.Markdown(value=i18n("## Download Pretrained Models"))
         pretrained_model = gr.Dropdown(
             label=i18n("Pretrained"),

@@ -18,6 +18,7 @@
   "Model Name": "Название модели",
   "Name of the new model.": "Название новой модели.",
   "Enter model name": "Введите название модели",
+  "## Download Dataset": "## Скачать датасет",
   "Dataset Path": "Путь к набору данных",
   "Path to the dataset folder.": "Путь к папке с набором данных.",
   "Refresh Datasets": "Обновить наборы данных",

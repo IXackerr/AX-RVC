@@ -39,7 +39,7 @@ from core import run_prerequisites_script
 run_prerequisites_script(
     pretraineds_v1_f0=False,
     pretraineds_v1_nof0=False,
-    pretraineds_v2_f0=True,
+    pretraineds_v2_f0=False,
     pretraineds_v2_nof0=False,
     models=True,
     exe=True,
@@ -76,9 +76,9 @@ my_applio = gr.themes.Base(primary_hue="sky",neutral_hue="zinc")
 
 # Define Gradio interface
 with gr.Blocks(
-    theme=my_applio, title="💙 AX-RVC WebUI v3 💎", css="footer{display:none !important}"
+    theme=my_applio, title="💙 AX-RVC v3 💎", css="footer{display:none !important}"
 ) as Applio:
-    gr.Markdown("# AX-RVC WebUI v3")
+    gr.Markdown("# AX-RVC v3")
     # gr.Markdown(
     #     i18n(
     #         "VITS-based Voice Conversion focused on simplicity, quality and performance."

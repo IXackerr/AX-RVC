@@ -657,14 +657,11 @@ def train_tab():
                 )
                 with gr.Column(visible=False) as pretrained_custom_settings:
                     with gr.Accordion(i18n("Pretrained Custom Settings")):
-                        upload_pretrained = gr.File(
-                            label=i18n("Upload Pretrained Model"),
-                            type="filepath",
-                            interactive=True,
-                        )
-                        refresh_custom_pretaineds_button = gr.Button(
-                            i18n("Refresh Custom Pretraineds")
-                        )
+                        # upload_pretrained = gr.File(
+                        #     label=i18n("Upload Pretrained Model"),
+                        #     type="filepath",
+                        #     interactive=True,
+                        # )
                         g_pretrained_path = gr.Dropdown(
                             label=i18n("Custom Pretrained G"),
                             info=i18n(
@@ -682,6 +679,9 @@ def train_tab():
                             choices=sorted(pretraineds_list_d),
                             interactive=True,
                             allow_custom_value=True,
+                        )
+                        refresh_custom_pretaineds_button = gr.Button(
+                            i18n("Refresh Custom Pretraineds")
                         )
                 multiple_gpu = gr.Checkbox(
                     label=i18n("GPU Settings"),

@@ -21,6 +21,7 @@
   "Model Name": "Model Name",
   "Name of the new model.": "Name of the new model.",
   "Enter model name": "Enter model name",
+  "## Download Dataset": "## Download Dataset",
   "Dataset Path": "Dataset Path",
   "Path to the dataset folder.": "Path to the dataset folder.",
   "Refresh Datasets": "Refresh Datasets",
