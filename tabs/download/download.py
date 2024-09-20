@@ -322,6 +322,8 @@ def load_dowloaded_dataset(url):
                 file_path = os.path.join(zips_path, file)
                 print("....")
                 foldername = file.replace(".zip", "").replace(" ", "").replace("-", "_")
+                print("Dataset Path:", folder)
+                infos.append("Dataset Path:", folder)
                 dataset_path = os.path.join(datasets_path, foldername)
                 print(i18n("Proceeding with the extraction..."))
                 infos.append(i18n("Proceeding with the extraction..."))
