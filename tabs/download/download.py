@@ -57,6 +57,10 @@ def save_drop_model(dropbox):
     return None
 
 def download_from_url(url):
+    file_path = find_folder_parent(now_dir, "assets")
+    print(file_path)
+    zips_path = os.path.join(file_path, "assets", "zips")
+    print(zips_path)
     os.makedirs(zips_path, exist_ok=True)
     if url != "":
         if "drive.google.com" in url:
@@ -257,7 +261,7 @@ def download_from_url(url):
 
     os.chdir(now_dir)
     return None
-    
+
 def load_dowloaded_dataset(url):
     parent_path = find_folder_parent(now_dir, "assets")
     infos = []
