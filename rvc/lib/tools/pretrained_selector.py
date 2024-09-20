@@ -81,16 +81,16 @@ def pretrained_selector(pitch_guidance):
             },
             "v2": {
                 32000: (
-                    "/kaggle/ax-oqm/pretraineds/pretrained_v2/f0G32k.pth",
-                    "/kaggle/ax-oqm/pretraineds/pretrained_v2/f0D32k.pth",
+                    "/kaggle/input/ax-oqm/pretraineds/pretrained_v2/f0G32k.pth",
+                    "/kaggle/input/ax-oqm/pretraineds/pretrained_v2/f0D32k.pth",
                 ),
                 40000: (
-                    "/kaggle/ax-oqm/pretraineds/pretrained_v2/f0G40k.pth",
-                    "/kaggle/ax-oqm/pretraineds/pretrained_v2/f0D40k.pth",
+                    "/kaggle/input/ax-oqm/pretraineds/pretrained_v2/f0G40k.pth",
+                    "/kaggle/input/ax-oqm/pretraineds/pretrained_v2/f0D40k.pth",
                 ),
                 48000: (
-                    "/kaggle/ax-oqm/pretraineds/pretrained_v2/f0G48k.pth",
-                    "/kaggle/ax-oqm/pretraineds/pretrained_v2/f0D48k.pth",
+                    "/kaggle/input/ax-oqm/pretraineds/pretrained_v2/f0G48k.pth",
+                    "/kaggle/input/ax-oqm/pretraineds/pretrained_v2/f0D48k.pth",
                 ),
             },
         }
@@ -112,16 +112,16 @@ def pretrained_selector(pitch_guidance):
             },
             "v2": {
                 32000: (
-                    "/kaggle/ax-oqm/pretraineds/pretrained_v2/G32k.pth",
-                    "/kaggle/ax-oqm/pretraineds/pretrained_v2/D32k.pth",
+                    "/kaggle/input/ax-oqm/pretraineds/pretrained_v2/G32k.pth",
+                    "/kaggle/input/ax-oqm/pretraineds/pretrained_v2/D32k.pth",
                 ),
                 40000: (
-                    "/kaggle/ax-oqm/pretraineds/pretrained_v2/G40k.pth",
-                    "/kaggle/ax-oqm/pretraineds/pretrained_v2/D40k.pth",
+                    "/kaggle/input/ax-oqm/pretraineds/pretrained_v2/G40k.pth",
+                    "/kaggle/input/ax-oqm/pretraineds/pretrained_v2/D40k.pth",
                 ),
                 48000: (
-                    "/kaggle/ax-oqm/pretraineds/pretrained_v2/G48k.pth",
-                    "/kaggle/ax-oqm/pretraineds/pretrained_v2/D48k.pth",
+                    "/kaggle/input/ax-oqm/pretraineds/pretrained_v2/G48k.pth",
+                    "/kaggle/input/ax-oqm/pretraineds/pretrained_v2/D48k.pth",
                 ),
             },
         }

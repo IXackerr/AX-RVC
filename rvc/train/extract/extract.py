@@ -121,7 +121,7 @@ class FeatureInput:
         if f0_method == "rmvpe":
             self.model_rmvpe = RMVPE0Predictor(
                 # os.path.join("rvc", "models", "predictors", "rmvpe.pt"),
-                os.path.join("/kaggle", "ax-oqm", "predictors", "rmvpe.pt"),
+                os.path.join("/kaggle", "input", "ax-oqm", "predictors", "rmvpe.pt"),
                 is_half=False,
                 device=device,
             )

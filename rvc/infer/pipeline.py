@@ -265,7 +265,7 @@ class Pipeline:
             elif method == "rmvpe":
                 self.model_rmvpe = RMVPE0Predictor(
                     # os.path.join("rvc", "models", "predictors", "rmvpe.pt"),
-                    os.path.join("/kaggle", "ax-oqm", "predictors", "rmvpe.pt"),
+                    os.path.join("/kaggle", "input", "ax-oqm", "predictors", "rmvpe.pt"),
                     is_half=self.is_half,
                     device=self.device,
                 )
@@ -274,7 +274,7 @@ class Pipeline:
             elif method == "fcpe":
                 self.model_fcpe = FCPEF0Predictor(
                     # os.path.join("rvc", "models", "predictors", "fcpe.pt"),
-                    os.path.join("/kaggle", "ax-oqm", "predictors", "fcpe.pt"),
+                    os.path.join("/kaggle", "input", "ax-oqm", "predictors", "fcpe.pt"),
                     f0_min=int(f0_min),
                     f0_max=int(f0_max),
                     dtype=torch.float32,
@@ -331,7 +331,7 @@ class Pipeline:
         elif f0_method == "rmvpe":
             self.model_rmvpe = RMVPE0Predictor(
                 # os.path.join("rvc", "models", "predictors", "rmvpe.pt"),
-                os.path.join("/kaggle", "ax-oqm", "predictors", "rmvpe.pt"),
+                os.path.join("/kaggle", "input", "ax-oqm", "predictors", "rmvpe.pt"),
                 is_half=self.is_half,
                 device=self.device,
             )
@@ -339,7 +339,7 @@ class Pipeline:
         elif f0_method == "fcpe":
             self.model_fcpe = FCPEF0Predictor(
                 # os.path.join("rvc", "models", "predictors", "fcpe.pt"),
-                os.path.join("/kaggle", "ax-oqm", "predictors", "fcpe.pt"),
+                os.path.join("/kaggle", "input", "ax-oqm", "predictors", "fcpe.pt"),
                 f0_min=int(self.f0_min),
                 f0_max=int(self.f0_max),
                 dtype=torch.float32,
