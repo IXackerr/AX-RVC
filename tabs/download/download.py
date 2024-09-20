@@ -55,6 +55,144 @@ def save_drop_model(dropbox):
         gr.Info(f"{file_name} saved in {model_path}")
     return None
 
+def download_from_url(url):
+    file_path = find_folder_parent(now_dir, "assets")
+    print(file_path)
+    zips_path = os.path.join(file_path, "assets", "zips")
+    print(zips_path)
+    os.makedirs(zips_path, exist_ok=True)
+    if url != "":
+        print(i18n("Downloading the file: ") + f"{url}")
+        if "drive.google.com" in url:
+            if "file/d/" in url:
+                file_id = url.split("file/d/")[1].split("/")[0]
+            elif "id=" in url:
+                file_id = url.split("id=")[1].split("&")[0]
+            else:
+                return None
+
+            if file_id:
+                os.chdir(zips_path)
+                result = subprocess.run(
+                    ["gdown", f"https://drive.google.com/uc?id={file_id}", "--fuzzy"],
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                )
+                if (
+                    "Too many users have viewed or downloaded this file recently"
+                    in str(result.stderr)
+                ):
+                    return "too much use"
+                if "Cannot retrieve the public link of the file." in str(result.stderr):
+                    return "private link"
+                print(result.stderr)
+
+        elif "/blob/" in url or "/resolve/" in url:
+            os.chdir(zips_path)
+            if "/blob/" in url:
+                url = url.replace("/blob/", "/resolve/")
+            
+            response = requests.get(url, stream=True)
+            if response.status_code == 200:
+                file_name = url.split("/")[-1]
+                file_name = file_name.replace("%20", "_")
+                total_size_in_bytes = int(response.headers.get('content-length', 0))
+                block_size = 1024  # 1 Kibibyte
+                progress_bar_length = 50
+                progress = 0
+                with open(os.path.join(zips_path, file_name), 'wb') as file:
+                    for data in response.iter_content(block_size):
+                        file.write(data)
+                        progress += len(data)
+                        progress_percent = int((progress / total_size_in_bytes) * 100)
+                        num_dots = int((progress / total_size_in_bytes) * progress_bar_length)
+                        progress_bar = "[" + "." * num_dots + " " * (progress_bar_length - num_dots) + "]"
+                        print(f"{progress_percent}% {progress_bar} {progress}/{total_size_in_bytes}  ", end="\r")
+                        if progress_percent == 100:
+                            print("\n")
+            else:
+                os.chdir(file_path)
+                return None
+        elif "/tree/main" in url:
+            response = requests.get(url)
+            soup = BeautifulSoup(response.content, "html.parser")
+            temp_url = ""
+            for link in soup.find_all("a", href=True):
+                if link["href"].endswith(".zip"):
+                    temp_url = link["href"]
+                    break
+            if temp_url:
+                url = temp_url
+                url = url.replace("blob", "resolve")
+                if "huggingface.co" not in url:
+                    url = "https://huggingface.co" + url
+
+                    wget.download(url)
+            else:
+                print("No .zip file found on the page.")
+        elif "cdn.discordapp.com" in url:
+            file = requests.get(url)
+            os.chdir("./assets/zips")
+            if file.status_code == 200:
+                name = url.split("/")
+                with open(
+                    os.path.join(name[-1]), "wb"
+                ) as newfile:
+                    newfile.write(file.content)
+            else:
+                return None
+        elif "pixeldrain.com" in url:
+            try:
+                file_id = url.split("pixeldrain.com/u/")[1]
+                os.chdir(zips_path)
+                print(file_id)
+                response = requests.get(f"https://pixeldrain.com/api/file/{file_id}")
+                if response.status_code == 200:
+                    file_name = (
+                        response.headers.get("Content-Disposition")
+                        .split("filename=")[-1]
+                        .strip('";')
+                    )
+                    os.makedirs(zips_path, exist_ok=True)
+                    with open(os.path.join(zips_path, file_name), "wb") as newfile:
+                        newfile.write(response.content)
+                        os.chdir(file_path)
+                        return "downloaded"
+                else:
+                    os.chdir(file_path)
+                    return None
+            except Exception as e:
+                print(e)
+                os.chdir(file_path)
+                return None
+        elif "mediafire.com" in url:
+            download_link = get_mediafire_download_link(url)
+            if download_link:
+                os.chdir(zips_path)
+                wget.download(download_link)
+            else:
+                return None
+        else:
+            os.chdir(zips_path)
+            wget.download(url)
+
+        # Fix points in the zips
+        for currentPath, _, zipFiles in os.walk(zips_path):
+            for Files in zipFiles:
+                filePart = Files.split(".")
+                extensionFile = filePart[len(filePart) - 1]
+                filePart.pop()
+                nameFile = "_".join(filePart)
+                realPath = os.path.join(currentPath, Files)
+                os.rename(realPath, nameFile + "." + extensionFile)
+
+        os.chdir(file_path)
+        print(i18n("Full download"))
+        return "downloaded"
+    else:
+        return None
+        
 def load_dowloaded_dataset(url):
     parent_path = find_folder_parent(now_dir, "assets")
     infos = []
