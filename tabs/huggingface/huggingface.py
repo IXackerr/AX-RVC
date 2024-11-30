@@ -14,6 +14,7 @@ def start_upload_to_huggingface(token, username, repo, model_name, model_epochs,
         
         hug_file_path = os.path.join(os.getcwd(), "hugupload")
         os.makedirs(hug_file_path, exist_ok=True)
+        zip_name = ""
         
         if upload_type == "Model Only":
             # Copy model files
