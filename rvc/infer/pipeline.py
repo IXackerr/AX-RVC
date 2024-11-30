@@ -265,7 +265,9 @@ class Pipeline:
             elif method == "rmvpe":
                 self.model_rmvpe = RMVPE0Predictor(
                     # os.path.join("rvc", "models", "predictors", "rmvpe.pt"),
-                    os.path.join("/kaggle", "input", "ax-oqm", "predictors", "rmvpe.pt"),
+                    os.path.join(
+                        "/kaggle", "input", "ax-oqm", "predictors", "rmvpe.pt"
+                    ),
                     is_half=self.is_half,
                     device=self.device,
                 )
