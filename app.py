@@ -32,6 +32,7 @@ from tabs.settings.flask_server import flask_server_tab
 from tabs.settings.themes import theme_tab
 from tabs.settings.precision import precision_tab
 from tabs.settings.model_author import model_author_tab
+from tabs.huggingface.huggingface import huggingface_tab
 
 # Run prerequisites
 from core import run_prerequisites_script
@@ -101,14 +102,17 @@ with gr.Blocks(
     with gr.Tab(i18n("Voice Blender")):
         voice_blender_tab()
 
-    with gr.Tab(i18n("Plugins")):
-        plugins_tab()
+    with gr.Tab(i18n("HuggingFace")):
+    huggingface_tab()
 
     with gr.Tab(i18n("Download")):
         download_tab()
 
-    with gr.Tab(i18n("Report a Bug")):
-        report_tab()
+    with gr.Tab(i18n("Plugins")):
+        plugins_tab()
+
+    # with gr.Tab(i18n("Report a Bug")):
+    #     report_tab()
 
     with gr.Tab(i18n("Extra")):
         extra_tab()
