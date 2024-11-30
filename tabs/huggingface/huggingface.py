@@ -12,14 +12,14 @@ def start_upload_to_huggingface(token, username, repo, model_name, model_epochs,
     try:
         login(token=token, add_to_git_credential=True, new_session=True)
         
-        hug_file_path = os.path.join(os.getcwd(), "hugupload")
+        hug_file_path = os.path.join(os.getcwd(), "program_ax")
         os.makedirs(hug_file_path, exist_ok=True)
         zip_name = ""
         
         if upload_type == "Model Only":
             # Copy model files
-            os.system(f'cp logs/{model_name}/{model_name}_{model_epochs}e_{model_steps}s.pth {hug_file_path}')
-            os.system(f'cp logs/{model_name}/added*.index {hug_file_path}')
+            os.system(f'cp /kaggle/working/program_ax/logs/{model_name}/{model_name}_{model_epochs}e_{model_steps}s.pth {hug_file_path}')
+            os.system(f'cp /kaggle/working/program_ax/logs/{model_name}/added*.index {hug_file_path}')
             
             # Create zip
             if zip_preffix != "" or zip_preffix is not None:
@@ -31,7 +31,7 @@ def start_upload_to_huggingface(token, username, repo, model_name, model_epochs,
             
         else:
             # Copy full logs folder
-            os.system(f'cp -r logs/{model_name} {hug_file_path}')
+            os.system(f'cp -r /kaggle/working/program_ax/logs/{model_name} {hug_file_path}')
             if zip_preffix != "" or zip_preffix is not None:
                 zip_name = f'LOGS_{zip_preffix}_{model_name}.zip'
             else:
@@ -46,15 +46,15 @@ def start_upload_to_huggingface(token, username, repo, model_name, model_epochs,
             repo_id=f"{username}/{repo}",
             repo_type="model"
         )
-
-        # Cleanup
-        os.chdir("..")
-        os.system(f'rm -rf {hug_file_path}/*')
         
         return i18n("Successfully uploaded to HuggingFace!")
     
     except Exception as e:
         return f"Error: {str(e)}"
+    finally:
+        # Cleanup
+        os.chdir("..")
+        os.system(f'rm -rf {hug_file_path}/*')
 
 def start_download_from_huggingface(token, username, repo, zip_name):
     try:
