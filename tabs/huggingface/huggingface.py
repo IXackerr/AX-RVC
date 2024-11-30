@@ -36,7 +36,7 @@ def start_upload_to_huggingface(token, username, repo, model_name, model_epochs,
             else:
                 zip_name = f'LOGS_{model_name}.zip'
             os.chdir(hug_file_path)
-            os.system(f'zip -r {zip_file} {model_name}'
+            os.system(f'zip -r {zip_file} {model_name}')
         # Upload to HuggingFace
         api = HfApi(token=token)
         api.upload_file(
