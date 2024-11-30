@@ -103,7 +103,7 @@ with gr.Blocks(
         voice_blender_tab()
 
     with gr.Tab(i18n("HuggingFace")):
-    huggingface_tab()
+        huggingface_tab()
 
     with gr.Tab(i18n("Download")):
         download_tab()
