@@ -27,7 +27,7 @@ def start_upload_to_huggingface(token, username, repo, model_name, model_epochs,
             else:
                 zip_name = f'{model_name}_{model_epochs}e_{model_steps}s.zip'
             os.chdir(hug_file_path)
-            os.system(f'zip -r {zip_file} {model_name}.pth added*.index')
+            os.system(f'zip -r {zip_name} {model_name}.pth added*.index')
             
         else:
             # Copy full logs folder
@@ -37,12 +37,12 @@ def start_upload_to_huggingface(token, username, repo, model_name, model_epochs,
             else:
                 zip_name = f'LOGS_{model_name}.zip'
             os.chdir(hug_file_path)
-            os.system(f'zip -r {zip_file} {model_name}')
+            os.system(f'zip -r {zip_name} {model_name}')
         # Upload to HuggingFace
         api = HfApi(token=token)
         api.upload_file(
-            path_or_fileobj=zip_file,
-            path_in_repo=zip_file,
+            path_or_fileobj=zip_name,
+            path_in_repo=zip_name,
             repo_id=f"{username}/{repo}",
             repo_type="model"
         )
