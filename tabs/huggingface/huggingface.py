@@ -44,7 +44,8 @@ def start_upload_to_huggingface(token, username, repo, model_name, model_epochs,
             path_in_repo=zip_file,
             repo_id=f"{username}/{repo}",
             repo_type="model"
-        
+        )
+
         # Cleanup
         os.chdir("..")
         os.system(f'rm -rf {hug_file_path}/*')
