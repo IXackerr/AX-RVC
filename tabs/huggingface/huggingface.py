@@ -15,10 +15,11 @@ def start_upload_to_huggingface(token, username, repo, model_name, model_epochs,
         hug_file_path = os.path.join(os.getcwd(), "program_ax")
         os.makedirs(hug_file_path, exist_ok=True)
         zip_name = ""
+        model_file_name = f'{model_name}_{model_epochs}e_{model_steps}s.pth'
         
         if upload_type == "Model Only":
             # Copy model files
-            os.system(f'cp /kaggle/working/program_ax/logs/{model_name}/{model_name}_{model_epochs}e_{model_steps}s.pth {hug_file_path}')
+            os.system(f'cp /kaggle/working/program_ax/logs/{model_file_name} {hug_file_path}')
             os.system(f'cp /kaggle/working/program_ax/logs/{model_name}/added*.index {hug_file_path}')
             
             # Create zip
@@ -27,7 +28,7 @@ def start_upload_to_huggingface(token, username, repo, model_name, model_epochs,
             else:
                 zip_name = f'{model_name}_{model_epochs}e_{model_steps}s.zip'
             os.chdir(hug_file_path)
-            os.system(f'zip -r {zip_name} {model_name}.pth added*.index')
+            os.system(f'zip -r {zip_name} {model_file_name} added*.index')
             
         else:
             # Copy full logs folder
