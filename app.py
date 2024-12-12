@@ -72,8 +72,8 @@ if load_config_flask():
 # Load theme
 import assets.themes.loadThemes as loadThemes
 
-#my_applio = loadThemes.load_json() or "ParityError/Interstellar"
-my_applio = gr.themes.Base(primary_hue="sky",neutral_hue="zinc")
+# my_applio = loadThemes.load_json() or "ParityError/Interstellar"
+my_applio = gr.themes.Base(primary_hue="sky", neutral_hue="zinc")
 
 # Define Gradio interface
 with gr.Blocks(
@@ -85,11 +85,7 @@ with gr.Blocks(
     #         "VITS-based Voice Conversion focused on simplicity, quality and performance."
     #     )
     # )
-    gr.Markdown(
-        i18n(
-            "[Made by Xackerr](https://github.com/IXackerr)"
-        )
-    )
+    gr.Markdown(i18n("[Made by Xackerr](https://github.com/IXackerr)"))
     with gr.Tab(i18n("Inference")):
         inference_tab()
 
