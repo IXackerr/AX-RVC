@@ -19,7 +19,7 @@ def start_upload_to_huggingface(token, username, repo, model_name, model_epochs,
         
         if upload_type == "Model Only":
             # Copy model files
-            os.system(f'cp /kaggle/working/program_ax/logs/{model_file_name} {hug_file_path}')
+            os.system(f'cp /kaggle/working/program_ax/logs/{model_name}/{model_file_name} {hug_file_path}')
             os.system(f'cp /kaggle/working/program_ax/logs/{model_name}/added*.index {hug_file_path}')
             
             # Create zip
