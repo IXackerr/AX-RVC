@@ -57,6 +57,7 @@ def save_drop_model(dropbox):
         gr.Info(f"{file_name} saved in {model_path}")
     return None
 
+
 def download_from_url(url):
     file_path = find_folder_parent(now_dir, "assets")
     print(file_path)
@@ -263,6 +264,7 @@ def download_from_url(url):
     os.chdir(now_dir)
     return None
 
+
 def load_dowloaded_dataset(url):
     parent_path = find_folder_parent(now_dir, "assets")
     infos = []
@@ -381,17 +383,15 @@ def load_dowloaded_dataset(url):
     finally:
         os.chdir(parent_path)
 
+
 def update_dataset_list(name):
     new_datasets = []
     file_path = find_folder_parent(now_dir, "assets")
     for foldername in os.listdir("./assets/datasets"):
         if "." not in foldername:
-            new_datasets.append(
-                os.path.join(
-                    file_path, "datasets", foldername
-                )
-            )
+            new_datasets.append(os.path.join(file_path, "datasets", foldername))
     return gr.Dropdown(choices=new_datasets)
+
 
 def search_models(name):
     url = f"https://cjtfqzjfdimgpvpwhzlv.supabase.co/rest/v1/models?name=ilike.%25{name}%25&order=created_at.desc&limit=15"
@@ -522,11 +522,13 @@ def update_sample_rate_dropdown(model):
         "__type__": "update",
     }
 
+
 def find_folder_parent(search_dir, folder_name):
     for dirpath, dirnames, filenames in os.walk(search_dir):
         if folder_name in dirnames:
             return os.path.abspath(dirpath)
     return None
+
 
 def download_tab():
     with gr.Column():

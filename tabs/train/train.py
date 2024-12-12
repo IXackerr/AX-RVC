@@ -77,9 +77,10 @@ os.makedirs(custom_embedder_root, exist_ok=True)
 os.makedirs(pretraineds_custom_path_relative, exist_ok=True)
 
 
-
 def get_pretrained_list(suffix):
-    pretraineds_custom_path_relative = os.path.relpath("/kaggle/input/ax-oqm/pretraineds/pretraineds_custom", now_dir)
+    pretraineds_custom_path_relative = os.path.relpath(
+        "/kaggle/input/ax-oqm/pretraineds/pretraineds_custom", now_dir
+    )
     return [
         os.path.join(dirpath, filename)
         for dirpath, _, filenames in os.walk(pretraineds_custom_path_relative)
